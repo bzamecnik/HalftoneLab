@@ -1,0 +1,24 @@
+<Combine name="halftonelab" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry build="True" name="libhalftone" configuration="Debug" />
+      <Entry build="True" name="gimp-sharp-plugin" configuration="Debug" />
+      <Entry build="True" name="tests" configuration="Debug" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry build="True" name="libhalftone" configuration="Release" />
+      <Entry build="True" name="gimp-sharp-plugin" configuration="Release" />
+      <Entry build="True" name="tests" configuration="Release" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="tests" single="True">
+    <Execute type="None" entry="libhalftone" />
+    <Execute type="None" entry="gimp-sharp-plugin" />
+    <Execute type="None" entry="tests" />
+  </StartMode>
+  <Entries>
+    <Entry filename="libhalftone/libhalftone.mdp" />
+    <Entry filename="gimp-sharp-plugin/gimp-sharp-plugin.mdp" />
+    <Entry filename="tests/tests.mdp" />
+  </Entries>
+</Combine>
