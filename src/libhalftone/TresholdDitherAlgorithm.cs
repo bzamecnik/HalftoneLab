@@ -3,7 +3,7 @@
 //
 
 using System;
-using Gimp;
+//using Gimp;
 
 namespace Halftone
 {
@@ -12,24 +12,42 @@ namespace Halftone
 	{
 		// treshold filter
 		TresholdFilter tresholdFilter;
-		// error filter (optional)
-		ErrorFilter errorFilter;
 		
-		public TresholdDitherAlgorithm(TresholdFilter tresholdFilter, ErrorFilter errorFilter)
+        // error filter (optional)
+		ErrorFilter errorFilter;
+
+        ScanningOrder scanningOrder;
+		
+		public TresholdDitherAlgorithm(
+            TresholdFilter tresholdFilter,
+            ErrorFilter errorFilter,
+            ScanningOrder scanningOrder
+            )
 		{
 			this.tresholdFilter = tresholdFilter;
 			this.errorFilter = errorFilter;
+            this.scanningOrder = scanningOrder;
 		}
 		
 		public TresholdDitherAlgorithm(TresholdFilter tresholdFilter)
-		: this(tresholdFilter, null)
+		: this(tresholdFilter, null, new ScanlineScanningOrder())
 		{
 		}
 		
-		public override void run(Gimp.Drawable drawable) {
-			RgnIterator iter = new RgnIterator(drawable, RunMode.Interactive);
-			iter.Progress = new Progress("Treshold Dither Algorithm");
-			iter.IterateSrcDest(pixel => tresholdFilter.dither(pixel));
+		public override void run(Image input, Image output) {
+            foreach (Coords coords in
+                scanningOrder.getCoordsIterator(input.Width, input.Height))
+            {
+                // if there is an error filter:
+                // TODO: error should be of 'double' type
+                Pixel original = input[coords] + errorFilter.getError(coords);
+                Pixel dithered = tresholdFilter.dither(original);
+                errorFilter.setError(coords, original - dithered);
+                output[coords] = dithered;
+
+                // if there's no error filter:
+                //output[coords] = tresholdFilter.dither(input[coords]);
+            }
 		}
 	}
 }

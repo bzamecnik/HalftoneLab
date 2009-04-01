@@ -2,7 +2,7 @@
 // User: bohous at 14:59 26.3.2009
 
 using System;
-using Gimp;
+//using Gimp;
 
 namespace Halftone
 {
@@ -10,7 +10,9 @@ namespace Halftone
 	{
 		// input image
 		// output image
-		// walk order
-		public abstract void run(Drawable drawable);
+		// scanning order
+		public abstract void run(Image input, Image output);
+
+        // progress
 	}
 }
