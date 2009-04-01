@@ -3,7 +3,7 @@
 //
 
 using System;
-using Gimp;
+//using Gimp;
 
 namespace Halftone
 {
@@ -75,12 +75,12 @@ namespace Halftone
 			// Create dispersed dot matrix of size 2^N x 2^N where N = magnitude
 			// which is able to represent (2^N*2^N)-1 tones
 			// Recursive algorithm is used
-			public static TresholdMatrix<int> createDispersedDotMatrix(int magnitude) {
+			public static TresholdMatrix<int> createBayerDispersedDotMatrix(int magnitude) {
 				if ((magnitude < 0) || (magnitude > 4)) {
 					return null;
 				}
 				if (magnitude == 0) {
-					return createFromIterativeMatrix(new int[1,1]{0});
+					return createFromIterativeMatrix(new int[1,1]{{0}});
 				} else {
 					int[,] offsets = {{0,0},{1,1},{0,1},{1,0}};					
 					int[,] matrix = new int[2,2]{{0,2},{3,1}};				

@@ -3,14 +3,14 @@
 //
 
 using System;
-using Gimp;
+//using Gimp;
 
 namespace Halftone
 {
 	public abstract class TresholdFilter
 	{
 		public Pixel dither(Pixel pixel) {
-			pixel[0] = (pixel[0] < treshold(pixel)) ? 0 : 255;
+            pixel.Intensity = (pixel.Intensity < treshold(pixel)) ? 0 : 255;
 			return pixel;
 		}
 		public abstract int treshold(Pixel pixel);
