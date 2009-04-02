@@ -11,7 +11,7 @@ namespace Halftone
 		// input image
 		// output image
 		// scanning order
-		public abstract void run(Image input, Image output);
+        public abstract void run(Image image);
 
         // progress
 	}

@@ -3,7 +3,7 @@
 //
 
 using System;
-//using Gimp;
+using Gimp;
 
 
 namespace Halftone
