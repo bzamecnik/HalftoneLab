@@ -3,7 +3,7 @@
 //
 
 using System;
-//using Gimp;
+using Gimp;
 
 namespace Halftone
 {
@@ -34,20 +34,24 @@ namespace Halftone
 		{
 		}
 		
-		public override void run(Image input, Image output) {
-            foreach (Coords coords in
-                scanningOrder.getCoordsIterator(input.Width, input.Height))
-            {
+		public override void run(Image image) {
+            Image.IterFuncSrcDest pixelFunc;
+            if (errorFilter != null) {
+                pixelFunc = ((pixel) => 
                 // if there is an error filter:
                 // TODO: error should be of 'double' type
-                Pixel original = input[coords] + errorFilter.getError(coords);
-                Pixel dithered = tresholdFilter.dither(original);
-                errorFilter.setError(coords, original - dithered);
-                output[coords] = dithered;
-
+                {
+                    Coordinate<int> coords = new Coordinate<int>(pixel.X, pixel.Y);
+                    Pixel original = pixel + errorFilter.getError(coords);
+                    Pixel dithered = tresholdFilter.dither(original);
+                    errorFilter.setError(coords, original - dithered);
+                    return dithered;
+                });
+            } else {
                 // if there's no error filter:
-                //output[coords] = tresholdFilter.dither(input[coords]);
+                pixelFunc = ((pixel) => tresholdFilter.dither(pixel));
             }
+            image.IterateSrcDest(pixelFunc, scanningOrder.getCoordsEnumerator);
 		}
 	}
 }
