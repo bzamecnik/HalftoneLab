@@ -16,7 +16,7 @@ namespace Halftone
 		{
 		}
 		
-		public override int treshold (Pixel pixel)
+		protected override int treshold (Pixel pixel)
 		{
 			throw new NotImplementedException ();
 		}
