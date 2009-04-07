@@ -7,49 +7,90 @@ using Gimp;
 
 namespace Halftone
 {
+    // Error diffusion filter
 	public abstract class ErrorFilter
 	{
-        //public abstract Pixel getNextError();
-        //public abstract void setNextError(Pixel pixel);
+        //ScanningOrder _scanOrder;
+        //public ErrorFilter(ScanningOrder scanOrder) {
+        //    _scanOrder = scanOrder;
+        //}
 
         // get accumulated error value for given pixel
-        public abstract Pixel getError(Coordinate<int> coords);
+        public abstract double getError();
         
         // diffuse error value from given pixel to neighbor pixels
-        public abstract void setError(Coordinate<int> coords, Pixel pixel);
+        public abstract void setError(double error);
+
+        // move to next pixel according to the scanning order
+        public abstract void moveNext();
 	}
 
-    abstract class ErrorBuffer {
+    public abstract class ErrorBuffer {
         protected Coordinate<int> _currentCoords;
 
-        public ErrorBuffer(int width, int height, Coordinate<int> coords) {
+        protected ErrorBuffer(int width, int height, Coordinate<int> coords) {
             _currentCoords = coords;
         }
-        public abstract Pixel getError();
-        public abstract void setError(Coordinate<int> offsetCoords, Pixel error);
+
+        public static ErrorBuffer createFromScanningOrder(ScanningOrder scanOrder,
+            int width,
+            int height,
+            Coordinate<int> coords)
+        {
+            // TODO: this is ugly!
+
+            if (scanOrder is ScanlineScanningOrder) {
+                return new ScanlineErrorBuffer(width, height, coords);
+            //} else if (scanOrder is SerpentineScanningOrder) {
+            //    return new SerpentineErrorBuffer(width, height, coords);
+            //} else if (scanOrder is SFCScanningOrder) {
+            //    return new SFCErrorBuffer(width, height, coords);
+            } else {
+                return null;
+            }
+        }
+
+        public abstract double getError();
+        public abstract double getError(Coordinate<int> offsetCoords);
+        public abstract void setError(Coordinate<int> offsetCoords, double error);
         public abstract void moveNext();
     }
 
     class ScanlineErrorBuffer : ErrorBuffer
     {
-        Pixel[,] _buffer;
+        double[,] _buffer;
 
         public ScanlineErrorBuffer(int width, int height, Coordinate<int> coords)
             : base(width, height, coords)
         {
-            _buffer = new Pixel[height, width];
+            _buffer = new double[height, width];
         }
 
-        public override Pixel getError() {
-            return _buffer[0, _currentCoords.X];
+        public override double getError() {
+            return _buffer[_currentCoords.Y, _currentCoords.X];
         }
-        public override void setError(Coordinate<int> offsetCoords, Pixel error) {
-            _buffer[offsetCoords.Y, _currentCoords.X + offsetCoords.Y] = error;
+
+        public override double getError(Coordinate<int> offsetCoords) {
+            return _buffer[_currentCoords.Y + offsetCoords.Y,
+                _currentCoords.X + offsetCoords.X];
+        }
+
+        public override void setError(Coordinate<int> offsetCoords, double error) {
+            _buffer[_currentCoords.Y + offsetCoords.Y,
+                _currentCoords.X + offsetCoords.X] = error;
         }
 
         public override void moveNext() {
-            // cycle the buffer
-            // - clear current line, make it the last
+            // move to next pixel, cycle the buffer if necessary
+            _currentCoords.X = (_currentCoords.X + 1) % _buffer.GetLength(1);
+            if (_currentCoords.X == 0) {
+                int lastLineY = _currentCoords.Y;
+                _currentCoords.Y = (_currentCoords.Y + 1) % _buffer.GetLength(0);
+                // clear the last line
+                for (int x = 0; x < _buffer.GetLength(1); x++) {
+                    _buffer[lastLineY, x] = 0;
+                }
+            }
         }
     }
 }

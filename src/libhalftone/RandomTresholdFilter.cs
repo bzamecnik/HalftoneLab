@@ -16,7 +16,7 @@ namespace Halftone
 			rnd = new Random();
 		}
 		
-		public override int treshold(Pixel pixel)
+		protected override int treshold(Pixel pixel)
 		{
 			return rnd.Next(255);
 		}

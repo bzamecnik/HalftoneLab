@@ -10,23 +10,40 @@ namespace Halftone
 	public class MatrixErrorFilter : ErrorFilter
 	{
         ErrorBuffer _buffer;
-        Pixel[,] _matrix;
-        Coordinate<int> _sourcePixelPosition;
+        double[,] _matrix;
+        Coordinate<int> _sourcePixelOffset;
 
-        MatrixErrorFilter(Pixel[,] matrix, Coordinate<int> sourcePixelPosition) {
+        MatrixErrorFilter(
+            double[,] matrix,
+            Coordinate<int> sourcePixelOffset,
+            ScanningOrder scanOrder)
+        {
             // check if matrix is ok
             _matrix = matrix;
             // check if source pixel position lies in the matrix
-            _sourcePixelPosition = sourcePixelPosition;
+            _sourcePixelOffset = sourcePixelOffset;
+            _buffer = ErrorBuffer.createFromScanningOrder(
+                scanOrder,
+                matrix.GetLength(1),
+                matrix.GetLength(0),
+                new Coordinate<int>(0, 0));
         }
 
-        public override Pixel getError(Coordinate<int> coords) {
-            return new Pixel(0);
+        public override double getError() {
+            return _buffer.getError(_sourcePixelOffset);
         }
 
         // diffuse error value from given pixel to neighbor pixels
-        public override void setError(Coordinate<int> coords, Pixel pixel) {
-        
+        public override void setError(double error) {
+            for (int y = 0; y < _matrix.GetLength(0); y++) {
+                for (int x = 0; x < _matrix.GetLength(1); x++) {
+                    _buffer.setError(new Coordinate<int>(x, y), _matrix[y, x] * error);
+                }
+            }
+        }
+
+        public override void moveNext() {
+            _buffer.moveNext();
         }
 	}
 }

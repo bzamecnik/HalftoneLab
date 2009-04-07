@@ -37,18 +37,18 @@ namespace Halftone
 		public override void run(Image image) {
             Image.IterFuncSrcDest pixelFunc;
             if (errorFilter != null) {
+                // error diffusion enabled
                 pixelFunc = ((pixel) => 
-                // if there is an error filter:
-                // TODO: error should be of 'double' type
                 {
                     Coordinate<int> coords = new Coordinate<int>(pixel.X, pixel.Y);
-                    Pixel original = pixel + errorFilter.getError(coords);
-                    Pixel dithered = tresholdFilter.dither(original);
-                    errorFilter.setError(coords, original - dithered);
+                    double original = pixel[0] + errorFilter.getError();
+                    Pixel dithered = tresholdFilter.dither(original, pixel.X, pixel.Y);
+                    errorFilter.setError(original - dithered[0]);
+                    errorFilter.moveNext();
                     return dithered;
                 });
             } else {
-                // if there's no error filter:
+                // error diffusion disabled
                 pixelFunc = ((pixel) => tresholdFilter.dither(pixel));
             }
             image.IterateSrcDest(pixelFunc, scanningOrder.getCoordsEnumerator);

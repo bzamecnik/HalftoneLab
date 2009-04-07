@@ -18,9 +18,10 @@ namespace Halftone
             _rectangle = _drawable.MaskBounds;
         }
         
-        public override void IterateSrcDest(IterFuncSrcDest pixelFunc,
-                IterFuncScanning scanFunc
-            ) {
+        public override void IterateSrcDest(
+            IterFuncSrcDest pixelFunc,
+            IterFuncScanning scanFunc)
+        {
             PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
             PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
 
