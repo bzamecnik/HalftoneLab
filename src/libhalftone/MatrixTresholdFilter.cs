@@ -14,8 +14,8 @@ namespace Halftone
 		public MatrixTresholdFilter(TresholdMatrix<int> matrix) {
 			this._tresholdMatrix = matrix;
 		}
-		
-		public override int treshold(Pixel pixel)
+
+        protected override int treshold(Pixel pixel)
 		{
 			return _tresholdMatrix[pixel.Y, pixel.X];
 		}
