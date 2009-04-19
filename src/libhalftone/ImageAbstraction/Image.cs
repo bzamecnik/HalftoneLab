@@ -17,15 +17,22 @@ namespace Halftone
 
         //Pixel this[Coords coords] { get; set; }
 
-        //int Width { get; }
-        //int Height { get; }
+        public abstract int Width { get; }
+        public abstract int Height { get; }
 
         // static Create
 
         public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int width, int height);
         public delegate Pixel IterFuncSrcDest(Pixel src);
 
-        public abstract void IterateSrcDest(
+        public abstract void IterateSrcDestNoOrder(
+            IterFuncSrcDest pixelFunc);
+
+        public abstract void IterateSrcDestDirect(
+            IterFuncSrcDest pixelFunc,
+            IterFuncScanning scanFunc);
+
+        public abstract void IterateSrcDestByRows(
             IterFuncSrcDest pixelFunc,
             IterFuncScanning scanFunc);
     }
