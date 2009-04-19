@@ -50,14 +50,14 @@ namespace Halftone
         
         // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
+            //first line goes from the source position
             for (int x = _sourcePixelOffset.X; x < _matrix.GetLength(1); x++) {
                 int y = _sourcePixelOffset.Y;
-                _buffer.setError(new Coordinate<int>(x - _sourcePixelOffset.X, 0), _matrix[y, x] * error);
+                _buffer.setError(x - _sourcePixelOffset.X, 0, _matrix[y, x] * error);
             }
             for (int y = _sourcePixelOffset.Y + 1; y < _matrix.GetLength(0); y++) {
                 for (int x = 0; x < _matrix.GetLength(1); x++) {
-                    _buffer.setError(
-                        new Coordinate<int>(x - _sourcePixelOffset.X, y - _sourcePixelOffset.Y),
+                    _buffer.setError(x - _sourcePixelOffset.X, y - _sourcePixelOffset.Y,
                         _matrix[y, x] * error);
                 }
             }

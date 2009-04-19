@@ -37,10 +37,12 @@ namespace Gimp.HalftoneLab
             
             TresholdFilter tresholdFilter = new MatrixTresholdFilter(
                 new MatrixTresholdFilter.TresholdMatrix<int>(new int[1, 1] {{ 127 }}));
+            //    MatrixTresholdFilter.sampleMatrix);
             ScanningOrder scanOrder = new ScanlineScanningOrder();
+            //ErrorFilter errorFilter = null;
             ErrorFilter errorFilter = new MatrixErrorFilter(
-                new double[2, 3] { { 0, 0, 7 }, { 3, 5, 1 } }, new Coordinate<int>(1, 0),
-                new ScanlineErrorBuffer(2, image.Width));
+                 new double[2, 3] { { 0, 0, 7 }, { 3, 5, 1 } }, new Coordinate<int>(1, 0),
+                 new ScanlineErrorBuffer(2, image.Width));
             TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm( tresholdFilter, errorFilter, scanOrder);
 
 			//	new MatrixTresholdFilter(MatrixTresholdFilter.Generator.createBayerDispersedDotMatrix(4)));

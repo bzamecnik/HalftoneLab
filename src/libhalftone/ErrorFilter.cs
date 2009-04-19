@@ -39,8 +39,8 @@ namespace Halftone
         //}
 
         public abstract double getError();
-        public abstract double getError(Coordinate<int> offsetCoords);
-        public abstract void setError(Coordinate<int> offsetCoords, double error);
+        public abstract double getError(int offsetX, int offsetY);
+        public abstract void setError(int offsetX, int offsetY, double error);
         public abstract void moveNext();
     }
 
@@ -60,9 +60,9 @@ namespace Halftone
             return _buffer[_currentCoords.Y, _currentCoords.X];
         }
 
-        public override double getError(Coordinate<int> offsetCoords) {
-            int x = _currentCoords.X + offsetCoords.X;
-            int y = (_currentCoords.Y + offsetCoords.Y) % _buffer.GetLength(0);
+        public override double getError(int offsetX, int offsetY) {
+            int x = _currentCoords.X + offsetX;
+            int y = (_currentCoords.Y + offsetY) % _buffer.GetLength(0);
 
             if ((x >= 0) && (x < _buffer.GetLength(1))) {
                 double error = _buffer[y, x];
@@ -76,9 +76,9 @@ namespace Halftone
             }
         }
 
-        public override void setError(Coordinate<int> offsetCoords, double error) {
-            int x = _currentCoords.X + offsetCoords.X;
-            int y = (_currentCoords.Y + offsetCoords.Y) % _buffer.GetLength(0);
+        public override void setError(int offsetX, int offsetY, double error) {
+            int x = _currentCoords.X + offsetX;
+            int y = (_currentCoords.Y + offsetY) % _buffer.GetLength(0);
 
             //if (loop > 0) {
             //    Console.WriteLine("ScanlineErrorBuffer.setError(), y: {0}, x: {1}, error: {2}, _buffer: [{3},{4}]",
