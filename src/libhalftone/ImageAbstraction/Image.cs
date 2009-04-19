@@ -35,5 +35,11 @@ namespace Halftone
         public abstract void IterateSrcDestByRows(
             IterFuncSrcDest pixelFunc,
             IterFuncScanning scanFunc);
+     
+        public abstract Pixel getPixel(int x, int y);
+        public abstract void setPixel(int x, int y, Pixel pixel);
+
+        public abstract void initBuffer();
+        public abstract void flushBuffer();
     }
 }
