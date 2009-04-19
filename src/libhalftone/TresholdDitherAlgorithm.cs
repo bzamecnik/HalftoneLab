@@ -33,7 +33,9 @@ namespace Halftone
 		: this(tresholdFilter, null, new ScanlineScanningOrder())
 		{
 		}
-		
+
+        static int loop = 100;
+
 		public override void run(Image image) {
             Image.IterFuncSrcDest pixelFunc;
             if (errorFilter != null) {
@@ -41,9 +43,19 @@ namespace Halftone
                 pixelFunc = ((pixel) => 
                 {
                     Coordinate<int> coords = new Coordinate<int>(pixel.X, pixel.Y);
-                    double original = pixel[0] + errorFilter.getError();
+                    double error = errorFilter.getError();
+                    double original = (double)pixel[0] + error;
                     Pixel dithered = tresholdFilter.dither(original, pixel.X, pixel.Y);
-                    errorFilter.setError(original - dithered[0]);
+                    //if ((loop > 0) && (pixel.Y < 5) && ((pixel.X < 10) || ((image.Width - pixel.X) < 10))) {
+                    //    Console.WriteLine("[{0}, {1}]: pixel {2} + error {3} = {4} (dithered: {5})",
+                    //        pixel.Y, pixel.X, pixel[0], error, original, dithered[0]);
+                    //    loop--;
+                    //}
+                    //if ((loop > 0) && (pixel.Y < 2)) {
+                    //    Console.WriteLine("[{0}, {1}], error: {2}", pixel.Y, pixel.X, error);
+                    //    loop--;
+                    //}
+                    errorFilter.setError(original - (double)dithered[0]);
                     errorFilter.moveNext();
                     return dithered;
                 });
@@ -51,7 +63,7 @@ namespace Halftone
                 // error diffusion disabled
                 pixelFunc = ((pixel) => tresholdFilter.dither(pixel));
             }
-            image.IterateSrcDest(pixelFunc, scanningOrder.getCoordsEnumerator);
+            image.IterateSrcDestByRows(pixelFunc, scanningOrder.getCoordsEnumerator);
 		}
 	}
 }

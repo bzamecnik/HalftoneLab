@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Halftone;
 
-namespace Gimp.HalftoneLaboratory
+namespace Gimp.HalftoneLab
 {
 	class HalftoneLaboratory : Plugin
 	{
@@ -33,11 +33,20 @@ namespace Gimp.HalftoneLaboratory
 
 	    override protected void Render(Drawable drawable)
 	    {
-			TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(
-				new MatrixTresholdFilter(MatrixTresholdFilter.Generator.createDispersedDotMatrix(4)));
-			//new MatrixTresholdFilter(MatrixTresholdFilter.sampleMatrix));
+            Halftone.Image image = new GSImage(drawable);
+            
+            TresholdFilter tresholdFilter = new MatrixTresholdFilter(
+                new MatrixTresholdFilter.TresholdMatrix<int>(new int[1, 1] {{ 127 }}));
+            ScanningOrder scanOrder = new ScanlineScanningOrder();
+            ErrorFilter errorFilter = new MatrixErrorFilter(
+                new double[2, 3] { { 0, 0, 7 }, { 3, 5, 1 } }, new Coordinate<int>(1, 0),
+                new ScanlineErrorBuffer(2, image.Width));
+            TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm( tresholdFilter, errorFilter, scanOrder);
+
+			//	new MatrixTresholdFilter(MatrixTresholdFilter.Generator.createBayerDispersedDotMatrix(4)));
+			//    new MatrixTresholdFilter(MatrixTresholdFilter.sampleMatrix));
 			//TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(new RandomTresholdFilter());
-			alg.run(drawable);
+            alg.run(image);
 		}		
 	}
 }
