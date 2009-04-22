@@ -52,8 +52,8 @@ namespace Halftone
                 // error diffusion disabled
                 pixelFunc = ((pixel) => tresholdFilter.dither(pixel));
             }
-            image.IterateSrcDestByRows(pixelFunc, scanningOrder.getCoordsEnumerator);
-            //image.IterateSrcDestDirect(pixelFunc, scanningOrder.getCoordsEnumerator);
+            //image.IterateSrcDestByRows(pixelFunc, scanningOrder);
+            image.IterateSrcDestDirect(pixelFunc, scanningOrder);
             //image.IterateSrcDestNoOrder(pixelFunc);
 		}
 	}

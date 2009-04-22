@@ -22,7 +22,7 @@ namespace Halftone
 
         // static Create
 
-        public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int width, int height);
+        //public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int width, int height);
         public delegate Pixel IterFuncSrcDest(Pixel src);
 
         public abstract void IterateSrcDestNoOrder(
@@ -30,11 +30,13 @@ namespace Halftone
 
         public abstract void IterateSrcDestDirect(
             IterFuncSrcDest pixelFunc,
-            IterFuncScanning scanFunc);
+            ScanningOrder scanOrder);
+            //IterFuncScanning scanFunc);
 
         public abstract void IterateSrcDestByRows(
             IterFuncSrcDest pixelFunc,
-            IterFuncScanning scanFunc);
+            ScanningOrder scanOrder);
+            //IterFuncScanning scanFunc);
      
         public abstract Pixel getPixel(int x, int y);
         public abstract void setPixel(int x, int y, Pixel pixel);
