@@ -28,7 +28,7 @@ namespace Halftone
 
         public override void IterateSrcDestDirect(
             IterFuncSrcDest pixelFunc,
-            IterFuncScanning scanFunc)
+            ScanningOrder scanOrder)
         {
             //// TODO: it should be: PixelFetcher(_drawable, true) to support undo
             //// but for now it doesn't work
@@ -51,10 +51,58 @@ namespace Halftone
             //}
 
             initBuffer();
-            foreach (Coordinate<int> coords in scanFunc(Width, Height)) {
-                setPixel(coords.X, coords.Y, pixelFunc(getPixel(coords.X, coords.Y)));
-                // TODO: update progress
+
+            // Note: getting coords using iterator or calling next() is almost
+            // the same in speed, although using next() allows better handling
+            // progess updates.
+
+            int x = 0;
+            int y = 0;
+
+            //// loop with progress count using next()
+            scanOrder.init(Width, Height);
+            // calulate a reasonable progress update count            
+            int blockCount = (int)(Math.Sqrt(Width*Height) / 10);
+            int blockSize = Height * Width / blockCount;
+            double progressPercentage = 0;
+            double progressUnit = 1.0 / (double)blockCount;
+            for (int i = 0; i < blockCount; i++) {
+                for (int block = 0; block < blockSize; block++) {
+                    if (scanOrder.hasNext()) {
+                        setPixel(x, y, pixelFunc(getPixel(x, y)));
+                        scanOrder.next(out x, out y);
+                    } else {
+                        break;
+                    }
+                }
+                progressPercentage += progressUnit;
+                Progress.Update(progressPercentage);
             }
+
+            //scanOrder.init(Width, Height);
+            //int blockCount = 100;
+            //int blockSize = Width * Height / blockCount;
+            //double progressPercentage = 0;
+            //double progressUnit = 1.0 / (double)blockCount;
+            //int i = 0;
+            //for (scanOrder.init(Width, Height); scanOrder.hasNext(); scanOrder.next(out x, out y)) {
+            //    setPixel(x, y, pixelFunc(getPixel(x, y)));
+            //    if ((i++ % blockSize) == 0) {
+            //        progressPercentage += progressUnit;
+            //        Progress.Update(progressPercentage);
+            //    }
+            //}
+
+            // loop without progress count using next()
+            //for (scanOrder.init(Width, Height); scanOrder.hasNext(); scanOrder.next(out x, out y)) {
+            //    setPixel(x, y, pixelFunc(getPixel(x, y)));
+            //}
+
+            // loop without progress count using iterator
+            //foreach (Coordinate<int> coords in scanOrder.getCoordsEnumerator(Width, Height)) {
+            //    setPixel(coords.X, coords.Y, pixelFunc(getPixel(coords.X, coords.Y)));
+            //}
+
             flushBuffer();
 
             //PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
@@ -77,7 +125,7 @@ namespace Halftone
 
         public override void IterateSrcDestByRows(
             IterFuncSrcDest pixelFunc,
-            IterFuncScanning scanFunc)
+            ScanningOrder scanOrder)
         {
             //PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
             //PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
@@ -92,8 +140,9 @@ namespace Halftone
             Pixel tmpPixel = new Pixel(_drawable.Bpp);
             byte[] pixelBytes = new byte[_drawable.Bpp];
 
-            double progressCounter = 0;
-            double progressUnit = (double) 100 / (double)_rectangle.Height;
+            int blockCount = 100;
+            double progressPercentage = 0;
+            double progressUnit = (double)blockCount / (double)_rectangle.Height;
 
             for (int y = _rectangle.Y1; y < _rectangle.Y2;
                 y++, bufferIndexY += rowstride)
@@ -111,9 +160,9 @@ namespace Halftone
                     tmpPixel = pixelFunc(tmpPixel);
                     tmpPixel.CopyTo(imageBuffer, bufferIndex);
                 }
-                if ((y % 100) == 0) {
-                    progressCounter += progressUnit;
-                    Progress.Update(progressCounter);
+                if ((y % blockCount) == 0) {
+                    progressPercentage += progressUnit;
+                    Progress.Update(progressPercentage);
                 }
             }
             flushBuffer();
@@ -128,7 +177,7 @@ namespace Halftone
         {
             PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
             PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
-            double progressCount = 0;
+            double progressPercentage = 0;
             double progressUnit = (double)(Gimp.Gimp.TileWidth * Gimp.Gimp.TileHeight) / (double)(Width * Height);
             for (IntPtr pr = PixelRgn.Register(srcPR, destPR); pr != IntPtr.Zero;
                 pr = PixelRgn.Process(pr))
@@ -140,8 +189,8 @@ namespace Halftone
                         destPR[y, x] = pixelFunc(srcPR[y, x]);
                     }
                 }
-                progressCount += progressUnit;
-                Progress.Update(progressCount);
+                progressPercentage += progressUnit;
+                Progress.Update(progressPercentage);
             }
             _drawable.Flush();
             _drawable.MergeShadow(true);

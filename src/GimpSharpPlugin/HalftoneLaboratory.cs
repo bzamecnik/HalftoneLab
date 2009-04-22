@@ -36,7 +36,7 @@ namespace Gimp.HalftoneLab
             Halftone.Image image = new GSImage(drawable);
             
             TresholdFilter tresholdFilter = new MatrixTresholdFilter(
-                new MatrixTresholdFilter.TresholdMatrix<int>(new int[1, 1] {{ 127 }}));
+                new TresholdMatrix(new int[1, 1] {{ 127 }}));
             //    MatrixTresholdFilter.sampleMatrix);
             ScanningOrder scanOrder = new ScanlineScanningOrder();
             //ErrorFilter errorFilter = null;
