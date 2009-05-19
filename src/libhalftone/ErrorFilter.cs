@@ -3,7 +3,6 @@
 //
 
 using System;
-using Gimp;
 
 namespace Halftone
 {
@@ -16,27 +15,30 @@ namespace Halftone
         // diffuse error value from given pixel to neighbor pixels
         public abstract void setError(double error);
 
+        // for dynamic error filters
+        // Note: this is not quite nice design
+        public abstract void setError(double error, int intensity);
+
         // move to next pixel (according to the scanning order, ie. error buffer type)
         public abstract void moveNext();
 	}
 
     public abstract class ErrorBuffer {
-        //public static ErrorBuffer createFromScanningOrder(ScanningOrder scanOrder,
-        //    int imageHeight,
-        //    int imageWidth)
-        //{
-        //    // TODO: this is ugly!
+        public static ErrorBuffer createFromScanningOrder(ScanningOrder scanOrder,
+            int bufferHeight,
+            int bufferWidth) {
+            // TODO: this is a bit ugly!
 
-        //    if (scanOrder is ScanlineScanningOrder) {
-        //        return new ScanlineErrorBuffer(imageHeight, imageWidth);
-        //    //} else if (scanOrder is SerpentineScanningOrder) {
-        //    //    return new SerpentineErrorBuffer(imageHeight, imageWidth);
-        //    //} else if (scanOrder is SFCScanningOrder) {
-        //    //    return new SFCErrorBuffer(imageHeight, imageWidth);
-        //    } else {
-        //        return null;
-        //    }
-        //}
+            if ((scanOrder is ScanlineScanningOrder) || (scanOrder is SFCScanningOrder)) {
+                return new ScanlineErrorBuffer(bufferHeight, bufferWidth);
+            //} else if (scanOrder is SerpentineScanningOrder) {
+            //    return new SerpentineErrorBuffer(bufferHeight, bufferWidth);
+            //} else if (scanOrder is SFCScanningOrder) {
+            //    return new SFCErrorBuffer(bufferHeight, bufferWidth);
+            } else {
+                return null;
+            }
+        }
 
         public abstract double getError();
         public abstract double getError(int offsetX, int offsetY);
@@ -48,28 +50,24 @@ namespace Halftone
     {
         double[,] _buffer;
         // current offset the error buffer
-        protected Coordinate<int> _currentCoords;
+        protected int _currentOffsetX, _currentOffsetY;
 
         public ScanlineErrorBuffer(int height, int width)
         {
             _buffer = new double[height, width];
-            _currentCoords = new Coordinate<int>(0, 0);
+            _currentOffsetX = _currentOffsetY = 0;
         }
 
         public override double getError() {
-            return _buffer[_currentCoords.Y, _currentCoords.X];
+            return _buffer[_currentOffsetX, _currentOffsetY];
         }
 
         public override double getError(int offsetX, int offsetY) {
-            int x = _currentCoords.X + offsetX;
-            int y = (_currentCoords.Y + offsetY) % _buffer.GetLength(0);
+            int x = _currentOffsetX + offsetX;
+            int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
 
             if ((x >= 0) && (x < _buffer.GetLength(1))) {
                 double error = _buffer[y, x];
-                //if (loop > 0) {
-                //    Console.WriteLine("ScanlineErrorBuffer.getError(): y: {0}, x: {1}, error: {2}",
-                //        y, x, error);
-                //}
                 return error;
             } else {
                 return 0;
@@ -77,37 +75,20 @@ namespace Halftone
         }
 
         public override void setError(int offsetX, int offsetY, double error) {
-            int x = _currentCoords.X + offsetX;
-            int y = (_currentCoords.Y + offsetY) % _buffer.GetLength(0);
+            int x = _currentOffsetX + offsetX;
+            int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
 
-            //if (loop > 0) {
-            //    Console.WriteLine("ScanlineErrorBuffer.setError(), y: {0}, x: {1}, error: {2}, _buffer: [{3},{4}]",
-            //        y, x, error, _buffer.GetLength(0), _buffer.GetLength(1));
-            //}
             if ((x >= 0) && (x < _buffer.GetLength(1))) {
                 _buffer[y, x] += error;
-                //if (loop > 0) {
-                //    Console.WriteLine("buffer[{0}, {1}] = {2}", y, x, _buffer[y, x]);
-                //}
             }
-            //if (loop > 0) {
-            //    loop--;
-            //}
         }
 
         public override void moveNext() {
             // move to next pixel, cycle the buffer if necessary
-            _currentCoords.X = (_currentCoords.X + 1) % _buffer.GetLength(1);
-            if (_currentCoords.X == 0) {
-                int lastLineY = _currentCoords.Y;
-                _currentCoords.Y = (_currentCoords.Y + 1) % _buffer.GetLength(0);
-                
-                //Console.WriteLine("last line of the error buffer:");
-                //for (int x = 0; x < _buffer.GetLength(1); x++) {
-                //    Console.Write("{0}, ", _buffer[_currentCoords.Y, x]);
-                //}
-                //Console.WriteLine();
-
+            _currentOffsetX = (_currentOffsetX + 1) % _buffer.GetLength(1);
+            if (_currentOffsetX == 0) {
+                int lastLineY = _currentOffsetY;
+                _currentOffsetY = (_currentOffsetY + 1) % _buffer.GetLength(0);
                 // clear the last line
                 for (int x = 0; x < _buffer.GetLength(1); x++) {
                     _buffer[lastLineY, x] = 0;

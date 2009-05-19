@@ -39,6 +39,9 @@
       <HintPath>C:\Program Files\Gimp-2.0\lib\gimp\2.0\plug-ins\gimp-sharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -49,13 +52,13 @@
     <Compile Include="DynamicTresholdFilter.cs" />
     <Compile Include="ErrorFilter.cs" />
     <Compile Include="ErrorFilterPrototype.cs" />
+    <Compile Include="ErrorMatrix.cs" />
     <Compile Include="imageAbstraction\gimpSharp\GSImage.cs" />
     <Compile Include="imageAbstraction\Image.cs" />
     <Compile Include="MatrixErrorFilter.cs" />
     <Compile Include="MatrixTresholdFilter.cs" />
     <Compile Include="imageAbstraction\Pixel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomTresholdFilter.cs" />
     <Compile Include="imageAbstraction\ScanningOrder.cs" />
     <Compile Include="TresholdDitherAlgorithm.cs" />
     <Compile Include="TresholdFilter.cs" />

@@ -26,7 +26,8 @@ namespace Halftone
         {
             // TODO: check if matrix is ok
             _matrix = matrix;
-            // scale down the coefficients
+            // scale down the coefficients (their sum must be 1.0)
+            // TODO: scaling should be done in a Prototype
             int coeffSum = 0;
             foreach (int coef in matrix) {
                 coeffSum += coef;
