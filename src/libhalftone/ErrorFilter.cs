@@ -7,7 +7,7 @@ using System;
 namespace Halftone
 {
     // Error diffusion filter
-	public abstract class ErrorFilter
+    public abstract class ErrorFilter : Module
 	{
         // get accumulated error value for given pixel
         public abstract double getError();
@@ -40,16 +40,20 @@ namespace Halftone
             }
         }
 
+        public static ErrorBuffer createDefaultErrorBuffer() {
+            return new ScanlineErrorBuffer();
+        }
+
         public abstract double getError();
-        public abstract double getError(int offsetX, int offsetY);
-        public abstract void setError(int offsetX, int offsetY, double error);
+        public abstract double getError(int offsetY, int offsetX);
+        public abstract void setError(int offsetY, int offsetX, double error);
         public abstract void moveNext();
     }
 
     public class ScanlineErrorBuffer : ErrorBuffer
     {
         double[,] _buffer;
-        // current offset the error buffer
+        // group2 offset the error buffer
         protected int _currentOffsetX, _currentOffsetY;
 
         public ScanlineErrorBuffer(int height, int width)
@@ -58,11 +62,13 @@ namespace Halftone
             _currentOffsetX = _currentOffsetY = 0;
         }
 
+        public ScanlineErrorBuffer() : this(1, 1) {}
+
         public override double getError() {
-            return _buffer[_currentOffsetX, _currentOffsetY];
+            return _buffer[_currentOffsetY, _currentOffsetX];
         }
 
-        public override double getError(int offsetX, int offsetY) {
+        public override double getError(int offsetY, int offsetX) {
             int x = _currentOffsetX + offsetX;
             int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
 
@@ -74,11 +80,13 @@ namespace Halftone
             }
         }
 
-        public override void setError(int offsetX, int offsetY, double error) {
+        public override void setError(int offsetY, int offsetX, double error) {
             int x = _currentOffsetX + offsetX;
             int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
 
-            if ((x >= 0) && (x < _buffer.GetLength(1))) {
+            if ((x >= 0) && (x < _buffer.GetLength(1)) &&
+                (y >= 0) && (y < _buffer.GetLength(0))) {
+                // discard error being set outside the buffer
                 _buffer[y, x] += error;
             }
         }

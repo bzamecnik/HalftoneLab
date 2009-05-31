@@ -11,12 +11,21 @@ namespace Halftone
 	public class TresholdDitherAlgorithm : DitherAlgorithm
 	{
 		// treshold filter
-		TresholdFilter tresholdFilter;
+        public TresholdFilter TresholdFilter {
+            get;
+            set;
+        }
 		
         // error filter (optional)
-		ErrorFilter errorFilter;
+        public ErrorFilter ErrorFilter {
+            get;
+            set;
+        }
 
-        ScanningOrder scanningOrder;
+        public ScanningOrder ScanningOrder {
+            get;
+            set;
+        }
 		
 		public TresholdDitherAlgorithm(
             TresholdFilter tresholdFilter,
@@ -24,9 +33,9 @@ namespace Halftone
             ScanningOrder scanningOrder
             )
 		{
-			this.tresholdFilter = tresholdFilter;
-			this.errorFilter = errorFilter;
-            this.scanningOrder = scanningOrder;
+			TresholdFilter = tresholdFilter;
+			ErrorFilter = errorFilter;
+            ScanningOrder = scanningOrder;
 		}
 		
 		public TresholdDitherAlgorithm(TresholdFilter tresholdFilter)
@@ -34,26 +43,30 @@ namespace Halftone
 		{
 		}
 
+        public TresholdDitherAlgorithm()
+            : this(new MatrixTresholdFilter(), null, new ScanlineScanningOrder()) {
+        }
+
 		public override void run(Image image) {
             Image.IterFuncSrcDest pixelFunc;
-            if (errorFilter != null) {
+            if (ErrorFilter != null) {
                 // error diffusion enabled
                 pixelFunc = ((pixel) => 
                 {
                     Coordinate<int> coords = new Coordinate<int>(pixel.X, pixel.Y);
-                    double error = errorFilter.getError();
+                    double error = ErrorFilter.getError();
                     double original = (double)pixel[0] + error;
-                    Pixel dithered = tresholdFilter.dither(original, pixel.X, pixel.Y);
-                    errorFilter.setError(original - (double)dithered[0]);
-                    errorFilter.moveNext();
+                    Pixel dithered = TresholdFilter.dither(original, pixel.X, pixel.Y);
+                    ErrorFilter.setError(original - (double)dithered[0]);
+                    ErrorFilter.moveNext();
                     return dithered;
                 });
             } else {
                 // error diffusion disabled
-                pixelFunc = ((pixel) => tresholdFilter.dither(pixel));
+                pixelFunc = ((pixel) => TresholdFilter.dither(pixel));
             }
-            //image.IterateSrcDestByRows(pixelFunc, scanningOrder);
-            image.IterateSrcDestDirect(pixelFunc, scanningOrder);
+            //image.IterateSrcDestByRows(pixelFunc, ScanningOrder);
+            image.IterateSrcDestDirect(pixelFunc, ScanningOrder);
             //image.IterateSrcDestNoOrder(pixelFunc);
 		}
 	}

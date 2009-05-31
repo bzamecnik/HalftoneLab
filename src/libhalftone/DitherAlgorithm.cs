@@ -6,7 +6,7 @@ using System;
 
 namespace Halftone
 {
-	public abstract class DitherAlgorithm
+	public abstract class DitherAlgorithm : Module
 	{
 		// input image
 		// output image

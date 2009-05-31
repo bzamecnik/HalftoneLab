@@ -4,33 +4,18 @@ using Gimp;
 namespace Halftone
 {
 
-    public class TresholdMatrix
+    public class TresholdMatrix : Matrix<int>
     {
-        private int[,] _matrix;
-
         public TresholdMatrix(int width, int height) {
-            _matrix = new int[height, width];
+            TheMatrix = new int[height, width];
         }
 
         public TresholdMatrix(int[,] matrix) {
-            _matrix = matrix;
+            TheMatrix = matrix;
         }
 
-        public int Height {
-            get { return _matrix.GetLength(0); }
-        }
-
-        public int Width {
-            get { return _matrix.GetLength(1); }
-        }
-
-        public int this[int y, int x] {
-            get {
-                return _matrix[y % Height, x % Width];
-            }
-            set {
-                _matrix[y % Height, x % Width] = value;
-            }
+        public override Matrix<int> Clone() {
+            return new TresholdMatrix(TheMatrix);
         }
 
         public class Generator
