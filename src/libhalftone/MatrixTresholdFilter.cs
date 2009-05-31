@@ -7,17 +7,20 @@ using Gimp;
 
 namespace Halftone
 {
-	public class MatrixTresholdFilter : TresholdFilter
-	{
-		private TresholdMatrix _tresholdMatrix;
-		
-		public MatrixTresholdFilter(TresholdMatrix matrix) {
-			this._tresholdMatrix = matrix;
-		}
+    public class MatrixTresholdFilter : TresholdFilter
+    {
+        private TresholdMatrix _tresholdMatrix;
 
-        protected override int treshold(Pixel pixel)
-		{
-			return _tresholdMatrix[pixel.Y, pixel.X];
-		}		
-	}
+        public MatrixTresholdFilter(TresholdMatrix matrix) {
+            this._tresholdMatrix = matrix;
+        }
+
+        public MatrixTresholdFilter() {
+            this._tresholdMatrix = new TresholdMatrix(new int[1, 1] { { 127 } });
+        }
+
+        protected override int treshold(Pixel pixel) {
+            return _tresholdMatrix[pixel.Y, pixel.X];
+        }
+    }
 }

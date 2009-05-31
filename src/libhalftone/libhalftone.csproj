@@ -51,13 +51,15 @@
     <Compile Include="DynamicErrorFilter.cs" />
     <Compile Include="DynamicTresholdFilter.cs" />
     <Compile Include="ErrorFilter.cs" />
-    <Compile Include="ErrorFilterPrototype.cs" />
     <Compile Include="ErrorMatrix.cs" />
     <Compile Include="imageAbstraction\gimpSharp\GSImage.cs" />
     <Compile Include="imageAbstraction\Image.cs" />
+    <Compile Include="Matrix.cs" />
     <Compile Include="MatrixErrorFilter.cs" />
     <Compile Include="MatrixTresholdFilter.cs" />
     <Compile Include="imageAbstraction\Pixel.cs" />
+    <Compile Include="Module.cs" />
+    <Compile Include="PerturbationErrorFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="imageAbstraction\ScanningOrder.cs" />
     <Compile Include="TresholdDitherAlgorithm.cs" />

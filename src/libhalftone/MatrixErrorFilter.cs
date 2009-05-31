@@ -7,65 +7,54 @@ using Gimp;
 
 namespace Halftone
 {
-	public class MatrixErrorFilter : ErrorFilter
-	{
+    public class MatrixErrorFilter : ErrorFilter
+    {
+        // TODO: properties for matrix and buffer
+        // - make a new buffer if a matrix with different dimensions is set
+
         // matrix of error filter weights
-        double[,] _matrix;
-        
-        // offset of source pixel, that is pixel currently processed
-        // from where the quantization error is distributed
-        Coordinate<int> _sourcePixelOffset;
-        
+        ErrorMatrix _matrix;
+
+        public ErrorMatrix ErrorMatrix {
+            get { return _matrix; }
+            private set { _matrix = value; }
+        }
+
         // error buffer
         ErrorBuffer _buffer;
 
-        public MatrixErrorFilter(
-            double[,] matrix,
-            Coordinate<int> sourcePixelOffset,
-            ErrorBuffer buffer)
-        {
-            // TODO: check if matrix is ok
-            _matrix = matrix;
-            // scale down the coefficients (their sum must be 1.0)
-            // TODO: scaling should be done in a Prototype
-            int coeffSum = 0;
-            foreach (int coef in matrix) {
-                coeffSum += coef;
-            }
-            if (coeffSum != 0) {
-                for (int y = 0; y < matrix.GetLength(0); y++) {
-                    for (int x = 0; x < matrix.GetLength(1); x++) {
-                        matrix[y, x] /= coeffSum;
-                    }
-                }
-            }
+        public ErrorBuffer ErrorBuffer {
+            get { return _buffer; }
+            private set { _buffer = value; }
+        }
 
-            // check if source pixel position lies in the matrix
-            _sourcePixelOffset = sourcePixelOffset;
-            _buffer = buffer;
+        public MatrixErrorFilter(ErrorMatrix matrix, ErrorBuffer buffer) {
+            ErrorMatrix = matrix;
+            ErrorBuffer = buffer;
+        }
+
+        public MatrixErrorFilter() {
+            _matrix = new ErrorMatrix();
+            _buffer = ErrorBuffer.createDefaultErrorBuffer();
         }
 
         public override double getError() {
             return _buffer.getError();
         }
-        
+
         // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
-            //first line goes from the source position
-            for (int x = _sourcePixelOffset.X; x < _matrix.GetLength(1); x++) {
-                int y = _sourcePixelOffset.Y;
-                _buffer.setError(x - _sourcePixelOffset.X, 0, _matrix[y, x] * error);
-            }
-            for (int y = _sourcePixelOffset.Y + 1; y < _matrix.GetLength(0); y++) {
-                for (int x = 0; x < _matrix.GetLength(1); x++) {
-                    _buffer.setError(x - _sourcePixelOffset.X, y - _sourcePixelOffset.Y,
-                        _matrix[y, x] * error);
-                }
-            }
+            _matrix.apply(
+                (int y, int x, double coeff) => { _buffer.setError(y, x, coeff * error); }
+                );
+        }
+
+        public override void setError(double error, int intensity) {
+            setError(error);
         }
 
         public override void moveNext() {
             _buffer.moveNext();
         }
-	}
+    }
 }
