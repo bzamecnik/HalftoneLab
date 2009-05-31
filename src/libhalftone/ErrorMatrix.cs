@@ -1,4 +1,6 @@
-﻿using Gimp;
+﻿using System;
+using System.Collections.Generic;
+using Gimp;
 
 namespace Halftone {
     public class ErrorMatrix : Matrix<double>
@@ -36,10 +38,17 @@ namespace Halftone {
         }
 
         // number of coefficients (weights)
-        public int NCoefficients {
+        public int CoefficientCount {
             get {
-                // counting even zero weights past source pixel offset
-                // TODO: exclude all zero weights
+                // including only zero weights past source pixel offset
+                // TODO: exclude all zero weights ( |offset| < epsilon)
+                return Height * Width - SourceOffset;
+            }
+        }
+
+        public int CoefficientCapacity {
+            get {
+                // including all weights past source pixel offset
                 return Height * Width - SourceOffset;
             }
         }
@@ -48,18 +57,36 @@ namespace Halftone {
 
         public void apply(ApplyFunc func) {
             // the first line goes from the source position
-            for (int x = SourceOffset; x < Width; x++) {
-                func(0, x - SourceOffset, this[0, x]);
+            foreach (Coordinate<int> coords in GetWeights()) {
+                func(coords.Y, coords.X, this[coords.Y, coords.X]);
             }
-            for (int y = 1; y < Height; y++) {
-                for (int x = 0; x < Width; x++) {
-                    func(y, x - SourceOffset, this[y, x]);
-                }
-            }
+
+            //// old code
+            //for (int x = SourceOffset; x < Width; x++) {
+            //    func(0, x - SourceOffset, this[0, x]);
+            //}
+            //for (int y = 1; y < Height; y++) {
+            //    for (int x = 0; x < Width; x++) {
+            //        func(y, x - SourceOffset, this[y, x]);
+            //    }
+            //}
         }
 
         public override Matrix<double> Clone() {
             return new ErrorMatrix(TheMatrix, _sourcePixelOffsetX);
+        }
+
+        public IEnumerable<Coordinate<int>> GetWeights() {
+            // the first line goes from the source position
+            for (int x = SourceOffset; x < Width; x++) {
+                yield return new Coordinate<int>(0, x);
+            }
+            for (int y = 1; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    yield return new Coordinate<int>(y, x);
+                }
+            }
+            yield break;
         }
     }
 }
