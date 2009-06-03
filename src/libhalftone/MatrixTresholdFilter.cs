@@ -12,11 +12,11 @@ namespace Halftone
         private TresholdMatrix _tresholdMatrix;
 
         public MatrixTresholdFilter(TresholdMatrix matrix) {
-            this._tresholdMatrix = matrix;
+            _tresholdMatrix = matrix;
         }
 
         public MatrixTresholdFilter() {
-            this._tresholdMatrix = new TresholdMatrix(new int[1, 1] { { 127 } });
+            _tresholdMatrix = new TresholdMatrix(new int[1, 1] { { 128 } });
         }
 
         protected override int treshold(Pixel pixel) {

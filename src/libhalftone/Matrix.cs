@@ -21,10 +21,6 @@ namespace Halftone
             _matrix = new T[1,1];
         }
 
-        protected Matrix(Matrix<T> matrix) {
-            _matrix = matrix._matrix;
-        }
-
         public int Height {
             get { return _matrix.GetLength(0); }
         }

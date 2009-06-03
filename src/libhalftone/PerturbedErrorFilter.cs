@@ -67,7 +67,7 @@ namespace Halftone
                 (int y, int x, double coeff) =>
                 {
                     WeightGroup group = new WeightGroup();
-                    group.addWeight(new Coordinate<int>(x, y), coeff);
+                    group.addWeight(new Coordinate<int>(x + _originalMatrix.SourceOffset, y), coeff);
                     weights.Add(group);
                 }
                 );
@@ -94,6 +94,10 @@ namespace Halftone
                     _weightGroups[_weightGroups.Count - 1].addWeight(group1);
                 }
                 // else: single weight, don't perturb at all
+            }
+            foreach (WeightGroup group in _weightGroups) {
+                foreach(Coordinate<int> coords in group.WeightCoords) {
+                }
             }
         }
 
@@ -127,7 +131,7 @@ namespace Halftone
         private class WeightGroup
         {
             // maximal allowed noise amplitude = minimal coefficient
-            public Double MaxNoiseAmplitude;
+            public Double MaxNoiseAmplitude = Double.MaxValue;
             public List<Coordinate<int>> WeightCoords;
 
             public WeightGroup() {
