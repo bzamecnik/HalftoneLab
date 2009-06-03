@@ -10,7 +10,15 @@ namespace Halftone
         ErrorMatrix _originalMatrix;
         ErrorMatrix _perturbedMatrix; // temporary
         List<WeightGroup> _weightGroups;
-        Random _random;
+        Random _randomGenerator = null;
+        private Random RandomGenerator {
+            get {
+                if (_randomGenerator == null) {
+                    _randomGenerator = new Random();
+                }
+                return _randomGenerator;
+            }
+        }
 
         double _perturbationAmplitude;
         // 0.0-1.0
@@ -25,7 +33,6 @@ namespace Halftone
 
         public PerturbedErrorFilter(MatrixErrorFilter childFilter) {
             PerturbationAmplitude = 1.0;
-            _random = new Random();
             _weightGroups = new List<WeightGroup>();
             _childFilter = childFilter;
             _originalMatrix = _childFilter.ErrorMatrix;
@@ -104,7 +111,7 @@ namespace Halftone
         void computePerturbation() {
             foreach (WeightGroup group in _weightGroups) {
                 // [-MaxNoiseAmplitude;+MaxNoiseAmplitude]
-                double perturbation = group.MaxNoiseAmplitude * (_random.NextDouble() * 2 - 1);
+                double perturbation = group.MaxNoiseAmplitude * (RandomGenerator.NextDouble() * 2 - 1);
                 if (group.WeightCoords.Count == 2) {
                     Coordinate<int> coords = group.WeightCoords[0];
                     _perturbedMatrix[coords.Y, coords.X] =

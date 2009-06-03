@@ -21,7 +21,9 @@ namespace Halftone
         public class Generator
         {
             public static TresholdMatrix sampleMatrix;
+            public static TresholdMatrix simpleTreshold;
             static Generator() {
+                simpleTreshold = new TresholdMatrix(new int[1, 1] { { 128 } });
                 //sampleMatrix = Generator.createFromIterativeMatrix(
                 sampleMatrix = TresholdMatrix.Generator.createFromIterativeMatrix(
                     new int[,] {
