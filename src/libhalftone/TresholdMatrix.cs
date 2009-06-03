@@ -6,7 +6,7 @@ namespace Halftone
 
     public class TresholdMatrix : Matrix<int>
     {
-        public TresholdMatrix(int width, int height) {
+        public TresholdMatrix(int height, int width) {
             TheMatrix = new int[height, width];
         }
 
@@ -71,7 +71,7 @@ namespace Halftone
                 int height = userMatrix.GetLength(0);
                 int width = userMatrix.GetLength(1);
                 double coeff = (double)255 / (height * width + 1);
-                TresholdMatrix matrix = new TresholdMatrix(width, height);
+                TresholdMatrix matrix = new TresholdMatrix(height, width);
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         matrix[y, x] = (int)(userMatrix[y, x] * coeff);

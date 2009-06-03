@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Collections;
 using Gimp;
 
 namespace Halftone {
@@ -15,10 +17,10 @@ namespace Halftone {
 
         public ErrorMatrix(double[,] coeffs, int sourcePixelOffsetX) {
             _sourcePixelOffsetX = sourcePixelOffsetX;
-            TheMatrix = coeffs;
+            TheMatrix = (double[,])coeffs.Clone();
             // scale down the coefficients if necessary (their sum must be 1.0)
             double coeffSum = 0;
-            foreach (int coef in TheMatrix) {
+            foreach (double coef in TheMatrix) {
                 coeffSum += coef;
             }
             if ((coeffSum != 0) || (coeffSum != 1.0)) {
@@ -58,7 +60,7 @@ namespace Halftone {
         public void apply(ApplyFunc func) {
             // the first line goes from the source position
             foreach (Coordinate<int> coords in GetWeights()) {
-                func(coords.Y, coords.X, this[coords.Y, coords.X]);
+                func(coords.Y, coords.X - SourceOffset, this[coords.Y, coords.X]);
             }
 
             //// old code
@@ -78,15 +80,26 @@ namespace Halftone {
 
         public IEnumerable<Coordinate<int>> GetWeights() {
             // the first line goes from the source position
-            for (int x = SourceOffset; x < Width; x++) {
-                yield return new Coordinate<int>(0, x);
+            for (int x = SourceOffset + 1; x < Width; x++) {
+                yield return new Coordinate<int>(x, 0);
             }
             for (int y = 1; y < Height; y++) {
                 for (int x = 0; x < Width; x++) {
-                    yield return new Coordinate<int>(y, x);
+                    yield return new Coordinate<int>(x, y);
                 }
             }
             yield break;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    sb.AppendFormat("{0} ", this[y, x]);
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
     }
 }

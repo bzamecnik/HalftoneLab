@@ -53,7 +53,6 @@ namespace Halftone
                 // error diffusion enabled
                 pixelFunc = ((pixel) => 
                 {
-                    Coordinate<int> coords = new Coordinate<int>(pixel.X, pixel.Y);
                     double error = ErrorFilter.getError();
                     double original = (double)pixel[0] + error;
                     Pixel dithered = TresholdFilter.dither(original, pixel.X, pixel.Y);

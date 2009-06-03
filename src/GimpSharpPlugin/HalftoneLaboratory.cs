@@ -32,15 +32,18 @@ namespace Gimp.HalftoneLab
             Halftone.Image image = new GSImage(drawable);
 
             TresholdFilter tresholdFilter = new MatrixTresholdFilter(
-                new TresholdMatrix(new int[1, 1] { { 127 } }));
-            //    MatrixTresholdFilter.sampleMatrix);
+                new TresholdMatrix(new int[1, 1] { { 128 } }));
+                //TresholdMatrix.Generator.sampleMatrix);
             ScanningOrder scanOrder = new ScanlineScanningOrder();
             //ErrorFilter errorFilter = null;
             ErrorMatrix errorMatrix = new ErrorMatrix(
-                new double[2, 3] { { 0, 0, 7 }, { 3, 5, 1 } }, 1);
-            ErrorFilter errorFilter = new MatrixErrorFilter(errorMatrix,
-                ErrorBuffer.createFromScanningOrder(
-                scanOrder, errorMatrix.Height, image.Width));
+                new double[2, 3] { { 0, 0, 7 }, { 3, 5, 1 } }, 1); // Floyd-Steinberg
+                //new double[2, 3] { { 0, 0, 1 }, {1, 1, 1} }, 1);
+            ErrorFilter errorFilter = //new PerturbedErrorFilter(
+                new RandomizedMatrixErrorFilter(
+                    errorMatrix,
+                    ErrorBuffer.createFromScanningOrder(
+                    scanOrder, errorMatrix.Height, image.Width));
             TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(
                 tresholdFilter, errorFilter, scanOrder);
 

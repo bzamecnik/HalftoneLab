@@ -71,21 +71,17 @@ namespace Halftone
         public override double getError(int offsetY, int offsetX) {
             int x = _currentOffsetX + offsetX;
             int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
-
+            double error = 0;
             if ((x >= 0) && (x < _buffer.GetLength(1))) {
-                double error = _buffer[y, x];
-                return error;
-            } else {
-                return 0;
+                error = _buffer[y, x];
             }
+            return error;
         }
 
         public override void setError(int offsetY, int offsetX, double error) {
             int x = _currentOffsetX + offsetX;
             int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
-
-            if ((x >= 0) && (x < _buffer.GetLength(1)) &&
-                (y >= 0) && (y < _buffer.GetLength(0))) {
+            if ((x >= 0) && (x < _buffer.GetLength(1))) {
                 // discard error being set outside the buffer
                 _buffer[y, x] += error;
             }

@@ -62,7 +62,7 @@ namespace Halftone
             //// loop with progress count using next()
             scanOrder.init(Width, Height);
             // calulate a reasonable progress update count            
-            int blockCount = (int)(Math.Sqrt(Width*Height) / 10);
+            int blockCount = Math.Max((int)(Math.Sqrt(Width*Height) / 10), 1);
             int blockSize = Height * Width / blockCount;
             double progressPercentage = 0;
             double progressUnit = 1.0 / (double)blockCount;
