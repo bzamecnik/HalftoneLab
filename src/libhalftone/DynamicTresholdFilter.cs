@@ -1,7 +1,3 @@
-// DynamicTresholdFilter.cs created with MonoDevelop
-// User: bohous at 15:30 26.3.2009
-//
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +5,10 @@ using Gimp;
 
 namespace Halftone
 {
-	public class DynamicTresholdFilter : TresholdFilter
-	{
-        class TresholdTableRecord : IComparable<TresholdTableRecord> {
+    public class DynamicTresholdFilter : TresholdFilter
+    {
+        class TresholdTableRecord : IComparable<TresholdTableRecord>
+        {
             public int intensityRangeStart;
             public double noiseAmplitude; // [0.0; 1.0]could be int
             public TresholdMatrix matrix;
@@ -20,9 +17,12 @@ namespace Halftone
                 return intensityRangeStart.CompareTo(other.intensityRangeStart);
             }
         }
+
         public bool NoiseEnabled { get; set; }
+
         SortedList<int, TresholdTableRecord> _tresholdTable;
         Random _randomGenerator = null;
+
         private Random RandomGenerator {
             get {
                 if (_randomGenerator == null) {
@@ -31,20 +31,20 @@ namespace Halftone
                 return _randomGenerator;
             }
         }
-        static TresholdTableRecord defaultRecord = new TresholdTableRecord() {
-                intensityRangeStart = 0,
-                noiseAmplitude = 0,
-                matrix = TresholdMatrix.Generator.simpleTreshold
-            };
-        
-		public DynamicTresholdFilter()
-		{
+
+        static TresholdTableRecord defaultRecord = new TresholdTableRecord()
+        {
+            intensityRangeStart = 0,
+            noiseAmplitude = 0,
+            matrix = TresholdMatrix.Generator.simpleTreshold
+        };
+
+        public DynamicTresholdFilter() {
             _tresholdTable = new SortedList<int, TresholdTableRecord>();
             NoiseEnabled = false;
-		}
-		
-		protected override int treshold(Pixel pixel)    
-		{
+        }
+
+        protected override int treshold(Pixel pixel) {
             TresholdTableRecord record = getTresholdRecord(pixel[0]);
             TresholdMatrix matrix = record.matrix;
             int treshold = matrix[pixel.Y, pixel.X];
@@ -54,7 +54,7 @@ namespace Halftone
                 treshold += (int)((RandomGenerator.NextDouble() - 0.5) * record.noiseAmplitude * 127);
             }
             return treshold;
-		}
+        }
 
         TresholdTableRecord getTresholdRecord(int intensity) {
             // this is an upper bound, lower bound idea from:
@@ -74,10 +74,10 @@ namespace Halftone
         public void addTresholdRecord(
             int intensityRangeStart,
             TresholdMatrix matrix,
-            double noiseAmplitude)
-        {
+            double noiseAmplitude) {
             //if ((intensityRangeStart < 0) || (intensityRangeStart > 255)) { return; }
-            TresholdTableRecord newRecord = new TresholdTableRecord() {
+            TresholdTableRecord newRecord = new TresholdTableRecord()
+            {
                 intensityRangeStart = intensityRangeStart,
                 matrix = matrix,
                 noiseAmplitude = noiseAmplitude
@@ -103,5 +103,5 @@ namespace Halftone
         // TODO: functions to modify records in _tresholdTable
         // Note: such an interface should be available in a Prototype which then
         // creates instances of this class
-	}
+    }
 }

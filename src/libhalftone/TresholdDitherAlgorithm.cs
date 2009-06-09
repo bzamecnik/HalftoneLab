@@ -1,7 +1,3 @@
-// TresholdDitherAlgorithm.cs created with MonoDevelop
-// User: bohous at 15:04 26.3.2009
-//
-
 using System;
 using Gimp;
 
@@ -11,22 +7,31 @@ namespace Halftone
 	public class TresholdDitherAlgorithm : DitherAlgorithm
 	{
 		// treshold filter
+        // NOTE: to be serialized
         public TresholdFilter TresholdFilter {
             get;
             set;
         }
 		
         // error filter (optional)
+        // NOTE: to be serialized
         public ErrorFilter ErrorFilter {
             get;
             set;
         }
 
+        // NOTE: to be serialized
         public ScanningOrder ScanningOrder {
             get;
             set;
         }
-		
+
+        bool ErrorFilterEnabled {
+            get {
+                return ErrorFilter != null;
+            }
+        }
+
 		public TresholdDitherAlgorithm(
             TresholdFilter tresholdFilter,
             ErrorFilter errorFilter,
@@ -49,7 +54,8 @@ namespace Halftone
 
 		public override void run(Image image) {
             Image.IterFuncSrcDest pixelFunc;
-            if (ErrorFilter != null) {
+            if (ErrorFilterEnabled) {
+                ErrorFilter.initBuffer(ScanningOrder, image.Height, image.Width);
                 // error diffusion enabled
                 pixelFunc = ((pixel) => 
                 {

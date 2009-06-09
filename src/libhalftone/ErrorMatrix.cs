@@ -7,6 +7,15 @@ using Gimp;
 namespace Halftone {
     public class ErrorMatrix : Matrix<double>
     {
+        // TODO:
+        // - Error matrix should contain a 'definition' matrix of coefficients
+        //   and a 'working' matrix.
+        // - Definition would be matrix of integers along with a divisor (it gives rational
+        //   coefficients). It would be serialized.
+        // - Working matrix would contain doubles computed by dividing definition integers
+        //   by the divisor. It would not be serialized as it acts as a cache only.
+        // - The purpose of definition matrix is to enable the user to edit it repeatedly.
+
         // TheMatrix property - matrix of error filter coefficients (ie. weights)
 
         // Horizontal (X) offset of source pixel, that is pixel currently processed
@@ -24,16 +33,17 @@ namespace Halftone {
                 coeffSum += coef;
             }
             if ((coeffSum != 0) || (coeffSum != 1.0)) {
+                double divisorInverse = 1 / coeffSum;
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
-                        this[y, x] /= coeffSum;
+                        this[y, x] *= divisorInverse;
                     }
                 }
             }
         }
 
-        public ErrorMatrix()
-            : this(new double[1, 1] { { 1 } }, 0) { }
+        //public ErrorMatrix()
+        //    : this(new double[1, 2] { { 0, 1 } }, 0) { }
 
         public int SourceOffset {
             get { return _sourcePixelOffsetX; }
@@ -91,15 +101,48 @@ namespace Halftone {
             yield break;
         }
 
-        public override string ToString() {
-            StringBuilder sb = new StringBuilder();
-            for (int y = 0; y < Height; y++) {
-                for (int x = 0; x < Width; x++) {
-                    sb.AppendFormat("{0} ", this[y, x]);
-                }
-                sb.AppendLine();
+        public class Samples
+        {
+            public static ErrorMatrix Default;
+            // the simplest error-diffusion matrix
+            public static ErrorMatrix nextPixel;
+            public static ErrorMatrix simpleNeighborhood;
+            // Floyd-Steinberg
+            public static ErrorMatrix floydSteinberg;
+            // Jarvis-Judice-Ninke 
+            public static ErrorMatrix jarvisJudiceNinke;
+            // Stucki
+            public static ErrorMatrix stucki;
+
+            static Samples() {
+                nextPixel = new ErrorMatrix(
+                    new double[1, 2] {
+                        { 0, 1 }
+                    }, 0);
+                Default = nextPixel;
+                simpleNeighborhood = new ErrorMatrix(
+                    new double[2, 2] {
+                        { 0, 2 },
+                        { 1, 1 }
+                    }, 0);
+                floydSteinberg = new ErrorMatrix(
+                    new double[2, 3] {
+                        { 0, 0, 7 },
+                        { 3, 5, 1 }
+                    }, 1);
+                jarvisJudiceNinke = new ErrorMatrix(
+                    new double[3, 5] {
+                        { 0, 0, 0, 7, 5 },
+                        { 3, 5, 7, 5, 3 },
+                        { 1, 3, 5, 3, 1 }
+                    }, 2);
+                stucki = new ErrorMatrix(
+                    new double[3, 5] {
+                        { 0, 0, 0, 4, 2 },
+                        { 1, 2, 4, 2, 1 },
+                        { 1, 1, 2, 1, 1 }
+                    }, 2);
             }
-            return sb.ToString();
         }
     }
 }

@@ -7,9 +7,10 @@ namespace Halftone
     public class RandomizedMatrixErrorFilter : MatrixErrorFilter
     {
         public bool RandomizeCoeffCount { get; set; }
-        Random _random = new Random();
 
-        public RandomizedMatrixErrorFilter(ErrorMatrix matrix, ErrorBuffer buffer)
+        private Random _random = new Random();
+
+        public RandomizedMatrixErrorFilter(ErrorMatrix matrix, MatrixErrorBuffer buffer)
             : base(matrix, buffer) { }
 
         public RandomizedMatrixErrorFilter() : base() { }
@@ -19,7 +20,7 @@ namespace Halftone
             generateCoefficients();
         }
 
-        void generateCoefficients() {
+        private void generateCoefficients() {
             int newCoeffCount;
             if (RandomizeCoeffCount) {
                 // generate new coefficient count from interval [1; CoefficientCapacity]

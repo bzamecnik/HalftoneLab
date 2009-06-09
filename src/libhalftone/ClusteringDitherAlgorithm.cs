@@ -8,6 +8,32 @@ namespace Halftone
 {
 	public abstract class ClusteringDitherAlgorithm : DitherAlgorithm
 	{
-		// error filter (optional)
 	}
+
+    //public class SFCAdaptiveClusteringDitherAlgorithm : ClusteringDitherAlgorithm
+    //{
+    //    // error filter (optional)
+    //    public ErrorFilter ErrorFilter {
+    //        get;
+    //        set;
+    //    }
+
+    //    public ScanningOrder ScanningOrder {
+    //        get;
+    //        set;
+    //    }
+
+    //    bool ErrorFilterEnabled {
+    //        get {
+    //            return ErrorFilter != null;
+    //        }
+    //    }
+
+    //    public override void run(Image image) {
+    //        if (ErrorFilterEnabled) {
+    //            ErrorFilter.setImageDimensions(image.Height, image.Width);
+    //        }
+    //        // TODO
+    //    }
+    //}
 }

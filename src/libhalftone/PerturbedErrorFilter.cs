@@ -6,11 +6,12 @@ namespace Halftone
 {
     public class PerturbedErrorFilter : ErrorFilter
     {
-        MatrixErrorFilter _childFilter;
-        ErrorMatrix _originalMatrix;
-        ErrorMatrix _perturbedMatrix; // temporary
-        List<WeightGroup> _weightGroups;
-        Random _randomGenerator = null;
+        private MatrixErrorFilter _childFilter;
+        private ErrorMatrix _originalMatrix;
+        private ErrorMatrix _perturbedMatrix; // temporary
+        private List<WeightGroup> _weightGroups;
+        
+        private Random _randomGenerator = null;
         private Random RandomGenerator {
             get {
                 if (_randomGenerator == null) {
@@ -20,9 +21,9 @@ namespace Halftone
             }
         }
 
-        double _perturbationAmplitude;
-        // 0.0-1.0
-        public double PerturbationAmplitude {
+        private double _perturbationAmplitude;
+        // TODO: serializable
+        public double PerturbationAmplitude { // 0.0-1.0
             get { return _perturbationAmplitude; }
             set {
                 if ((value >= 0.0) && (value <= 1.0)) {
@@ -52,20 +53,17 @@ namespace Halftone
             _perturbedMatrix.apply(
                 (int y, int x, double coeff) =>
                 {
-                    _childFilter.ErrorBuffer.setError(y, x, coeff * error);
+                    _childFilter.Buffer.setError(y, x, coeff * error);
                 }
                 );
         }
 
-        public override void setError(double error, int intensity) {
-            setError(error);
-        }
         public override void moveNext() {
             _childFilter.moveNext();
             computePerturbation();
         }
 
-        void preparePerturbationGroups() {
+        private void preparePerturbationGroups() {
             // Note: this must be called everytime the original matrix changes!
 
             List<WeightGroup> weights = new List<WeightGroup>();
@@ -108,7 +106,7 @@ namespace Halftone
             }
         }
 
-        void computePerturbation() {
+        private void computePerturbation() {
             foreach (WeightGroup group in _weightGroups) {
                 // [-MaxNoiseAmplitude;+MaxNoiseAmplitude]
                 double perturbation = group.MaxNoiseAmplitude * (RandomGenerator.NextDouble() * 2 - 1);
@@ -133,6 +131,12 @@ namespace Halftone
                     }
                 }
             }
+        }
+
+        public override void initBuffer(
+            ScanningOrder scanningOrder, int imageHeight, int imageWidth)
+        {
+            _childFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
         }
 
         private class WeightGroup
