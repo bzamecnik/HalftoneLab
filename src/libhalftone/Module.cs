@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Halftone
 {
+    // a base for module serialization
     public interface Module
     {
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Halftone
 {
-    public abstract class Matrix<T>
+    public abstract class Matrix<T> : Module
     {
         private T[,] _matrix; // TODO: maybe 'protected'
 
@@ -44,5 +44,16 @@ namespace Halftone
         }
 
         public abstract Matrix<T> Clone();
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    sb.AppendFormat("{0} ", this[y, x]);
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
     }
 }

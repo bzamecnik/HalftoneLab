@@ -45,7 +45,7 @@ namespace Halftone
             return (x < width) && (y < height);
         }
 
-        int x, y; // group2 coordinates (from 0)
+        int x, y; // current coordinates (from 0)
         int width, height;
     }
 
@@ -90,7 +90,7 @@ namespace Halftone
             return (x < width) && (y < height);
         }
 
-        int x, y; // group2 coordinates (from 0)
+        int x, y; // current coordinates (from 0)
         int width, height;
         int xDiff; // movement: 1: --->, -1: <---
     }

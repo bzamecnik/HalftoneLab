@@ -49,9 +49,11 @@
     <Compile Include="ClusteringDitherAlgorithm.cs" />
     <Compile Include="DitherAlgorithm.cs" />
     <Compile Include="DynamicErrorFilter.cs" />
+    <Compile Include="DynamicMatrixErrorFilter.cs" />
     <Compile Include="DynamicTresholdFilter.cs" />
     <Compile Include="ErrorFilter.cs" />
     <Compile Include="ErrorMatrix.cs" />
+    <Compile Include="ErrorBuffer.cs" />
     <Compile Include="imageAbstraction\gimpSharp\GSImage.cs" />
     <Compile Include="imageAbstraction\Image.cs" />
     <Compile Include="Matrix.cs" />

@@ -1,7 +1,3 @@
-// MatrixTresholdFilter.cs created with MonoDevelop
-// User: bohous at 15:28 26.3.2009
-//
-
 using System;
 using Gimp;
 
