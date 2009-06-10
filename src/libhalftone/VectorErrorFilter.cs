@@ -1,37 +1,36 @@
+﻿using System;
+
 namespace Halftone
 {
-    public class MatrixErrorFilter : ErrorFilter
+    public class VectorErrorFilter : ErrorFilter
     {
-        // matrix of error filter weights
-        ErrorMatrix _matrix;
-
-        // NOTE: to be serialized
+        ErrorMatrix _matrix; // must be of unit height
         public ErrorMatrix ErrorMatrix {
             get { return _matrix; }
             protected set {
-                // Resize the buffer if a matrix with different height is set
-                // Note: buffer width depends on image size
-                if ((Buffer != null) && (value.Height != _matrix.Height)) {
-                    Buffer.resize(_matrix.Height, Buffer.Width);
+                if (value.Height != 1) {
+                    return;
+                }
+                // Resize the buffer if a matrix with different width is set
+                if ((Buffer != null) && (value.Width != _matrix.Width)) {
+                    Buffer.resize(_matrix.Width);
                 }
                 _matrix = value;
             }
         }
 
-        // error buffer
-        MatrixErrorBuffer _buffer;
-
-        public MatrixErrorBuffer Buffer {
+        LineErrorBuffer _buffer;
+        public LineErrorBuffer Buffer {
             get { return _buffer; }
             private set { _buffer = value; }
         }
-        
-        public MatrixErrorFilter(ErrorMatrix matrix) {
+
+        public VectorErrorFilter(ErrorMatrix matrix) {
             ErrorMatrix = matrix;
         }
 
-        public MatrixErrorFilter() {
-            _matrix = ErrorMatrix.Samples.Default;
+        public VectorErrorFilter() {
+            _matrix = ErrorMatrix.Samples.nextPixel;
         }
 
         public override double getError() {
@@ -41,7 +40,7 @@ namespace Halftone
         // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
             ErrorMatrix.apply(
-                (int y, int x, double coeff) => { Buffer.setError(y, x, coeff * error); }
+                (int y, int x, double coeff) => { Buffer.setError(x, coeff * error); }
                 );
         }
 
@@ -52,11 +51,10 @@ namespace Halftone
         public override bool initBuffer(
             ScanningOrder scanningOrder,
             int imageHeight,
-            int imageWidth)
-        {
+            int imageWidth) {
             // null if the created result is not a MatrixErrorBuffer
             Buffer = ErrorBuffer.createFromScanningOrder(scanningOrder,
-                ErrorMatrix.Height, imageWidth) as MatrixErrorBuffer;
+                ErrorMatrix.Height, ErrorMatrix.Width) as LineErrorBuffer;
             return Buffer != null;
         }
     }

@@ -31,24 +31,42 @@ namespace Gimp.HalftoneLab
         override protected void Render(Drawable drawable) {
             Halftone.Image image = new GSImage(drawable);
 
-            DynamicTresholdFilter tresholdFilter = new DynamicTresholdFilter();
-            tresholdFilter.NoiseEnabled = true;
-            tresholdFilter.addTresholdRecord(0, TresholdMatrix.Generator.sampleMatrix, 0.0);
-            tresholdFilter.addTresholdRecord(32, TresholdMatrix.Generator.sampleMatrix, 0.125);
-            tresholdFilter.addTresholdRecord(64, TresholdMatrix.Generator.sampleMatrix, 0.25);
-            tresholdFilter.addTresholdRecord(96, TresholdMatrix.Generator.sampleMatrix, 0.375);
-            tresholdFilter.addTresholdRecord(128, TresholdMatrix.Generator.sampleMatrix, 0.5);
-            tresholdFilter.addTresholdRecord(160, TresholdMatrix.Generator.sampleMatrix, 0.625);
-            tresholdFilter.addTresholdRecord(192, TresholdMatrix.Generator.sampleMatrix, 0.75);
-            tresholdFilter.addTresholdRecord(224, TresholdMatrix.Generator.sampleMatrix, 0.875);
+            //ScanningOrder scanningOrder = new HilbertScanningOrder();
+            //scanningOrder.init(image.Width, image.Height);
+            //while (scanningOrder.hasNext()) {
+            //    scanningOrder.next();
+            //    Console.Out.WriteLine("x: {0}, y: {1}", scanningOrder.CurrentX, scanningOrder.CurrentY);
+            //}
+
+            //IEnumerator<Coordinate<int>> coordsEnum =
+            //    scanningOrder.getCoordsEnumerable().GetEnumerator();
+            //while (coordsEnum.MoveNext()) {
+            //    Console.Out.WriteLine("x: {0}, y: {1}", coordsEnum.Current.X, coordsEnum.Current.Y);
+            //}
+
+            //return;
+
+            //DynamicTresholdFilter tresholdFilter = new DynamicTresholdFilter();
+            //tresholdFilter.NoiseEnabled = true;
+            //tresholdFilter.addTresholdRecord(0, TresholdMatrix.Generator.sampleMatrix, 0.0);
+            //tresholdFilter.addTresholdRecord(32, TresholdMatrix.Generator.sampleMatrix, 0.125);
+            //tresholdFilter.addTresholdRecord(64, TresholdMatrix.Generator.sampleMatrix, 0.25);
+            //tresholdFilter.addTresholdRecord(96, TresholdMatrix.Generator.sampleMatrix, 0.375);
+            //tresholdFilter.addTresholdRecord(128, TresholdMatrix.Generator.sampleMatrix, 0.5);
+            //tresholdFilter.addTresholdRecord(160, TresholdMatrix.Generator.sampleMatrix, 0.625);
+            //tresholdFilter.addTresholdRecord(192, TresholdMatrix.Generator.sampleMatrix, 0.75);
+            //tresholdFilter.addTresholdRecord(224, TresholdMatrix.Generator.sampleMatrix, 0.875);
             
             //tresholdFilter.addTresholdRecord(100, TresholdMatrix.Generator.simpleTreshold);
             //tresholdFilter.addTresholdRecord(150, TresholdMatrix.Generator.createBayerDispersedDotMatrix(3));
-            //TresholdFilter tresholdFilter = new MatrixTresholdFilter(
-            //    TresholdMatrix.Generator.simpleTreshold);
+            TresholdFilter tresholdFilter = new MatrixTresholdFilter(
+                TresholdMatrix.Generator.simpleTreshold);
                 //TresholdMatrix.Generator.sampleMatrix);
-            ScanningOrder scanOrder = new ScanlineScanningOrder();
-            ErrorFilter errorFilter = null;
+            //ScanningOrder scanOrder = new ScanlineScanningOrder();
+            ScanningOrder scanOrder = new HilbertScanningOrder();
+            //ErrorFilter errorFilter = null;
+            ErrorFilter errorFilter = new VectorErrorFilter(
+                new ErrorMatrix(new double[1,5] {{0, 2, 2, 1, 1}}, 0));
             //ErrorFilter errorFilter = //new PerturbedErrorFilter(
             //    new MatrixErrorFilter(
             //        ErrorMatrix.Samples.floydSteinberg,

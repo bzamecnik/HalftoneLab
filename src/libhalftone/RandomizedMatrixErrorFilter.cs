@@ -10,8 +10,8 @@ namespace Halftone
 
         private Random _random = new Random();
 
-        public RandomizedMatrixErrorFilter(ErrorMatrix matrix, MatrixErrorBuffer buffer)
-            : base(matrix, buffer) { }
+        public RandomizedMatrixErrorFilter(ErrorMatrix matrix)
+            : base(matrix) { }
 
         public RandomizedMatrixErrorFilter() : base() { }
 
