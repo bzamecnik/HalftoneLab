@@ -61,16 +61,23 @@ namespace Halftone
 
             //// loop with progress count using next()
             scanOrder.init(Width, Height);
+            IEnumerator<Coordinate<int>> coordsEnum = scanOrder.getCoordsEnumerable().GetEnumerator();
             // calulate a reasonable progress update count            
-            int blockCount = Math.Max((int)(Math.Sqrt(Width*Height) / 10), 1);
-            int blockSize = Height * Width / blockCount;
+            int blockCount = Math.Max((int)Math.Ceiling(
+                Math.Ceiling(Math.Sqrt(Width * Height)) / 10.0), 1);
+            int blockSize = (int)Math.Ceiling(Height * Width / (double)blockCount);
             double progressPercentage = 0;
             double progressUnit = 1.0 / (double)blockCount;
             for (int i = 0; i < blockCount; i++) {
                 for (int block = 0; block < blockSize; block++) {
-                    if (scanOrder.hasNext()) {
+                    //if (scanOrder.hasNext()) {
+                    if (coordsEnum.MoveNext()) {
+                        x = coordsEnum.Current.X;
+                        y = coordsEnum.Current.Y;
+                        //scanOrder.next();
+                        //x = scanOrder.CurrentX;
+                        //y = scanOrder.CurrentY;
                         setPixel(x, y, pixelFunc(getPixel(x, y)));
-                        scanOrder.next(out x, out y);
                     } else {
                         break;
                     }
@@ -99,7 +106,7 @@ namespace Halftone
             //}
 
             // loop without progress count using iterator
-            //foreach (Coordinate<int> coords in scanOrder.getCoordsEnumerator(Width, Height)) {
+            //foreach (Coordinate<int> coords in scanOrder.getCoordsEnumerable(Width, Height)) {
             //    setPixel(coords.X, coords.Y, pixelFunc(getPixel(coords.X, coords.Y)));
             //}
 

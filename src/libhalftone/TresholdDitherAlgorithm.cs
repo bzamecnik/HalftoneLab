@@ -54,8 +54,11 @@ namespace Halftone
 
 		public override void run(Image image) {
             Image.IterFuncSrcDest pixelFunc;
+            if (ErrorFilterEnabled &&
+                !ErrorFilter.initBuffer(ScanningOrder, image.Height, image.Width)) {
+                ErrorFilter = null; // disable the filter if the buffer is not ok
+            }
             if (ErrorFilterEnabled) {
-                ErrorFilter.initBuffer(ScanningOrder, image.Height, image.Width);
                 // error diffusion enabled
                 pixelFunc = ((pixel) => 
                 {
@@ -70,6 +73,9 @@ namespace Halftone
                 // error diffusion disabled
                 pixelFunc = ((pixel) => TresholdFilter.dither(pixel));
             }
+            //pixelFunc = ((pixel) => { pixel[0] = 127; return pixel; });
+            //int i = 0;
+            //pixelFunc = ((pixel) => { pixel[0] = i; i = (i + 2) % 256; return pixel; });
             //image.IterateSrcDestByRows(pixelFunc, ScanningOrder);
             image.IterateSrcDestDirect(pixelFunc, ScanningOrder);
             //image.IterateSrcDestNoOrder(pixelFunc);

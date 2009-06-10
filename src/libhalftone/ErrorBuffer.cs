@@ -1,4 +1,6 @@
-﻿namespace Halftone
+﻿using System.Text;
+
+namespace Halftone
 {
     public abstract class ErrorBuffer
     {
@@ -13,8 +15,8 @@
                 return new ScanlineErrorBuffer(height, width);
             //} else if (scanOrder is SerpentineScanningOrder) {
             //    return new SerpentineErrorBuffer(height, width);
-            //} else if (scanOrder is SFCScanningOrder) {
-            //    return new LineErrorBuffer(height);
+            } else if (scanningOrder is SFCScanningOrder) {
+                return new LineErrorBuffer(width);
             } else {
                 return null;
             }
@@ -100,12 +102,18 @@
         private double[] _buffer;
         private int _currentOffset = 0;
 
+        public int Length {
+            get {
+                return (_buffer != null) ? _buffer.Length : 0;
+            }
+        }
+
         public LineErrorBuffer(int size) {
-            _buffer = new double[size];
+            _buffer = new double[size + 1];
         }
 
         public void resize(int size) {
-            _buffer = new double[size];
+            _buffer = new double[size + 1];
         }
 
         public override double getError() {
@@ -113,7 +121,7 @@
         }
 
         public void setError(int offset, double error) {
-            int pos = _currentOffset + offset;
+            int pos = (_currentOffset + offset) % _buffer.Length;
             if ((pos >= 0) && (pos < _buffer.Length)) {
                 // discard error being set outside the buffer
                 _buffer[pos] += error;
@@ -122,7 +130,18 @@
 
         public override void moveNext() {
             // move to next pixel, cycle the buffer if necessary
+            _buffer[_currentOffset] = 0;
             _currentOffset = (_currentOffset + 1) % _buffer.Length;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("buffer [");
+            foreach (double item in _buffer) {
+                sb.AppendFormat("{0}, ", item);
+            }
+            sb.Append("]");
+            return sb.ToString();
         }
     }
 }

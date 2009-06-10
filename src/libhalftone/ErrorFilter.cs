@@ -13,7 +13,8 @@ namespace Halftone
         public abstract void moveNext();
 
         // initialize internal buffer according to some image-dependent parameters
-        public abstract void initBuffer(ScanningOrder scanningOrder,
+        // return true, if buffer initialized successfully
+        public abstract bool initBuffer(ScanningOrder scanningOrder,
             int imageHeight, int imageWidth);
 	}
 }

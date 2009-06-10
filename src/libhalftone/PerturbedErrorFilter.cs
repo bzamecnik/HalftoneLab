@@ -133,10 +133,10 @@ namespace Halftone
             }
         }
 
-        public override void initBuffer(
+        public override bool initBuffer(
             ScanningOrder scanningOrder, int imageHeight, int imageWidth)
         {
-            _childFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
+            return _childFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
         }
 
         private class WeightGroup
