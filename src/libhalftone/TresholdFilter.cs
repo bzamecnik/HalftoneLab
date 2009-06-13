@@ -3,6 +3,7 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public abstract class TresholdFilter : Module
 	{
 		public Pixel dither(Pixel pixel) {

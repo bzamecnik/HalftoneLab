@@ -3,30 +3,26 @@ using Gimp;
 
 namespace Halftone
 {
-	
+    [Serializable]
 	public class TresholdDitherAlgorithm : DitherAlgorithm
 	{
-		// treshold filter
-        // NOTE: to be serialized
         public TresholdFilter TresholdFilter {
             get;
             set;
         }
 		
-        // error filter (optional)
-        // NOTE: to be serialized
+        // (optional)
         public ErrorFilter ErrorFilter {
             get;
             set;
         }
 
-        // NOTE: to be serialized
         public ScanningOrder ScanningOrder {
             get;
             set;
         }
 
-        bool ErrorFilterEnabled {
+        private bool ErrorFilterEnabled {
             get {
                 return ErrorFilter != null;
             }

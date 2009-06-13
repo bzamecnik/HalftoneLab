@@ -3,6 +3,7 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public class MatrixTresholdFilter : TresholdFilter
     {
         private TresholdMatrix _tresholdMatrix;

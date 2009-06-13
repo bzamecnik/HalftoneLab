@@ -2,16 +2,17 @@
 
 namespace Halftone
 {
+    [Serializable]
     public class VectorErrorFilter : ErrorFilter
     {
-        ErrorMatrix _matrix; // must be of unit height
+        ErrorMatrix _matrix; // must be of unit _height
         public ErrorMatrix ErrorMatrix {
             get { return _matrix; }
             protected set {
                 if (value.Height != 1) {
                     return;
                 }
-                // Resize the buffer if a matrix with different width is set
+                // Resize the buffer if a matrix with different _width is set
                 if ((Buffer != null) && (value.Width != _matrix.Width)) {
                     Buffer.resize(_matrix.Width);
                 }
@@ -19,6 +20,7 @@ namespace Halftone
             }
         }
 
+        [NonSerialized]
         LineErrorBuffer _buffer;
         public LineErrorBuffer Buffer {
             get { return _buffer; }

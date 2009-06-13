@@ -6,6 +6,7 @@ using System;
 
 namespace Halftone
 {
+    [Serializable]
 	public abstract class ClusteringDitherAlgorithm : DitherAlgorithm
 	{
 	}

@@ -5,8 +5,10 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public class DynamicTresholdFilter : TresholdFilter
     {
+        [Serializable]
         class TresholdTableRecord : IComparable<TresholdTableRecord>
         {
             public int intensityRangeStart;
@@ -20,7 +22,8 @@ namespace Halftone
 
         public bool NoiseEnabled { get; set; }
 
-        SortedList<int, TresholdTableRecord> _tresholdTable;
+        private SortedList<int, TresholdTableRecord> _tresholdTable;
+        [NonSerialized]
         Random _randomGenerator = null;
 
         private Random RandomGenerator {

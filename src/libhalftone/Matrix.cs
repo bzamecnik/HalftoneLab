@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Halftone
 {
+    [Serializable]
     public abstract class Matrix<T> : Module
     {
         private T[,] _matrix; // TODO: maybe 'protected'
 
-        //public Matrix(int width, int height) {
-        //    _matrix = new T[height, width];
+        //public Matrix(int _width, int _height) {
+        //    _matrix = new T[_height, _width];
         //}
 
         //public Matrix(T[,] matrix) {

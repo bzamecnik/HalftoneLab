@@ -3,6 +3,7 @@ using System;
 
 namespace Halftone
 {
+    [Serializable]
 	public abstract class DitherAlgorithm : Module
 	{
 		// input image

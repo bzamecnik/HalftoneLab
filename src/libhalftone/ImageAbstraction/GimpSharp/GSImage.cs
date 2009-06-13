@@ -6,9 +6,9 @@ namespace Halftone
 {
     public class GSImage : Image
     {
-        Drawable _drawable;
-        Rectangle _rectangle;
-        byte[] imageBuffer;
+        private Drawable _drawable;
+        private Rectangle _rectangle;
+        private byte[] _imageBuffer; // TODO: this should be a local variable probably
 
         public Drawable Drawable {
             get { return _drawable; }
@@ -137,7 +137,7 @@ namespace Halftone
             //PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
             //PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
             
-            //imageBuffer = new byte[_rectangle.Width * _rectangle.Height * _drawable.Bpp];
+            //_imageBuffer = new byte[_rectangle.Width * _rectangle.Height * _drawable.Bpp];
 
             initBuffer();
 
@@ -154,7 +154,7 @@ namespace Halftone
             for (int y = _rectangle.Y1; y < _rectangle.Y2;
                 y++, bufferIndexY += rowstride)
             {
-                //Array.Copy(imageBuffer, bufferIndexY, row, 0, rowstride);
+                //Array.Copy(_imageBuffer, bufferIndexY, row, 0, rowstride);
                 //Pixel[] pixelRow = srcPR.GetRow(_rectangle.X1, y, _rectangle.Width);
                 //Pixel[] row = srcPR.GetRow(_rectangle.X1, y, srcPR.W);
                 for (int x = 0, bufferIndex = bufferIndexY; x < _rectangle.Width;
@@ -162,10 +162,10 @@ namespace Halftone
                 {
                     // setPixel(x, y, pixelFunc(pixelRow[x]));
 
-                    tmpPixel.CopyFrom(imageBuffer, bufferIndex);
+                    tmpPixel.CopyFrom(_imageBuffer, bufferIndex);
                     tmpPixel.X = x; tmpPixel.Y = y;
                     tmpPixel = pixelFunc(tmpPixel);
-                    tmpPixel.CopyTo(imageBuffer, bufferIndex);
+                    tmpPixel.CopyTo(_imageBuffer, bufferIndex);
                 }
                 if ((y % blockCount) == 0) {
                     progressPercentage += progressUnit;
@@ -209,23 +209,23 @@ namespace Halftone
             Pixel pixel = new Pixel(_drawable.Bpp);
             pixel.X = x;
             pixel.Y = y;
-            pixel.CopyFrom(imageBuffer, (y * _rectangle.Width + x) * _drawable.Bpp);
+            pixel.CopyFrom(_imageBuffer, (y * _rectangle.Width + x) * _drawable.Bpp);
             return pixel;
         }
 
         public override void setPixel(int x, int y, Pixel pixel) {
-            pixel.CopyTo(imageBuffer, (y * _rectangle.Width + x) * _drawable.Bpp);
+            pixel.CopyTo(_imageBuffer, (y * _rectangle.Width + x) * _drawable.Bpp);
         }
 
         public override void initBuffer() {
             PixelRgn rgn = new PixelRgn(_drawable, false, false);
-            imageBuffer = rgn.GetRect(_rectangle.X1, _rectangle.Y1,
+            _imageBuffer = rgn.GetRect(_rectangle.X1, _rectangle.Y1,
                 _rectangle.Width, _rectangle.Height);
         }
 
         public override void flushBuffer() {
             PixelRgn destPR = new PixelRgn(_drawable, true, true);
-            destPR.SetRect(imageBuffer, _rectangle.X1, _rectangle.Y1,
+            destPR.SetRect(_imageBuffer, _rectangle.X1, _rectangle.Y1,
                 _rectangle.Width, _rectangle.Height);
             _drawable.Flush();
             _drawable.MergeShadow(true);

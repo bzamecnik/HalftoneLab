@@ -6,11 +6,13 @@ namespace Halftone
 {
     // TODO:
     // - join common code of DynamicMatrixErrorFilter and DynamicTresholdFilter
-    // - the table should be a fixed size array of records (not a list)
+    // - the table should be a fixed _size array of records (not a list)
     //   - it is presumed that the each intensity in the table should have one record
 
+    [Serializable]
     public class DynamicMatrixErrorFilter : MatrixErrorFilter, DynamicErrorFilter
     {
+        [Serializable]
         class ErrorTableRecord : IComparable<ErrorTableRecord>
         {
             public int intensityRangeStart;
@@ -21,9 +23,9 @@ namespace Halftone
             }
         }
 
-        SortedList<int, ErrorTableRecord> _recordTable;
+        private SortedList<int, ErrorTableRecord> _recordTable;
 
-        static ErrorTableRecord defaultRecord = new ErrorTableRecord()
+        private static ErrorTableRecord _defaultRecord = new ErrorTableRecord()
         {
             intensityRangeStart = 0,
             matrix = ErrorMatrix.Samples.Default
@@ -37,22 +39,22 @@ namespace Halftone
         private new void setError(double error) { }
 
         public void setError(double error, int intensity) {
-            ErrorMatrix = getTresholdRecord(intensity).matrix;
+            ErrorMatrix = getRecord(intensity).matrix;
             base.setError(error);
         }
 
-        ErrorTableRecord getTresholdRecord(int intensity) {
+        ErrorTableRecord getRecord(int intensity) {
             // this is an upper bound, lower bound idea from:
             // http://stackoverflow.com/questions/594518/is-there-a-lower-bound-function-in-c-on-a-sortedlist
             ErrorTableRecord record = _recordTable.LastOrDefault(
                 x => x.Key <= intensity).Value;
             if (record == null) {
-                record = defaultRecord;
+                record = _defaultRecord;
             }
             return record;
         }
 
-        public void addTresholdRecord(int intensityRangeStart, ErrorMatrix matrix) {
+        public void addRecord(int intensityRangeStart, ErrorMatrix matrix) {
             //if ((intensityRangeStart < 0) || (intensityRangeStart > 255)) { return; }
             ErrorTableRecord newRecord = new ErrorTableRecord()
             {
@@ -73,7 +75,7 @@ namespace Halftone
             }
         }
 
-        public void deleteTresholdRecord(int intensityRangeStart) {
+        public void deleteRecord(int intensityRangeStart) {
             _recordTable.Remove(intensityRangeStart);
         }
     }

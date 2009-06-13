@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
 using Gimp;
 
 namespace Halftone {
+    [Serializable]
     public class ErrorMatrix : Matrix<double>
     {
         // TODO:
@@ -23,27 +22,6 @@ namespace Halftone {
         // A vertical (Y) offset > 0 wouldn't make sense as we cannot set error to
         // already computed pixels.
         private int _sourcePixelOffsetX;
-
-        public ErrorMatrix(double[,] coeffs, int sourcePixelOffsetX) {
-            _sourcePixelOffsetX = sourcePixelOffsetX;
-            TheMatrix = (double[,])coeffs.Clone();
-            // scale down the coefficients if necessary (their sum must be 1.0)
-            double coeffSum = 0;
-            foreach (double coef in TheMatrix) {
-                coeffSum += coef;
-            }
-            if ((coeffSum != 0) || (coeffSum != 1.0)) {
-                double divisorInverse = 1 / coeffSum;
-                for (int y = 0; y < Height; y++) {
-                    for (int x = 0; x < Width; x++) {
-                        this[y, x] *= divisorInverse;
-                    }
-                }
-            }
-        }
-
-        //public ErrorMatrix()
-        //    : this(new double[1, 2] { { 0, 1 } }, 0) { }
 
         public int SourceOffset {
             get { return _sourcePixelOffsetX; }
@@ -66,6 +44,27 @@ namespace Halftone {
         }
 
         public delegate void ApplyFunc(int y, int x, double coeff);
+
+        public ErrorMatrix(double[,] coeffs, int sourcePixelOffsetX) {
+            _sourcePixelOffsetX = sourcePixelOffsetX;
+            TheMatrix = (double[,])coeffs.Clone();
+            // scale down the coefficients if necessary (their sum must be 1.0)
+            double coeffSum = 0;
+            foreach (double coef in TheMatrix) {
+                coeffSum += coef;
+            }
+            if ((coeffSum != 0) || (coeffSum != 1.0)) {
+                double divisorInverse = 1 / coeffSum;
+                for (int y = 0; y < Height; y++) {
+                    for (int x = 0; x < Width; x++) {
+                        this[y, x] *= divisorInverse;
+                    }
+                }
+            }
+        }
+
+        //public ErrorMatrix()
+        //    : this(new double[1, 2] { { 0, 1 } }, 0) { }
 
         public void apply(ApplyFunc func) {
             // the first line goes from the source position

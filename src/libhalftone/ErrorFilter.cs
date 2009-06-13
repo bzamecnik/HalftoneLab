@@ -1,6 +1,9 @@
+using System;
+
 namespace Halftone
 {
     // Error diffusion filter
+    [Serializable]
     public abstract class ErrorFilter : Module
 	{
         // get accumulated error value for given pixel

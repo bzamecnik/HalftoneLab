@@ -14,7 +14,7 @@ namespace Halftone
             if (scanningOrder is ScanlineScanningOrder) {
                 return new ScanlineErrorBuffer(height, width);
             //} else if (scanOrder is SerpentineScanningOrder) {
-            //    return new SerpentineErrorBuffer(height, width);
+            //    return new SerpentineErrorBuffer(_height, _width);
             } else if (scanningOrder is SFCScanningOrder) {
                 return new LineErrorBuffer(width);
             } else {
