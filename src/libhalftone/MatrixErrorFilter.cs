@@ -1,16 +1,18 @@
+using System;
+
 namespace Halftone
 {
+    [Serializable]
     public class MatrixErrorFilter : ErrorFilter
     {
         // matrix of error filter weights
         ErrorMatrix _matrix;
 
-        // NOTE: to be serialized
         public ErrorMatrix ErrorMatrix {
             get { return _matrix; }
             protected set {
-                // Resize the buffer if a matrix with different height is set
-                // Note: buffer width depends on image size
+                // Resize the buffer if a matrix with different _height is set
+                // Note: buffer _width depends on image _size
                 if ((Buffer != null) && (value.Height != _matrix.Height)) {
                     Buffer.resize(_matrix.Height, Buffer.Width);
                 }
@@ -19,6 +21,7 @@ namespace Halftone
         }
 
         // error buffer
+        [NonSerialized]
         MatrixErrorBuffer _buffer;
 
         public MatrixErrorBuffer Buffer {

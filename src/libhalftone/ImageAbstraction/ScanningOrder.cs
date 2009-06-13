@@ -4,12 +4,32 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public abstract class ScanningOrder : Module
     {
         public int CurrentX { get; protected set; } // (from 0)
-        public int CurrentY { get; protected set; } // (from 0)
-        public Coordinate<int> CurrentCoords { get; protected set; }
-        protected int width, height; // image dimensions
+        public int CurrentY { get; protected set; } // (from 0) 
+        //[NonSerialized]
+        //private Coordinate<int> _currentCoords;
+        //public Coordinate<int> CurrentCoords {
+        //    get {
+        //        if (_currentCoords == null) {
+        //            _currentCoords = new Coordinate<int>()
+        //            {
+        //                X = CurrentX,
+        //                Y = CurrentY
+        //            };
+        //        }
+        //        return _currentCoords;
+        //    }
+        //    protected set {
+        //        _currentCoords = value;
+        //    }
+        //}
+        [NonSerialized]
+        protected int _width; // image dimensions
+        [NonSerialized]
+        protected int _height;
 
         public abstract void init(int width, int height);
         public abstract void next();
@@ -17,22 +37,23 @@ namespace Halftone
         public abstract IEnumerable<Coordinate<int>> getCoordsEnumerable();
     }
 
+    [Serializable]
     public class ScanlineScanningOrder : ScanningOrder
     {
         public override IEnumerable<Coordinate<int>> getCoordsEnumerable() {
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
+            for (int y = 0; y < _height; y++)
+                for (int x = 0; x < _width; x++)
                     yield return new Coordinate<int>(x, y);
         }
 
         public override void init(int width, int height) {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
             CurrentX = CurrentY = -1;
         }
 
         public override void next() {
-            CurrentX = (CurrentX + 1) % width;
+            CurrentX = (CurrentX + 1) % _width;
             if (CurrentX == 0) {
                 CurrentY++;
             }
@@ -40,67 +61,74 @@ namespace Halftone
 
         public override bool hasNext() {
             // TODO: buggy
-            return ((CurrentX + 1) < width) && ((CurrentY + 1) < height);
+            return ((CurrentX + 1) < _width) && ((CurrentY + 1) < _height);
         }
     }
 
+    [Serializable]
     public class SerpentineScanningOrder : ScanningOrder
     {
-        private int xDiff; // movement: 1: --->, -1: <---
+        [NonSerialized]
+        private int _xDiff; // movement: 1: --->, -1: <---
 
         public override IEnumerable<Coordinate<int>> getCoordsEnumerable() {
             // zig-zag order: odd lines go left to right, even lines right to left
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++)
-                    yield return new Coordinate<int>((y % 2 == 0) ? x : width - 1 - x, y);
+            for (int y = 0; y < _height; y++) {
+                for (int x = 0; x < _width; x++)
+                    yield return new Coordinate<int>((y % 2 == 0) ? x : _width - 1 - x, y);
             }
         }
 
         public override void init(int width, int height) {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
             CurrentX = CurrentY = 0;
-            xDiff = 1;
+            _xDiff = 1;
         }
 
         public override void next() {
-            CurrentX = (CurrentX + xDiff) % width;
-            if (CurrentX == (width - 1)) {
+            CurrentX = (CurrentX + _xDiff) % _width;
+            if (CurrentX == (_width - 1)) {
                 // end of even line
                 CurrentY++;
-                xDiff = -1;
+                _xDiff = -1;
             } else if (CurrentX == 0) {
                 // end of odd line
                 CurrentY++;
-                xDiff = 1;
+                _xDiff = 1;
             }
         }
 
         public override bool hasNext() {
             // TODO: buggy
-            return (CurrentX < width) && (CurrentY < height);
+            return (CurrentX < _width) && (CurrentY < _height);
         }
     }
 
+    [Serializable]
     public abstract class SFCScanningOrder : ScanningOrder
     {
     }
 
+    [Serializable]
     public class HilbertScanningOrder : SFCScanningOrder {
         // - Algorithm 781 - generating Hilbert's space-filling curve by recursion.pdf
         //   - by GREG BREINHOLT and CHRISTOPH SCHIERZ
         //   - Swiss Federal Institute of Technology
 
-        private int size; // size of a square side (2^N)
-        private IEnumerator<Coordinate<int>> imageEnumerator;
-        private IEnumerable<Coordinate<int>> squareEnumerable;
+        [NonSerialized]
+        private int _size; // _size of a square side (2^N)
+        [NonSerialized]
+        private IEnumerator<Coordinate<int>> _imageEnumerator;
+        [NonSerialized]
+        private IEnumerable<Coordinate<int>> _squareEnumerable;
 
         public override IEnumerable<Coordinate<int>> getCoordsEnumerable() {
-            int pixelsRemaining = width * height;
-            foreach (Coordinate<int> coords in squareEnumerable) {
+            int pixelsRemaining = _width * _height;
+            foreach (Coordinate<int> coords in _squareEnumerable) {
                 // skip all coordinates outside the image, yet inside the square
                 // TODO: this optimization could be done inside hilbert()
-                if ((pixelsRemaining > 0) &&(coords.X < width) && (coords.Y < height)) {
+                if ((pixelsRemaining > 0) &&(coords.X < _width) && (coords.Y < _height)) {
                     pixelsRemaining--;
                     yield return coords;
                 } else {
@@ -111,41 +139,41 @@ namespace Halftone
         }
 
         public override void init(int width, int height) {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
             // find the smallest square that can contain the image
-            size = 1;
-            while ((size < width) || (size < height)) {
-                size *= 2; // or: size += size;
+            _size = 1;
+            while ((_size < width) || (_size < height)) {
+                _size *= 2; // or: _size += _size;
             }
-            //Console.Out.WriteLine("hilbert size: {0}x{0}", size);
+            //Console.Out.WriteLine("hilbert _size: {0}x{0}", _size);
             // TODO: the shape orientation could be controlled from outside
             // Note: an optimization of unit hilbert shape orientation
             // according to image orientation
-            squareEnumerable = hilbert(0, 0, size, 0, (width > height) ? 1 : 0);
-            imageEnumerator = getCoordsEnumerable().GetEnumerator();
+            _squareEnumerable = hilbert(0, 0, _size, 0, (width > height) ? 1 : 0);
+            _imageEnumerator = getCoordsEnumerable().GetEnumerator();
         }
 
         public override void next() {
-            if (imageEnumerator != null) {
-                if (imageEnumerator.MoveNext()) {
-                    CurrentX = imageEnumerator.Current.X;
-                    CurrentY = imageEnumerator.Current.Y;
+            if (_imageEnumerator != null) {
+                if (_imageEnumerator.MoveNext()) {
+                    CurrentX = _imageEnumerator.Current.X;
+                    CurrentY = _imageEnumerator.Current.Y;
                 } else {
-                    imageEnumerator = null;
+                    _imageEnumerator = null;
                 }
             }
         }
 
         public override bool hasNext() {
-            return (imageEnumerator != null);
+            return (_imageEnumerator != null);
         }
 
         // x, y - bottom-left corner of the block
-        // size - must be power of two (2^N)
+        // _size - must be power of two (2^N)
         // i1, i2 (0-1) - orientation of the shape
         static IEnumerable<Coordinate<int>> hilbert(int x, int y, int size, int i1, int i2) {
-            size /= 2; // could be: size >>= 1;
+            size /= 2; // could be: _size >>= 1;
 
             int angle = 0;
             int angleOrientation;

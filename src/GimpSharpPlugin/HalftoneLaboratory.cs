@@ -1,6 +1,3 @@
-// Main.cs created with MonoDevelop
-// User: bohous at 17:01 26.3.2009
-//
 using System;
 using System.Collections.Generic;
 using Halftone;

@@ -4,13 +4,18 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public class PerturbedErrorFilter : ErrorFilter
     {
         private MatrixErrorFilter _childFilter;
+        [NonSerialized]
         private ErrorMatrix _originalMatrix;
+        [NonSerialized]
         private ErrorMatrix _perturbedMatrix; // temporary
+        [NonSerialized]
         private List<WeightGroup> _weightGroups;
         
+        [NonSerialized]
         private Random _randomGenerator = null;
         private Random RandomGenerator {
             get {
@@ -22,7 +27,6 @@ namespace Halftone
         }
 
         private double _perturbationAmplitude;
-        // TODO: serializable
         public double PerturbationAmplitude { // 0.0-1.0
             get { return _perturbationAmplitude; }
             set {
@@ -37,7 +41,7 @@ namespace Halftone
             _weightGroups = new List<WeightGroup>();
             _childFilter = childFilter;
             _originalMatrix = _childFilter.ErrorMatrix;
-            // Note: Creating an empty matrix with the same size and source offset
+            // Note: Creating an empty matrix with the same _size and source offset
             // as in original matrix would be enough. The values are overwritten
             // in computePerturbation() anyway.
             _perturbedMatrix = (ErrorMatrix)_originalMatrix.Clone();

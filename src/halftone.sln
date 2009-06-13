@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libhalftone", "libhalftone\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GimpSharpPlugin", "GimpSharpPlugin\GimpSharpPlugin.csproj", "{174CC1EF-725F-47FF-BC03-F8B64D476A27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testing", "testing\testing.csproj", "{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{174CC1EF-725F-47FF-BC03-F8B64D476A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{174CC1EF-725F-47FF-BC03-F8B64D476A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{174CC1EF-725F-47FF-BC03-F8B64D476A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

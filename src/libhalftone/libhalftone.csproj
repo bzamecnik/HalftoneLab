@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClusteringDitherAlgorithm.cs" />
+    <Compile Include="ConfigManager.cs" />
     <Compile Include="DitherAlgorithm.cs" />
     <Compile Include="DynamicErrorFilter.cs" />
     <Compile Include="DynamicMatrixErrorFilter.cs" />

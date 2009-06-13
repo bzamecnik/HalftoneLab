@@ -4,10 +4,12 @@ using Gimp;
 
 namespace Halftone
 {
+    [Serializable]
     public class RandomizedMatrixErrorFilter : MatrixErrorFilter
     {
         public bool RandomizeCoeffCount { get; set; }
 
+        [NonSerialized]
         private Random _random = new Random();
 
         public RandomizedMatrixErrorFilter(ErrorMatrix matrix)

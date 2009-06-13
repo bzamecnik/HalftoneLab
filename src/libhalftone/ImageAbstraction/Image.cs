@@ -22,7 +22,7 @@ namespace Halftone
 
         // static Create
 
-        //public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int width, int height);
+        //public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int _width, int _height);
         public delegate Pixel IterFuncSrcDest(Pixel src);
 
         public abstract void IterateSrcDestNoOrder(

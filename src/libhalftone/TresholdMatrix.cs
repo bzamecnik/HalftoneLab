@@ -3,7 +3,7 @@ using Gimp;
 
 namespace Halftone
 {
-
+    [Serializable]
     public class TresholdMatrix : Matrix<int>
     {
         public TresholdMatrix(int height, int width) {
@@ -82,7 +82,7 @@ namespace Halftone
                 return matrix;
             }
 
-            // Create dispersed dot matrix of size 2^N x 2^N where N = magnitude
+            // Create dispersed dot matrix of _size 2^N x 2^N where N = magnitude
             // which is able to represent (2^N*2^N)-1 tones.
             // A recursive algorithm is used.
             public static TresholdMatrix createBayerDispersedDotMatrix(int magnitude) {
