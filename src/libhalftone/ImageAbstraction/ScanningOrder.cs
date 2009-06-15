@@ -69,7 +69,7 @@ namespace Halftone
     public class SerpentineScanningOrder : ScanningOrder
     {
         [NonSerialized]
-        private int _xDiff; // movement: 1: --->, -1: <---
+        private int _xStep; // movement: 1: --->, -1: <---
 
         public override IEnumerable<Coordinate<int>> getCoordsEnumerable() {
             // zig-zag order: odd lines go left to right, even lines right to left
@@ -83,19 +83,19 @@ namespace Halftone
             _width = width;
             _height = height;
             CurrentX = CurrentY = 0;
-            _xDiff = 1;
+            _xStep = 1;
         }
 
         public override void next() {
-            CurrentX = (CurrentX + _xDiff) % _width;
+            CurrentX = (CurrentX + _xStep) % _width;
             if (CurrentX == (_width - 1)) {
                 // end of even line
                 CurrentY++;
-                _xDiff = -1;
+                _xStep = -1;
             } else if (CurrentX == 0) {
                 // end of odd line
                 CurrentY++;
-                _xDiff = 1;
+                _xStep = 1;
             }
         }
 

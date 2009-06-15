@@ -7,14 +7,13 @@ namespace Halftone
         public static ErrorBuffer createFromScanningOrder(
             ScanningOrder scanningOrder,
             int height,
-            int width)
-        {
+            int width) {
             // TODO: This is not quite nice. How to make it better?
 
             if (scanningOrder is ScanlineScanningOrder) {
-                return new ScanlineErrorBuffer(height, width);
-            //} else if (scanOrder is SerpentineScanningOrder) {
-            //    return new SerpentineErrorBuffer(_height, _width);
+                return new MatrixErrorBuffer(height, width);
+            } else if (scanningOrder is SerpentineScanningOrder) {
+                return new MatrixErrorBuffer(height, width) { SerpentineEnabled = true };
             } else if (scanningOrder is SFCScanningOrder) {
                 return new LineErrorBuffer(width);
             } else {
@@ -26,54 +25,58 @@ namespace Halftone
         public abstract void moveNext();
     }
 
-    public abstract class MatrixErrorBuffer : ErrorBuffer
+    public class MatrixErrorBuffer : ErrorBuffer
     {
+        // Note:
+        // There are currently two modes:
+        //   * scanline row scanning (default)
+        //   * serpentine row scanning (SerpentineEnabled == true)
+        // For now it seems that scanline and serpentine scanning is enough
+        // and the need for different behavior is very unlikely.
+        // The code is more compact and readable this way.
+        // To support different behavior, make this class abstract and split
+        // the code into several descentant classes.
+
         protected double[,] _buffer;
         // current offset of the error buffer
         protected int _currentOffsetX, _currentOffsetY;
 
-        public int Height { get { return _buffer.GetLength(0); } }
-        public int Width { get { return _buffer.GetLength(1); } }
+        public bool SerpentineEnabled { get; set; }
+        // x step
+        // for scanline order: false
+        // for serpentine order: true, false
+        private bool _backMovement;
+
+        public int Height { get; protected set; }
+        public int Width { get; protected set; }
 
         public MatrixErrorBuffer(int height, int width) {
-            _buffer = new double[height, width];
-            _currentOffsetX = _currentOffsetY = 0;
+            SerpentineEnabled = false;
+            init(height, width);
         }
 
         public void resize(int height, int width) {
+            init(height, width);
+        }
+
+        protected virtual void init(int height, int width) {
             _buffer = new double[height, width];
+            Height = _buffer.GetLength(0);
+            Width = _buffer.GetLength(1);
+            _currentOffsetX = _currentOffsetY = 0;
+            _backMovement = false;
         }
-
-        public abstract void setError(int offsetY, int offsetX, double error);
-
-        public static MatrixErrorBuffer createDefaultBuffer(int height, int width) {
-            return new ScanlineErrorBuffer(height, width);
-        }
-    }
-
-    public class ScanlineErrorBuffer : MatrixErrorBuffer
-    {
-
-        public ScanlineErrorBuffer(int height, int width) : base(height, width) { }
 
         public override double getError() {
             return _buffer[_currentOffsetY, _currentOffsetX];
         }
 
-        //public override double getError(int offsetY, int offsetX) {
-        //    int x = _currentOffsetX + offsetX;
-        //    int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
-        //    double error = 0;
-        //    if ((x >= 0) && (x < _buffer.GetLength(1))) {
-        //        error = _buffer[y, x];
-        //    }
-        //    return error;
-        //}
-
-        public override void setError(int offsetY, int offsetX, double error) {
-            int x = _currentOffsetX + offsetX;
-            int y = (_currentOffsetY + offsetY) % _buffer.GetLength(0);
-            if ((x >= 0) && (x < _buffer.GetLength(1))) {
+        public void setError(int offsetY, int offsetX, double error) {
+            bool oddLine = _backMovement;
+            oddLine = (SerpentineEnabled && ((offsetY % 2) == 1)) ? !oddLine : oddLine;
+            int x = _currentOffsetX + (oddLine ? -offsetX : offsetX);
+            int y = (_currentOffsetY + offsetY) % Height;
+            if ((x >= 0) && (x < Width)) {
                 // discard error being set outside the buffer
                 _buffer[y, x] += error;
             }
@@ -81,22 +84,30 @@ namespace Halftone
 
         public override void moveNext() {
             // move to next pixel, cycle the buffer if necessary
-            _currentOffsetX = (_currentOffsetX + 1) % _buffer.GetLength(1);
-            if (_currentOffsetX == 0) {
-                int lastLineY = _currentOffsetY;
-                _currentOffsetY = (_currentOffsetY + 1) % _buffer.GetLength(0);
+            bool endOfRow = (_backMovement  && (_currentOffsetX == 0))
+                         || (!_backMovement && (_currentOffsetX == (Width - 1)));
+            if (endOfRow) {
+                // the end of a row was reached, move to the next row
+                int lastRowY = _currentOffsetY;
+                _currentOffsetY = (_currentOffsetY + 1) % Height;
                 // clear the last line
-                for (int x = 0; x < _buffer.GetLength(1); x++) {
-                    _buffer[lastLineY, x] = 0;
+                for (int x = 0; x < Width; x++) {
+                    _buffer[lastRowY, x] = 0;
                 }
+            }
+            if (!(SerpentineEnabled && endOfRow)) {
+                _currentOffsetX = (_currentOffsetX + (_backMovement ? Width - 1 : 1))
+                    % Width;
+            } else {
+                // change the row scanning direction
+                _backMovement = !_backMovement;
             }
         }
     }
 
-    // TODO:
-    //public class SerpentineErrorBuffer : MatrixErrorBuffer { }
-
     // A simple cyclic buffer (to be used by ClusteringDitherAlgorithm with SFCScanningOrder)
+    // The reason not to use MatrixErrorBuffer is different signature of constructor,
+    // and resize(), setError().
     public class LineErrorBuffer : ErrorBuffer
     {
         private double[] _buffer;
