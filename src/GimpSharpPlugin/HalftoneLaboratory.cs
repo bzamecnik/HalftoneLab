@@ -60,15 +60,13 @@ namespace Gimp.HalftoneLab
                 TresholdMatrix.Generator.simpleTreshold);
                 //TresholdMatrix.Generator.sampleMatrix);
             //ScanningOrder scanOrder = new ScanlineScanningOrder();
-            ScanningOrder scanOrder = new HilbertScanningOrder();
+            ScanningOrder scanOrder = new SerpentineScanningOrder();
+            //ScanningOrder scanOrder = new HilbertScanningOrder();
             //ErrorFilter errorFilter = null;
-            ErrorFilter errorFilter = new VectorErrorFilter(
-                new ErrorMatrix(new double[1,5] {{0, 2, 2, 1, 1}}, 0));
-            //ErrorFilter errorFilter = //new PerturbedErrorFilter(
-            //    new MatrixErrorFilter(
-            //        ErrorMatrix.Samples.floydSteinberg,
-            //        ErrorBuffer.createFromScanningOrder(
-            //        scanOrder, errorMatrix.Height, image.Width));
+            //ErrorFilter errorFilter = new VectorErrorFilter(
+            //    new ErrorMatrix(new double[1,5] {{0, 2, 2, 1, 1}}, 0));
+            ErrorFilter errorFilter = //new PerturbedErrorFilter(
+                new MatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
             TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(
                 tresholdFilter, errorFilter, scanOrder);
 
