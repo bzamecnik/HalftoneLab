@@ -2,16 +2,26 @@ using System;
 using System.Collections.Generic;
 using Halftone;
 
+using Gtk;
+
 namespace Gimp.HalftoneLab
 {
     class HalftoneLaboratory : Plugin
     {
+        private List<DitherAlgorithm> algorithms;
+        private DitherAlgorithm selectedAlgorithm;
+        [SaveAttribute("algorithm")]
+        private string selectedAlgorithmName;
+        private ConfigManager configManager;
+
         public static void Main(string[] args) {
             new HalftoneLaboratory(args);
         }
 
         HalftoneLaboratory(string[] args)
-            : base(args, "HalftoneLaboratory") {
+            : base(args, "HalftoneLaboratory")
+        {
+            Console.Out.WriteLine("HalftoneLaboratory()");
         }
 
         override protected IEnumerable<Procedure> ListProcedures() {
@@ -25,55 +35,74 @@ namespace Gimp.HalftoneLab
                     "GRAY*") { MenuPath = "<Image>/Filters/Distorts" };
         }
 
+        override protected GimpDialog CreateDialog() {
+            gimp_ui_init("HalftoneLab", true);
+
+            GimpDialog dialog = DialogNew("Halftone Laboratory", "HalftoneLab",
+                IntPtr.Zero, 0, Gimp.StandardHelpFunc, "HalftoneLab");
+
+            VBox vbox = new VBox(false, 12) { BorderWidth = 12 };
+            dialog.VBox.PackStart(vbox, true, true, 0);
+
+            loadAlgorithms();
+            ComboBox algorithmCombo = ComboBox.NewText();
+            foreach (DitherAlgorithm alg in algorithms) {
+                algorithmCombo.AppendText(alg.Name);
+            }
+            algorithmCombo.Changed += delegate
+            {
+                selectedAlgorithm = algorithms.Find(
+                    alg => alg.Name == algorithmCombo.ActiveText);
+                if (selectedAlgorithm != null) {
+                    selectedAlgorithmName = selectedAlgorithm.Name;
+                }
+            };
+            algorithmCombo.Active = 0;
+
+            vbox.PackStart(algorithmCombo, false, false, 0);
+
+            return dialog;
+        }
+
         override protected void Render(Drawable drawable) {
             Halftone.Image image = new GSImage(drawable);
+            if (algorithms == null) {
+                loadAlgorithms();
+            }
+            if ((selectedAlgorithm == null) && (algorithms != null)) {
+                selectedAlgorithm = algorithms.Find(
+                    alg => alg.Name == selectedAlgorithmName);
+            }
+            if (selectedAlgorithm != null) {
+                Console.Out.WriteLine("algorithm name: {0}", selectedAlgorithm.Name);
+                Console.Out.WriteLine("description: {0}", selectedAlgorithm.Description);
+                selectedAlgorithm.run(image);
+            }
 
-            //ScanningOrder scanningOrder = new HilbertScanningOrder();
-            //scanningOrder.init(image.Width, image.Height);
-            //while (scanningOrder.hasNext()) {
-            //    scanningOrder.next();
-            //    Console.Out.WriteLine("x: {0}, y: {1}", scanningOrder.CurrentX, scanningOrder.CurrentY);
-            //}
+            ////DynamicMatrixErrorFilter dynamicMatrixErrorFilter = new DynamicMatrixErrorFilter();
+            ////dynamicMatrixErrorFilter.addRecord(0, ErrorMatrix.Samples.floydSteinberg);
+            ////dynamicMatrixErrorFilter.addRecord(64, ErrorMatrix.Samples.jarvisJudiceNinke);
+            ////dynamicMatrixErrorFilter.addRecord(128, ErrorMatrix.Samples.stucki);
+            ////dynamicMatrixErrorFilter.addRecord(192, ErrorMatrix.Samples.nextPixel);
 
-            //IEnumerator<Coordinate<int>> coordsEnum =
-            //    scanningOrder.getCoordsEnumerable().GetEnumerator();
-            //while (coordsEnum.MoveNext()) {
-            //    Console.Out.WriteLine("x: {0}, y: {1}", coordsEnum.Current.X, coordsEnum.Current.Y);
-            //}
+            //TresholdDitherAlgorithm tresholdDitherAlgorithm = new TresholdDitherAlgorithm();
+            //tresholdDitherAlgorithm.ErrorFilter = new MatrixErrorFilter(ErrorMatrix.Samples.stucki);
+            ////tresholdDitherAlgorithm.ErrorFilter = new PerturbedErrorFilter(
+            ////    new MatrixErrorFilter(ErrorMatrix.Samples.stucki))
+            ////    {
+            ////        PerturbationAmplitude = 0.5
+            ////    };
+            ////tresholdDitherAlgorithm.ErrorFilter = new RandomizedMatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
+            //tresholdDitherAlgorithm.run(image);
+        }
 
-            //return;
-
-            //DynamicTresholdFilter tresholdFilter = new DynamicTresholdFilter();
-            //tresholdFilter.NoiseEnabled = true;
-            //tresholdFilter.addTresholdRecord(0, TresholdMatrix.Generator.sampleMatrix, 0.0);
-            //tresholdFilter.addTresholdRecord(32, TresholdMatrix.Generator.sampleMatrix, 0.125);
-            //tresholdFilter.addTresholdRecord(64, TresholdMatrix.Generator.sampleMatrix, 0.25);
-            //tresholdFilter.addTresholdRecord(96, TresholdMatrix.Generator.sampleMatrix, 0.375);
-            //tresholdFilter.addTresholdRecord(128, TresholdMatrix.Generator.sampleMatrix, 0.5);
-            //tresholdFilter.addTresholdRecord(160, TresholdMatrix.Generator.sampleMatrix, 0.625);
-            //tresholdFilter.addTresholdRecord(192, TresholdMatrix.Generator.sampleMatrix, 0.75);
-            //tresholdFilter.addTresholdRecord(224, TresholdMatrix.Generator.sampleMatrix, 0.875);
-            
-            //tresholdFilter.addTresholdRecord(100, TresholdMatrix.Generator.simpleTreshold);
-            //tresholdFilter.addTresholdRecord(150, TresholdMatrix.Generator.createBayerDispersedDotMatrix(3));
-            TresholdFilter tresholdFilter = new MatrixTresholdFilter(
-                TresholdMatrix.Generator.simpleTreshold);
-                //TresholdMatrix.Generator.sampleMatrix);
-            //ScanningOrder scanOrder = new ScanlineScanningOrder();
-            ScanningOrder scanOrder = new SerpentineScanningOrder();
-            //ScanningOrder scanOrder = new HilbertScanningOrder();
-            //ErrorFilter errorFilter = null;
-            //ErrorFilter errorFilter = new VectorErrorFilter(
-            //    new ErrorMatrix(new double[1,5] {{0, 2, 2, 1, 1}}, 0));
-            ErrorFilter errorFilter = //new PerturbedErrorFilter(
-                new MatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
-            TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(
-                tresholdFilter, errorFilter, scanOrder);
-
-            //	new MatrixTresholdFilter(MatrixTresholdFilter.Generator.createBayerDispersedDotMatrix(4)));
-            //    new MatrixTresholdFilter(MatrixTresholdFilter.sampleMatrix));
-            //TresholdDitherAlgorithm alg = new TresholdDitherAlgorithm(new RandomTresholdFilter());
-            alg.run(image);
+        private void loadAlgorithms() {
+            Console.Out.WriteLine("loadAlgorithms()");
+            configManager = new ConfigManager() { ConfigFileName = "halftonelab.cfg" };
+            configManager.load();
+            algorithms = configManager.findAllModules(
+                module => module is DitherAlgorithm
+                ).ConvertAll<DitherAlgorithm>(module => module as DitherAlgorithm);
         }
     }
 }

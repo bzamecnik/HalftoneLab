@@ -103,6 +103,10 @@ namespace Halftone
             _tresholdTable.Remove(intensityRangeStart);
         }
 
+        public void clearTresholdRecords() {
+            _tresholdTable.Clear();
+        }
+
         // TODO: functions to modify records in _tresholdTable
         // Note: such an interface should be available in a Prototype which then
         // creates instances of this class
