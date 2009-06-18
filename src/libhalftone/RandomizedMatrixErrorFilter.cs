@@ -10,7 +10,15 @@ namespace Halftone
         public bool RandomizeCoeffCount { get; set; }
 
         [NonSerialized]
-        private Random _random = new Random();
+        private Random _randomGenerator = null;
+        private Random RandomGenerator {
+            get {
+                if (_randomGenerator == null) {
+                    _randomGenerator = new Random();
+                }
+                return _randomGenerator;
+            }
+        }
 
         public RandomizedMatrixErrorFilter(ErrorMatrix matrix)
             : base(matrix) { }
@@ -26,7 +34,7 @@ namespace Halftone
             int newCoeffCount;
             if (RandomizeCoeffCount) {
                 // generate new coefficient count from interval [1; CoefficientCapacity]
-                newCoeffCount = _random.Next(ErrorMatrix.CoefficientCapacity) + 1;
+                newCoeffCount = RandomGenerator.Next(ErrorMatrix.CoefficientCapacity) + 1;
             } else {
                 // use present coefficient count
                 newCoeffCount = ErrorMatrix.CoefficientCount;
@@ -41,7 +49,7 @@ namespace Halftone
                 if (!iter.MoveNext()) {
                     break;
                 }
-                double newWeight = _random.NextDouble() * remaining;
+                double newWeight = RandomGenerator.NextDouble() * remaining;
                 Coordinate<int> coords = iter.Current;
                 ErrorMatrix[coords.Y, coords.X] = newWeight;
                 remaining -= newWeight;

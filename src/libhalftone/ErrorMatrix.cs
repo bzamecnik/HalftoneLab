@@ -105,6 +105,7 @@ namespace Halftone {
             public static ErrorMatrix Default;
             // the simplest error-diffusion matrix
             public static ErrorMatrix nextPixel;
+            public static ErrorMatrix nextTwoPixels;
             public static ErrorMatrix simpleNeighborhood;
             // Floyd-Steinberg
             public static ErrorMatrix floydSteinberg;
@@ -119,6 +120,10 @@ namespace Halftone {
                         { 0, 1 }
                     }, 0);
                 Default = nextPixel;
+                nextTwoPixels = new ErrorMatrix(
+                    new double[1, 3] {
+                        { 0, 0.7, 0.3 }
+                    }, 0);
                 simpleNeighborhood = new ErrorMatrix(
                     new double[2, 2] {
                         { 0, 2 },

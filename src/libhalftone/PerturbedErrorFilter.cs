@@ -8,10 +8,25 @@ namespace Halftone
     public class PerturbedErrorFilter : ErrorFilter
     {
         private MatrixErrorFilter _childFilter;
-        [NonSerialized]
-        private ErrorMatrix _originalMatrix;
-        [NonSerialized]
-        private ErrorMatrix _perturbedMatrix; // temporary
+        public MatrixErrorFilter ChildFilter {
+            get {
+                if (_childFilter == null) {
+                    _childFilter = new MatrixErrorFilter();
+                }
+
+                return _childFilter;
+            }
+            set {
+                // TODO: on deserialization call this insted just setting _childFilter
+                _childFilter = value;
+                _originalMatrix = _childFilter.ErrorMatrix;
+                _perturbedMatrix = (ErrorMatrix)OriginalMatrix.Clone();
+                _weightGroups = new List<WeightGroup>();
+                preparePerturbationGroups();
+                computePerturbation();
+            }
+        }
+
         [NonSerialized]
         private List<WeightGroup> _weightGroups;
         
@@ -23,6 +38,25 @@ namespace Halftone
                     _randomGenerator = new Random();
                 }
                 return _randomGenerator;
+            }
+        }
+
+        [NonSerialized]
+        private ErrorMatrix _originalMatrix;
+        private ErrorMatrix OriginalMatrix {
+            get {
+                return _originalMatrix;
+            }
+        }
+
+        // Note: Creating an empty matrix with the same _size and source offset
+        // as in original matrix would be enough. The values are overwritten
+        // in computePerturbation() anyway.
+        [NonSerialized]
+        private ErrorMatrix _perturbedMatrix; // temporary
+        private ErrorMatrix PerturbedMatrix {
+            get {
+                return _perturbedMatrix;
             }
         }
 
@@ -38,32 +72,24 @@ namespace Halftone
 
         public PerturbedErrorFilter(MatrixErrorFilter childFilter) {
             PerturbationAmplitude = 1.0;
-            _weightGroups = new List<WeightGroup>();
-            _childFilter = childFilter;
-            _originalMatrix = _childFilter.ErrorMatrix;
-            // Note: Creating an empty matrix with the same _size and source offset
-            // as in original matrix would be enough. The values are overwritten
-            // in computePerturbation() anyway.
-            _perturbedMatrix = (ErrorMatrix)_originalMatrix.Clone();
-            preparePerturbationGroups();
-            computePerturbation();
+            ChildFilter = childFilter;
         }
 
         public override double getError() {
-            return _childFilter.getError();
+            return ChildFilter.getError();
         }
 
         public override void setError(double error) {
-            _perturbedMatrix.apply(
+            PerturbedMatrix.apply(
                 (int y, int x, double coeff) =>
                 {
-                    _childFilter.Buffer.setError(y, x, coeff * error);
+                    ChildFilter.Buffer.setError(y, x, coeff * error);
                 }
                 );
         }
 
         public override void moveNext() {
-            _childFilter.moveNext();
+            ChildFilter.moveNext();
             computePerturbation();
         }
 
@@ -72,11 +98,11 @@ namespace Halftone
 
             List<WeightGroup> weights = new List<WeightGroup>();
             // make a temporary list of weights (groups contain single weights)
-            _originalMatrix.apply(
+            OriginalMatrix.apply(
                 (int y, int x, double coeff) =>
                 {
                     WeightGroup group = new WeightGroup();
-                    group.addWeight(new Coordinate<int>(x + _originalMatrix.SourceOffset, y), coeff);
+                    group.addWeight(new Coordinate<int>(x + OriginalMatrix.SourceOffset, y), coeff);
                     weights.Add(group);
                 }
                 );
@@ -116,22 +142,22 @@ namespace Halftone
                 double perturbation = group.MaxNoiseAmplitude * (RandomGenerator.NextDouble() * 2 - 1);
                 if (group.WeightCoords.Count == 2) {
                     Coordinate<int> coords = group.WeightCoords[0];
-                    _perturbedMatrix[coords.Y, coords.X] =
-                        _originalMatrix[coords.Y, coords.X] + perturbation;
+                    PerturbedMatrix[coords.Y, coords.X] =
+                        OriginalMatrix[coords.Y, coords.X] + perturbation;
 
                     coords = group.WeightCoords[1];
-                    _perturbedMatrix[coords.Y, coords.X] =
-                        _originalMatrix[coords.Y, coords.X] - perturbation;
+                    PerturbedMatrix[coords.Y, coords.X] =
+                        OriginalMatrix[coords.Y, coords.X] - perturbation;
                 } else if (group.WeightCoords.Count == 3) {
                     Coordinate<int> coords = group.WeightCoords[0];
-                    _perturbedMatrix[coords.Y, coords.X] =
-                        _originalMatrix[coords.Y, coords.X] + perturbation;
+                    PerturbedMatrix[coords.Y, coords.X] =
+                        OriginalMatrix[coords.Y, coords.X] + perturbation;
 
                     perturbation *= 0.5; // perturbation/2
                     for (int i = 1; i <= 2; i++) {
                         coords = group.WeightCoords[i];
-                        _perturbedMatrix[coords.Y, coords.X] =
-                            _originalMatrix[coords.Y, coords.X] - perturbation;
+                        PerturbedMatrix[coords.Y, coords.X] =
+                            OriginalMatrix[coords.Y, coords.X] - perturbation;
                     }
                 }
             }
@@ -140,7 +166,7 @@ namespace Halftone
         public override bool initBuffer(
             ScanningOrder scanningOrder, int imageHeight, int imageWidth)
         {
-            return _childFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
+            return ChildFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
         }
 
         private class WeightGroup
