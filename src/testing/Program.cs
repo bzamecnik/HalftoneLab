@@ -190,6 +190,13 @@ namespace testing
             };
             config.saveModule(sfcAdaptiveClustering, false);
 
+            tresholdDitherAlgorithm.TresholdFilter = new SpotFunctionTresholdFilter();
+            tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
+            tresholdDitherAlgorithm.ErrorFilter = null;
+            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot";
+            tresholdDitherAlgorithm.Description = "";
+            config.saveModule(tresholdDitherAlgorithm, false);
+
             config.save();
 
             printConfig(config);

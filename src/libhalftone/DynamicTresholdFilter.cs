@@ -47,10 +47,10 @@ namespace Halftone
             NoiseEnabled = false;
         }
 
-        protected override int treshold(Pixel pixel) {
-            TresholdTableRecord record = getTresholdRecord(pixel[0]);
+        protected override int treshold(int intensity, int x, int y) {
+            TresholdTableRecord record = getTresholdRecord(intensity);
             TresholdMatrix matrix = record.matrix;
-            int treshold = matrix[pixel.Y, pixel.X];
+            int treshold = matrix[x, y];
             if (NoiseEnabled) {
                 // add noise from interval [-amplitude;amplitude)
                 // TODO: find out maximum absolute noise amplitude
