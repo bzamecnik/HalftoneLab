@@ -16,8 +16,8 @@ namespace Halftone
             _tresholdMatrix = new TresholdMatrix(new int[1, 1] { { 128 } });
         }
 
-        protected override int treshold(Pixel pixel) {
-            return _tresholdMatrix[pixel.Y, pixel.X];
+        protected override int treshold(int intensity, int x, int y) {
+            return _tresholdMatrix[y, x];
         }
     }
 }

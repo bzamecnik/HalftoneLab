@@ -7,16 +7,16 @@ namespace Halftone
     public abstract class TresholdFilter : Module
 	{
 		public Pixel dither(Pixel pixel) {
-            pixel[0] = (pixel[0] < treshold(pixel)) ? 0 : 255;
+            pixel[0] = (pixel[0] < treshold(pixel[0], pixel.X, pixel.Y)) ? 0 : 255;
 			return pixel;
 		}
 
         public Pixel dither(double intensity, int x, int y) {
             Pixel pixel = new Pixel(1) { X = x, Y = y};
-            pixel[0] = (intensity < treshold(pixel)) ? 0 : 255;
+            pixel[0] = (intensity < treshold((int)intensity, x, y)) ? 0 : 255;
             return pixel;
         }
 
-		protected abstract int treshold(Pixel pixel);
+        protected abstract int treshold(int intensity, int x, int y);
 	}
 }
