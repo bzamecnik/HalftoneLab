@@ -57,6 +57,7 @@
     <Compile Include="ErrorBuffer.cs" />
     <Compile Include="imageAbstraction\gimpSharp\GSImage.cs" />
     <Compile Include="imageAbstraction\Image.cs" />
+    <Compile Include="ImageTresholdFilter.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="MatrixErrorFilter.cs" />
     <Compile Include="MatrixTresholdFilter.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="imageAbstraction\ScanningOrder.cs" />
     <Compile Include="RandomizedMatrixErrorFilter.cs" />
+    <Compile Include="SpotFunction.cs" />
     <Compile Include="SpotFunctionTresholdFilter.cs" />
     <Compile Include="TresholdDitherAlgorithm.cs" />
     <Compile Include="TresholdFilter.cs" />

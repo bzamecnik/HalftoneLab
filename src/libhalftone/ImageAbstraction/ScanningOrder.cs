@@ -31,6 +31,11 @@ namespace Halftone
         [NonSerialized]
         protected int _height;
 
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            init(imageRunInfo.Width, imageRunInfo.Height);
+        }
+
         public abstract void init(int width, int height);
         public abstract void next();
         public abstract bool hasNext();

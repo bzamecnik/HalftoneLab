@@ -17,13 +17,8 @@ namespace Halftone
                 return _childFilter;
             }
             set {
-                // TODO: on deserialization call this insted just setting _childFilter
                 _childFilter = value;
-                _originalMatrix = _childFilter.ErrorMatrix;
-                _perturbedMatrix = (ErrorMatrix)OriginalMatrix.Clone();
-                _weightGroups = new List<WeightGroup>();
-                preparePerturbationGroups();
-                computePerturbation();
+                prepare();
             }
         }
 
@@ -47,6 +42,10 @@ namespace Halftone
             get {
                 return _originalMatrix;
             }
+            set {
+                _originalMatrix = value;
+                preparePerturbationGroups();
+            }
         }
 
         // Note: Creating an empty matrix with the same _size and source offset
@@ -57,6 +56,9 @@ namespace Halftone
         private ErrorMatrix PerturbedMatrix {
             get {
                 return _perturbedMatrix;
+            }
+            set {
+                _perturbedMatrix = value;
             }
         }
 
@@ -80,16 +82,26 @@ namespace Halftone
         }
 
         public override void setError(double error) {
-            PerturbedMatrix.apply(
-                (int y, int x, double coeff) =>
+            PerturbedMatrix.apply( (int y, int x, double coeff) =>
                 {
                     ChildFilter.Buffer.setError(y, x, coeff * error);
                 }
-                );
+            );
         }
 
         public override void moveNext() {
             ChildFilter.moveNext();
+            computePerturbation();
+        }
+
+        private void prepare() {
+            if (_weightGroups == null) {
+                _weightGroups = new List<WeightGroup>();
+            } else {
+                _weightGroups.Clear();
+            }
+            OriginalMatrix = ChildFilter.Matrix;
+            PerturbedMatrix = (ErrorMatrix)OriginalMatrix.Clone();
             computePerturbation();
         }
 
@@ -163,10 +175,11 @@ namespace Halftone
             }
         }
 
-        public override bool initBuffer(
-            ScanningOrder scanningOrder, int imageHeight, int imageWidth)
-        {
-            return ChildFilter.initBuffer(scanningOrder, imageHeight, imageWidth);
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            ChildFilter.init(imageRunInfo);
+            prepare();
+            Initialized = ChildFilter.Initialized;
         }
 
         private class WeightGroup

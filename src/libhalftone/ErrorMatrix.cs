@@ -25,6 +25,7 @@ namespace Halftone {
 
         public int SourceOffset {
             get { return _sourcePixelOffsetX; }
+            private set { _sourcePixelOffsetX = value; }
         }
 
         // number of coefficients (weights)
@@ -46,7 +47,7 @@ namespace Halftone {
         public delegate void ApplyFunc(int y, int x, double coeff);
 
         public ErrorMatrix(double[,] coeffs, int sourcePixelOffsetX) {
-            _sourcePixelOffsetX = sourcePixelOffsetX;
+            SourceOffset = sourcePixelOffsetX;
             TheMatrix = (double[,])coeffs.Clone();
             // scale down the coefficients if necessary (their sum must be 1.0)
             double coeffSum = 0;
@@ -84,7 +85,7 @@ namespace Halftone {
         }
 
         public override Matrix<double> Clone() {
-            return new ErrorMatrix(TheMatrix, _sourcePixelOffsetX);
+            return new ErrorMatrix(TheMatrix, SourceOffset);
         }
 
         public IEnumerable<Coordinate<int>> GetWeights() {

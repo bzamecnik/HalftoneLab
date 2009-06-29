@@ -39,7 +39,7 @@ namespace Halftone
         private new void setError(double error) { }
 
         public void setError(double error, int intensity) {
-            ErrorMatrix = getRecord(intensity).matrix;
+            Matrix = getRecord(intensity).matrix;
             base.setError(error);
         }
 

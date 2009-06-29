@@ -36,7 +36,7 @@ namespace Halftone
 
         bool ErrorFilterEnabled {
             get {
-                return ErrorFilter != null;
+                return (ErrorFilter != null) && ErrorFilter.Initialized;
             }
         }
 
@@ -67,10 +67,13 @@ namespace Halftone
             Console.Out.WriteLine("adative clustering: {0}", UseAdaptiveClustering);
             Console.Out.WriteLine("error filter: {0}", ErrorFilterEnabled);
 
-            if (ErrorFilterEnabled) {
-                ErrorFilter.initBuffer(ScanningOrder, image.Height, image.Width);
-            }
-            ScanningOrder.init(image.Width, image.Height);
+            Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
+            {
+                ScanOrder = ScanningOrder,
+                Height = image.Height,
+                Width = image.Width
+            };
+            init(imageRunInfo);
 
             // size of the current cluster
             int currentCellSize = MaxCellSize;
@@ -205,6 +208,14 @@ namespace Halftone
                 }
             }
             image.flushBuffer();
+        }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            if (ErrorFilter != null) {
+                ErrorFilter.init(imageRunInfo);
+            }
+            ScanningOrder.init(imageRunInfo);
         }
     }
 }

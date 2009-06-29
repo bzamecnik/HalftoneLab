@@ -8,7 +8,7 @@ namespace Halftone
         // matrix of error filter weights
         ErrorMatrix _matrix;
 
-        public ErrorMatrix ErrorMatrix {
+        public ErrorMatrix Matrix {
             get { return _matrix; }
             protected set {
                 // Resize the buffer if a matrix with different _height is set
@@ -30,7 +30,7 @@ namespace Halftone
         }
         
         public MatrixErrorFilter(ErrorMatrix matrix) {
-            ErrorMatrix = matrix;
+            Matrix = matrix;
         }
 
         public MatrixErrorFilter() {
@@ -43,7 +43,7 @@ namespace Halftone
 
         // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
-            ErrorMatrix.apply(
+            Matrix.apply(
                 (int y, int x, double coeff) => { Buffer.setError(y, x, coeff * error); }
                 );
         }
@@ -52,15 +52,13 @@ namespace Halftone
             Buffer.moveNext();
         }
 
-        public override bool initBuffer(
-            ScanningOrder scanningOrder,
-            int imageHeight,
-            int imageWidth)
-        {
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            Buffer = ErrorBuffer.createFromScanningOrder(
+                imageRunInfo.ScanOrder, Matrix.Height,
+                imageRunInfo.Width) as MatrixErrorBuffer;
             // null if the created result is not a MatrixErrorBuffer
-            Buffer = ErrorBuffer.createFromScanningOrder(scanningOrder,
-                ErrorMatrix.Height, imageWidth) as MatrixErrorBuffer;
-            return Buffer != null;
+            Initialized = Buffer != null;
         }
     }
 }

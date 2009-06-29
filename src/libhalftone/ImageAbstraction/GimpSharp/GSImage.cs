@@ -8,10 +8,15 @@ namespace Halftone
     {
         private Drawable _drawable;
         private Rectangle _rectangle;
+        private Gimp.Image _image;
         private byte[] _imageBuffer; // TODO: this should be a local variable probably
 
         public Drawable Drawable {
             get { return _drawable; }
+        }
+
+        public Gimp.Image Image {
+            get { return _image; }
         }
 
         public Progress Progress { get;  set; }
@@ -21,6 +26,17 @@ namespace Halftone
 
         public GSImage(Drawable drawable) {
             _drawable = drawable;
+            _rectangle = _drawable.MaskBounds;
+            Tile.CacheDefault(_drawable);
+            Progress = new Progress("Halftone Laboratory");
+        }
+
+        public GSImage(int width, int height) {
+            _image = new Gimp.Image(width, height, ImageBaseType.Gray);
+            Layer layer = new Layer(_image, "default", width, height,
+                ImageType.Gray, 100, LayerModeEffects.Normal);
+            _image.AddLayer(layer, 0);
+            _drawable = _image.ActiveDrawable;
             _rectangle = _drawable.MaskBounds;
             Tile.CacheDefault(_drawable);
             Progress = new Progress("Halftone Laboratory");
@@ -178,6 +194,8 @@ namespace Halftone
             //_drawable.MergeShadow(true);
             //_drawable.Update(_rectangle);
         }
+
+        // TODO: doesn't work properly, debug!
 
         public override void IterateSrcDestNoOrder(
             IterFuncSrcDest pixelFunc)

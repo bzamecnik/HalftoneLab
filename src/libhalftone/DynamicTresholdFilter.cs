@@ -5,6 +5,10 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Matrix treshold filter with multiple matrices for different
+    /// intensity ranges and optional random treshold value perturbation.
+    /// </summary>
     [Serializable]
     public class DynamicTresholdFilter : TresholdFilter
     {
@@ -12,7 +16,7 @@ namespace Halftone
         class TresholdTableRecord : IComparable<TresholdTableRecord>
         {
             public int intensityRangeStart;
-            public double noiseAmplitude; // [0.0; 1.0]could be int
+            public double noiseAmplitude; // [0.0; 1.0], could be int
             public TresholdMatrix matrix;
 
             public int CompareTo(TresholdTableRecord other) {

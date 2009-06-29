@@ -50,14 +50,13 @@ namespace Halftone
             Buffer.moveNext();
         }
 
-        public override bool initBuffer(
-            ScanningOrder scanningOrder,
-            int imageHeight,
-            int imageWidth) {
-            // null if the created result is not a MatrixErrorBuffer
-            Buffer = ErrorBuffer.createFromScanningOrder(scanningOrder,
-                ErrorMatrix.Height, ErrorMatrix.Width) as LineErrorBuffer;
-            return Buffer != null;
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            Buffer = ErrorBuffer.createFromScanningOrder(
+                imageRunInfo.ScanOrder,ErrorMatrix.Height,
+                ErrorMatrix.Width) as LineErrorBuffer;
+            // null if the created result is not a LineErrorBuffer
+            Initialized = Buffer != null;
         }
     }
 }

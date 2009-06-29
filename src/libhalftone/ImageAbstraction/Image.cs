@@ -20,7 +20,9 @@ namespace Halftone
         public abstract int Width { get; }
         public abstract int Height { get; }
 
-        // static Create
+        public static Image createDefatult(int width, int height) {
+            return new GSImage(width, height);
+        }
 
         //public delegate IEnumerable<Coordinate<int>> IterFuncScanning(int _width, int _height);
         public delegate Pixel IterFuncSrcDest(Pixel src);
@@ -43,5 +45,12 @@ namespace Halftone
 
         public abstract void initBuffer();
         public abstract void flushBuffer();
+
+        public class ImageRunInfo
+        {
+            public ScanningOrder ScanOrder { get; set; }
+            public int Height { get; set; }
+            public int Width { get; set; }
+        }
     }
 }
