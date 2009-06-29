@@ -190,10 +190,28 @@ namespace testing
             };
             config.saveModule(sfcAdaptiveClustering, false);
 
-            tresholdDitherAlgorithm.TresholdFilter = new SpotFunctionTresholdFilter();
+            SpotFunction euclidDotSpotFunction = new SpotFunction(
+                        SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8);
+
+            tresholdDitherAlgorithm.TresholdFilter =
+                new SpotFunctionTresholdFilter(euclidDotSpotFunction);
             tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
             tresholdDitherAlgorithm.ErrorFilter = null;
-            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot";
+            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, direct";
+            tresholdDitherAlgorithm.Description = "";
+            config.saveModule(tresholdDitherAlgorithm, false);
+
+            euclidDotSpotFunction.Distance = 32;
+            tresholdDitherAlgorithm.TresholdFilter =
+                new ImageTresholdFilter()
+                {
+                    ImageGenerator = new ImageTresholdFilter.Generator()
+                    {
+                        SpotFunction = euclidDotSpotFunction,
+                        Effects = ImageTresholdFilter.Generator.pixelizeEffect
+                    }
+                };
+            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, using Image";
             tresholdDitherAlgorithm.Description = "";
             config.saveModule(tresholdDitherAlgorithm, false);
 

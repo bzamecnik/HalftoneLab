@@ -3,6 +3,15 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Treshold dither algorithm acts as a base class for dither algorithms
+    /// which perform bi-level intensity quantization using a treshold filter.
+    /// Optional error-diffusion can be accomplished as well.
+    /// </summary>
+    /// <remarks>
+    /// Order in which image pixels are passed through is given by a
+    /// ScanningOrder module.
+    /// </remarks>
     [Serializable]
 	public class TresholdDitherAlgorithm : DitherAlgorithm
 	{
@@ -24,7 +33,7 @@ namespace Halftone
 
         private bool ErrorFilterEnabled {
             get {
-                return ErrorFilter != null;
+                return (ErrorFilter != null) && ErrorFilter.Initialized;
             }
         }
 
@@ -49,11 +58,16 @@ namespace Halftone
         }
 
 		public override void run(Image image) {
+            Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
+            {
+                ScanOrder = ScanningOrder,
+                Height = image.Height,
+                Width = image.Width
+            };
+            Console.Out.WriteLine("TresholdDitherAlgorithm.run()");
+            init(imageRunInfo);
+            
             Image.IterFuncSrcDest pixelFunc;
-            if (ErrorFilterEnabled &&
-                !ErrorFilter.initBuffer(ScanningOrder, image.Height, image.Width)) {
-                ErrorFilter = null; // disable the filter if the buffer is not ok
-            }
             if (ErrorFilterEnabled) {
                 // error diffusion enabled
                 pixelFunc = ((pixel) => 
@@ -69,12 +83,17 @@ namespace Halftone
                 // error diffusion disabled
                 pixelFunc = ((pixel) => TresholdFilter.dither(pixel));
             }
-            //pixelFunc = ((pixel) => { pixel[0] = 127; return pixel; });
-            //int i = 0;
-            //pixelFunc = ((pixel) => { pixel[0] = i; i = (i + 2) % 256; return pixel; });
-            //image.IterateSrcDestByRows(pixelFunc, ScanningOrder);
             image.IterateSrcDestDirect(pixelFunc, ScanningOrder);
-            //image.IterateSrcDestNoOrder(pixelFunc);
 		}
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            Console.Out.WriteLine("TresholdDitherAlgorithm.init ()");
+            base.init(imageRunInfo);
+            if (ErrorFilter != null) {
+                ErrorFilter.init(imageRunInfo);
+            }
+            TresholdFilter.init(imageRunInfo);
+            ScanningOrder.init(imageRunInfo);
+        }
 	}
 }

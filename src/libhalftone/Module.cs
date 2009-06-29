@@ -4,12 +4,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Halftone
 {
-    // a base for serializable modules (configuration presets)
+    /// <summary>
+    /// A base class for serializable modules (configuration presets)
+    /// </summary>
     [Serializable]
     public abstract class Module
     {
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public virtual void init(Image.ImageRunInfo imageRunInfo) {}
 
         public Module deepCopy() {
             MemoryStream stream = new MemoryStream();
