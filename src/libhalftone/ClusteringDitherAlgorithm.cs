@@ -12,8 +12,8 @@ namespace Halftone
     // TODO:
     // - make a new algorithm:
     //   - traverse the image on an SFC using cells
-    //   - compute average or median of each cell -> adaptive treshold
-    //   - make tresholding for pixels in that cell
+    //   - compute average or median of each cell -> adaptive threshold
+    //   - make thresholding for pixels in that cell
     // - cell sizes could be varied adaptively using image gradient
 
     // TODO:

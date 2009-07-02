@@ -5,7 +5,7 @@ using System.Linq;
 namespace Halftone
 {
     // TODO:
-    // - join common code of DynamicMatrixErrorFilter and DynamicTresholdFilter
+    // - join common code of DynamicMatrixErrorFilter and DynamicThresholdFilter
     // - the table should be a fixed size array of records (not a list)
     //   - it is presumed that the each intensity in the table should have one record
 

@@ -9,42 +9,42 @@ namespace Halftone
     // - working matrix could be of double type
 
     /// <summary>
-    /// Tileable matrix of treshold values.
+    /// Tileable matrix of threshold values.
     /// </summary>
     /// <remarks>
     /// Coefficients are scaled to 0-255 range.
     /// </remarks>
     [Serializable]
-    public class TresholdMatrix : Matrix<int>
+    public class ThresholdMatrix : Matrix<int>
     {
         /// <summary>
-        /// Create a treshold matrix of given size.
+        /// Create a threshold matrix of given size.
         /// </summary>
         /// <param name="height">matrix height (max Y size), > 0</param>
         /// <param name="width">matrix height (max X size), > 0</param>
-        public TresholdMatrix(int height, int width)
+        public ThresholdMatrix(int height, int width)
             : base(height, width) {}
 
         /// <summary>
-        /// Create a treshold matrix from given scaled matrix.
+        /// Create a threshold matrix from given scaled matrix.
         /// </summary>
         /// <param name="matrix">matrix with coefficients scaled to 0-255
         /// range.</param>
-        public TresholdMatrix(int[,] matrix)
+        public ThresholdMatrix(int[,] matrix)
             : base(matrix) { }
 
         public override Matrix<int> Clone() {
-            return new TresholdMatrix(matrix);
+            return new ThresholdMatrix(matrix);
         }
 
         public class Generator
         {
-            public static TresholdMatrix sampleMatrix;
-            public static TresholdMatrix simpleTreshold;
+            public static ThresholdMatrix sampleMatrix;
+            public static ThresholdMatrix simpleThreshold;
             static Generator() {
-                simpleTreshold = new TresholdMatrix(new int[1, 1] { { 128 } });
+                simpleThreshold = new ThresholdMatrix(new int[1, 1] { { 128 } });
                 sampleMatrix =
-                    TresholdMatrix.Generator.createFromIterativeMatrix(
+                    ThresholdMatrix.Generator.createFromIterativeMatrix(
                     new int[,] {
                     //{ 16,  5,  9, 13 },
                     //{ 12,  1,  2,  6 },
@@ -94,11 +94,11 @@ namespace Halftone
             /// </summary>
             /// <param name="userMatrix">matrix with coefficients in range 1-(h*w)</param>
             /// <returns>matrix with coefficients in range 0-255</returns>
-            public static TresholdMatrix createFromIterativeMatrix(int[,] userMatrix) {
+            public static ThresholdMatrix createFromIterativeMatrix(int[,] userMatrix) {
                 int height = userMatrix.GetLength(0);
                 int width = userMatrix.GetLength(1);
                 double coeff = (double)255 / (height * width + 1);
-                TresholdMatrix matrix = new TresholdMatrix(height, width);
+                ThresholdMatrix matrix = new ThresholdMatrix(height, width);
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         matrix[y, x] = (int)(userMatrix[y, x] * coeff);
@@ -117,7 +117,7 @@ namespace Halftone
             /// </remarks>
             /// <param name="magnitude">log_2 of matrix size, range: [0, 8]</param>
             /// <returns>scaled Bayer matrix</returns>
-            public static TresholdMatrix createBayerDispersedDotMatrix(int magnitude) {
+            public static ThresholdMatrix createBayerDispersedDotMatrix(int magnitude) {
                 if ((magnitude < 0) || (magnitude > 8)) {
                     return null;
                 }

@@ -4,8 +4,8 @@ using Gimp;
 namespace Halftone
 {
     /// <summary>
-    /// Treshold dither algorithm acts as a base class for dither algorithms
-    /// which perform bi-level intensity quantization using a treshold filter.
+    /// Threshold dither algorithm acts as a base class for dither algorithms
+    /// which perform bi-level intensity quantization using a threshold filter.
     /// Optional error-diffusion can be accomplished as well.
     /// </summary>
     /// <remarks>
@@ -13,12 +13,12 @@ namespace Halftone
     /// ScanningOrder module.
     /// </remarks>
     [Serializable]
-	public class TresholdDitherAlgorithm : DitherAlgorithm
+	public class ThresholdDitherAlgorithm : DitherAlgorithm
 	{
         /// <summary>
-        /// Treshold filter module. Mandatory.
+        /// Threshold filter module. Mandatory.
         /// </summary>
-        public TresholdFilter TresholdFilter {
+        public ThresholdFilter ThresholdFilter {
             get;
             set;
         }
@@ -49,39 +49,39 @@ namespace Halftone
         }
 
         /// <summary>
-        /// Create a treshold dither algorithm skeleton.
+        /// Create a threshold dither algorithm skeleton.
         /// </summary>
-        /// <param name="tresholdFilter">Treshold filter</param>
+        /// <param name="thresholdFilter">Threshold filter</param>
         /// <param name="errorFilter">Error filter (optional)</param>
         /// <param name="scanningOrder">Scanning order</param>
-		public TresholdDitherAlgorithm(
-            TresholdFilter tresholdFilter,
+		public ThresholdDitherAlgorithm(
+            ThresholdFilter thresholdFilter,
             ErrorFilter errorFilter,
             ScanningOrder scanningOrder
             )
 		{
-			TresholdFilter = tresholdFilter;
+			ThresholdFilter = thresholdFilter;
 			ErrorFilter = errorFilter;
             ScanningOrder = scanningOrder;
 		}
 		
         /// <summary>
-        /// Create a treshold dither algorithm skeleton with no error filter
+        /// Create a threshold dither algorithm skeleton with no error filter
         /// and default scanning order (scanline).
         /// </summary>
-        /// <param name="tresholdFilter"></param>
-		public TresholdDitherAlgorithm(TresholdFilter tresholdFilter)
-		: this(tresholdFilter, null, new ScanlineScanningOrder())
+        /// <param name="thresholdFilter"></param>
+		public ThresholdDitherAlgorithm(ThresholdFilter thresholdFilter)
+		: this(thresholdFilter, null, new ScanlineScanningOrder())
 		{
 		}
 
         /// <summary>
-        /// Create a treshold dither algorithm skeleton with default treshold
-        /// filter (MatrixTresholdFilter), no error filter and default scanning
+        /// Create a threshold dither algorithm skeleton with default threshold
+        /// filter (MatrixThresholdFilter), no error filter and default scanning
         /// order (scanline).
         /// </summary>
-        public TresholdDitherAlgorithm()
-            : this(new MatrixTresholdFilter(), null, new ScanlineScanningOrder()) {
+        public ThresholdDitherAlgorithm()
+            : this(new MatrixThresholdFilter(), null, new ScanlineScanningOrder()) {
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Halftone
         /// </remarks>
         /// <param name="image">Image - both input and output</param>
 		public override void run(Image image) {
-            if ((TresholdFilter == null) || (ScanningOrder == null)) {
+            if ((ThresholdFilter == null) || (ScanningOrder == null)) {
                 return; // TODO: throw an exception
             }
             Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
@@ -111,14 +111,14 @@ namespace Halftone
                 {
                     double error = ErrorFilter.getError();
                     double original = (double)pixel[0] + error;
-                    Pixel dithered = TresholdFilter.quantize(original, pixel.X, pixel.Y);
+                    Pixel dithered = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
                     ErrorFilter.setError(original - (double)dithered[0]);
                     ErrorFilter.moveNext();
                     return dithered;
                 });
             } else {
                 // error diffusion disabled
-                pixelFunc = ((pixel) => TresholdFilter.quantize(pixel));
+                pixelFunc = ((pixel) => ThresholdFilter.quantize(pixel));
             }
             image.IterateSrcDestDirect(pixelFunc, ScanningOrder);
 		}
@@ -128,7 +128,7 @@ namespace Halftone
             if (ErrorFilter != null) {
                 ErrorFilter.init(imageRunInfo);
             }
-            TresholdFilter.init(imageRunInfo);
+            ThresholdFilter.init(imageRunInfo);
             ScanningOrder.init(imageRunInfo);
         }
 	}

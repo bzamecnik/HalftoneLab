@@ -48,10 +48,10 @@ namespace testing
             floydSteinbergErrorMatrix.Name = "Floyd-Steinberg";
             //config.saveModule(floydSteinbergErrorMatrix, false);
 
-            TresholdMatrix bayerTresholdMatrix =
-                TresholdMatrix.Generator.createBayerDispersedDotMatrix(3);
-            bayerTresholdMatrix.Name = "Bayer matrix 8x8";
-            //config.saveModule(bayerTresholdMatrix, false);
+            ThresholdMatrix bayerThresholdMatrix =
+                ThresholdMatrix.Generator.createBayerDispersedDotMatrix(3);
+            bayerThresholdMatrix.Name = "Bayer matrix 8x8";
+            //config.saveModule(bayerThresholdMatrix, false);
 
             MatrixErrorFilter matrixErrorFilter = new MatrixErrorFilter(floydSteinbergErrorMatrix)
             {
@@ -91,96 +91,96 @@ namespace testing
             dynamicMatrixErrorFilter.addRecord(192, ErrorMatrix.Samples.nextPixel);
             //config.saveModule(dynamicMatrixErrorFilter, false);
 
-            MatrixTresholdFilter matrixTresholdFilter = new MatrixTresholdFilter(bayerTresholdMatrix)
+            MatrixThresholdFilter matrixThresholdFilter = new MatrixThresholdFilter(bayerThresholdMatrix)
             {
                 Name = "Bayer filter"
             };
-            //config.saveModule(matrixTresholdFilter, false);
+            //config.saveModule(matrixThresholdFilter, false);
 
-            DynamicTresholdFilter dynamicTresholdFilter = new DynamicTresholdFilter()
+            DynamicThresholdFilter dynamicThresholdFilter = new DynamicThresholdFilter()
             {
                 NoiseEnabled = true,
-                Name = "Dynamic treshold filter"
+                Name = "Dynamic threshold filter"
             };
-            dynamicTresholdFilter.addTresholdRecord(0, TresholdMatrix.Generator.sampleMatrix, 0.0);
-            dynamicTresholdFilter.addTresholdRecord(32, TresholdMatrix.Generator.sampleMatrix, 0.125);
-            dynamicTresholdFilter.addTresholdRecord(64, TresholdMatrix.Generator.sampleMatrix, 0.25);
-            dynamicTresholdFilter.addTresholdRecord(96, TresholdMatrix.Generator.sampleMatrix, 0.375);
-            dynamicTresholdFilter.addTresholdRecord(128, TresholdMatrix.Generator.sampleMatrix, 0.5);
-            dynamicTresholdFilter.addTresholdRecord(160, TresholdMatrix.Generator.sampleMatrix, 0.625);
-            dynamicTresholdFilter.addTresholdRecord(192, TresholdMatrix.Generator.sampleMatrix, 0.75);
-            dynamicTresholdFilter.addTresholdRecord(224, TresholdMatrix.Generator.sampleMatrix, 0.875);
+            dynamicThresholdFilter.addThresholdRecord(0, ThresholdMatrix.Generator.sampleMatrix, 0.0);
+            dynamicThresholdFilter.addThresholdRecord(32, ThresholdMatrix.Generator.sampleMatrix, 0.125);
+            dynamicThresholdFilter.addThresholdRecord(64, ThresholdMatrix.Generator.sampleMatrix, 0.25);
+            dynamicThresholdFilter.addThresholdRecord(96, ThresholdMatrix.Generator.sampleMatrix, 0.375);
+            dynamicThresholdFilter.addThresholdRecord(128, ThresholdMatrix.Generator.sampleMatrix, 0.5);
+            dynamicThresholdFilter.addThresholdRecord(160, ThresholdMatrix.Generator.sampleMatrix, 0.625);
+            dynamicThresholdFilter.addThresholdRecord(192, ThresholdMatrix.Generator.sampleMatrix, 0.75);
+            dynamicThresholdFilter.addThresholdRecord(224, ThresholdMatrix.Generator.sampleMatrix, 0.875);
 
-            dynamicTresholdFilter.addTresholdRecord(100, TresholdMatrix.Generator.simpleTreshold);
-            dynamicTresholdFilter.addTresholdRecord(150, TresholdMatrix.Generator.createBayerDispersedDotMatrix(3));
+            dynamicThresholdFilter.addThresholdRecord(100, ThresholdMatrix.Generator.simpleThreshold);
+            dynamicThresholdFilter.addThresholdRecord(150, ThresholdMatrix.Generator.createBayerDispersedDotMatrix(3));
 
-            //config.saveModule(dynamicTresholdFilter, false);
+            //config.saveModule(dynamicThresholdFilter, false);
 
-            TresholdDitherAlgorithm tresholdDitherAlgorithm = new TresholdDitherAlgorithm()
+            ThresholdDitherAlgorithm thresholdDitherAlgorithm = new ThresholdDitherAlgorithm()
             {
-                Name = "Treshold dither algorithm"
+                Name = "Threshold dither algorithm"
             };
-            config.saveModule(tresholdDitherAlgorithm, false);
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
-            tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            tresholdDitherAlgorithm.Name = "Floyd-Steinberg, scanline";
-            tresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Scanline order";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
+            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdDitherAlgorithm.Name = "Floyd-Steinberg, scanline";
+            thresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Scanline order";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
-            tresholdDitherAlgorithm.Name = "Floyd-Steinberg, serpentine";
-            tresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Serpentine order";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
+            thresholdDitherAlgorithm.Name = "Floyd-Steinberg, serpentine";
+            thresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Serpentine order";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            tresholdDitherAlgorithm.ErrorFilter = null;
-            tresholdDitherAlgorithm.TresholdFilter = matrixTresholdFilter;
-            tresholdDitherAlgorithm.Name = "Bayer dispersed dither";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdDitherAlgorithm.ErrorFilter = null;
+            thresholdDitherAlgorithm.ThresholdFilter = matrixThresholdFilter;
+            thresholdDitherAlgorithm.Name = "Bayer dispersed dither";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.TresholdFilter = new MatrixTresholdFilter(TresholdMatrix.Generator.sampleMatrix);
-            tresholdDitherAlgorithm.Name = "Clustered dot dither";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ThresholdFilter = new MatrixThresholdFilter(ThresholdMatrix.Generator.sampleMatrix);
+            thresholdDitherAlgorithm.Name = "Clustered dot dither";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.TresholdFilter = dynamicTresholdFilter;
-            tresholdDitherAlgorithm.Name = "Dynamic treshold dither";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ThresholdFilter = dynamicThresholdFilter;
+            thresholdDitherAlgorithm.Name = "Dynamic threshold dither";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            dynamicTresholdFilter.clearTresholdRecords();
-            dynamicTresholdFilter.addTresholdRecord(0, TresholdMatrix.Generator.simpleTreshold, 1.0);
-            tresholdDitherAlgorithm.TresholdFilter = dynamicTresholdFilter;
-            tresholdDitherAlgorithm.Name = "Simpe blue-noise";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            dynamicThresholdFilter.clearThresholdRecords();
+            dynamicThresholdFilter.addThresholdRecord(0, ThresholdMatrix.Generator.simpleThreshold, 1.0);
+            thresholdDitherAlgorithm.ThresholdFilter = dynamicThresholdFilter;
+            thresholdDitherAlgorithm.Name = "Simpe blue-noise";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
-            tresholdDitherAlgorithm.Name = "Blue-noise Floyd-Steinberg, scanline";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
+            thresholdDitherAlgorithm.Name = "Blue-noise Floyd-Steinberg, scanline";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
-            tresholdDitherAlgorithm.Name = "Blue-noise, Floyd-Steinberg, serpentine";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
+            thresholdDitherAlgorithm.Name = "Blue-noise, Floyd-Steinberg, serpentine";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            tresholdDitherAlgorithm.TresholdFilter = new MatrixTresholdFilter();
+            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdDitherAlgorithm.ThresholdFilter = new MatrixThresholdFilter();
 
-            //tresholdDitherAlgorithm.ErrorFilter = dynamicMatrixErrorFilter;
-            //tresholdDitherAlgorithm.Name = "Dynamic error filter";
-            //config.saveModule(tresholdDitherAlgorithm, false);
+            //thresholdDitherAlgorithm.ErrorFilter = dynamicMatrixErrorFilter;
+            //thresholdDitherAlgorithm.Name = "Dynamic error filter";
+            //config.saveModule(thresholdDitherAlgorithm, false);
 
-            //tresholdDitherAlgorithm.ErrorFilter = perturbedErrorFilter;
-            //tresholdDitherAlgorithm.Name = "Perturbed error filter";
-            //config.saveModule(tresholdDitherAlgorithm, false);
+            //thresholdDitherAlgorithm.ErrorFilter = perturbedErrorFilter;
+            //thresholdDitherAlgorithm.Name = "Perturbed error filter";
+            //config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ErrorFilter = randomizedMatrixErrorFilter;
-            tresholdDitherAlgorithm.Name = "Randomized error filter";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ErrorFilter = randomizedMatrixErrorFilter;
+            thresholdDitherAlgorithm.Name = "Randomized error filter";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
-            tresholdDitherAlgorithm.ScanningOrder = hilbertScanOrder;
-            tresholdDitherAlgorithm.ErrorFilter = vectorErrorFilter;
-            tresholdDitherAlgorithm.Name = "SFC Treshold dither algorithm";
-            tresholdDitherAlgorithm.Description = "Hilbert SFC order, next pixel vector error filter";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ScanningOrder = hilbertScanOrder;
+            thresholdDitherAlgorithm.ErrorFilter = vectorErrorFilter;
+            thresholdDitherAlgorithm.Name = "SFC Threshold dither algorithm";
+            thresholdDitherAlgorithm.Description = "Hilbert SFC order, next pixel vector error filter";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
             SFCAdaptiveClustering sfcAdaptiveClustering = new SFCAdaptiveClustering()
             {
@@ -193,27 +193,27 @@ namespace testing
             SpotFunction euclidDotSpotFunction = new SpotFunction(
                         SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8);
 
-            tresholdDitherAlgorithm.TresholdFilter =
-                new SpotFunctionTresholdFilter(euclidDotSpotFunction);
-            tresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            tresholdDitherAlgorithm.ErrorFilter = null;
-            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, direct";
-            tresholdDitherAlgorithm.Description = "";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.ThresholdFilter =
+                new SpotFunctionThresholdFilter(euclidDotSpotFunction);
+            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdDitherAlgorithm.ErrorFilter = null;
+            thresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, direct";
+            thresholdDitherAlgorithm.Description = "";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
             euclidDotSpotFunction.Distance = 32;
-            tresholdDitherAlgorithm.TresholdFilter =
-                new ImageTresholdFilter()
+            thresholdDitherAlgorithm.ThresholdFilter =
+                new ImageThresholdFilter()
                 {
-                    ImageGenerator = new ImageTresholdFilter.Generator()
+                    ImageGenerator = new ImageThresholdFilter.Generator()
                     {
                         SpotFunction = euclidDotSpotFunction,
-                        Effects = ImageTresholdFilter.Generator.pixelizeEffect
+                        Effects = ImageThresholdFilter.Generator.pixelizeEffect
                     }
                 };
-            tresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, using Image";
-            tresholdDitherAlgorithm.Description = "";
-            config.saveModule(tresholdDitherAlgorithm, false);
+            thresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, using Image";
+            thresholdDitherAlgorithm.Description = "";
+            config.saveModule(thresholdDitherAlgorithm, false);
 
             config.save();
 
