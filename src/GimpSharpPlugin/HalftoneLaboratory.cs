@@ -8,8 +8,8 @@ namespace Gimp.HalftoneLab
 {
     class HalftoneLaboratory : Plugin
     {
-        private List<DitherAlgorithm> algorithms;
-        private DitherAlgorithm selectedAlgorithm;
+        private List<HalfoneAlgorithm> algorithms;
+        private HalfoneAlgorithm selectedAlgorithm;
         [SaveAttribute("algorithm")]
         private string selectedAlgorithmName;
         private ConfigManager configManager;
@@ -46,7 +46,7 @@ namespace Gimp.HalftoneLab
 
             loadAlgorithms();
             ComboBox algorithmCombo = ComboBox.NewText();
-            foreach (DitherAlgorithm alg in algorithms) {
+            foreach (HalfoneAlgorithm alg in algorithms) {
                 algorithmCombo.AppendText(alg.Name);
             }
             algorithmCombo.Changed += delegate
@@ -81,22 +81,6 @@ namespace Gimp.HalftoneLab
                 Console.Out.WriteLine("description: {0}", selectedAlgorithm.Description);
                 selectedAlgorithm.run(image);
             }
-
-            ////DynamicMatrixErrorFilter dynamicMatrixErrorFilter = new DynamicMatrixErrorFilter();
-            ////dynamicMatrixErrorFilter.addRecord(0, ErrorMatrix.Samples.floydSteinberg);
-            ////dynamicMatrixErrorFilter.addRecord(64, ErrorMatrix.Samples.jarvisJudiceNinke);
-            ////dynamicMatrixErrorFilter.addRecord(128, ErrorMatrix.Samples.stucki);
-            ////dynamicMatrixErrorFilter.addRecord(192, ErrorMatrix.Samples.nextPixel);
-
-            //ThresholdDitherAlgorithm thresholdDitherAlgorithm = new ThresholdDitherAlgorithm();
-            //thresholdDitherAlgorithm.ErrorFilter = new MatrixErrorFilter(ErrorMatrix.Samples.stucki);
-            ////thresholdDitherAlgorithm.ErrorFilter = new PerturbedErrorFilter(
-            ////    new MatrixErrorFilter(ErrorMatrix.Samples.stucki))
-            ////    {
-            ////        PerturbationAmplitude = 0.5
-            ////    };
-            ////thresholdDitherAlgorithm.ErrorFilter = new RandomizedMatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
-            //thresholdDitherAlgorithm.run(image);
         }
 
         private void loadAlgorithms() {
@@ -104,8 +88,8 @@ namespace Gimp.HalftoneLab
             configManager = new ConfigManager() { ConfigFileName = "halftonelab.cfg" };
             configManager.load();
             algorithms = configManager.findAllModules(
-                module => module is DitherAlgorithm
-                ).ConvertAll<DitherAlgorithm>(module => module as DitherAlgorithm);
+                module => module is HalfoneAlgorithm
+                ).ConvertAll<HalfoneAlgorithm>(module => module as HalfoneAlgorithm);
         }
     }
 }

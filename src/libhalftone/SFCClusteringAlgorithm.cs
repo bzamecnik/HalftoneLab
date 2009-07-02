@@ -1,20 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Gimp;
 
 namespace Halftone
 {
-    [Serializable]
-	public abstract class CellDitherAlgorithm : DitherAlgorithm
-	{
-	}
-
-    // TODO:
-    // - make a new algorithm:
-    //   - traverse the image on an SFC using cells
-    //   - compute average or median of each cell -> adaptive threshold
-    //   - make thresholding for pixels in that cell
-    // - cell sizes could be varied adaptively using image gradient
 
     // TODO:
     // - solve problem of outputting the last cell
@@ -27,8 +16,12 @@ namespace Halftone
     //     - Sobel matrix
     //     - external Laplace transformation of the whole image
 
+    /// <summary>
+    /// Adaptive clustering algorithm on a Space-Filling Curve by
+    /// Velho & Gomes.
+    /// </summary>
     [Serializable]
-    public class SFCAdaptiveClustering : CellDitherAlgorithm
+    public class SFCClusteringAlgorithm : CellHalftoneAlgorithm
     {
         // error filter (optional)
         public VectorErrorFilter ErrorFilter {
@@ -59,7 +52,7 @@ namespace Halftone
         // Adjust cluster sizes to amount of local detail?
         public bool UseAdaptiveClustering { get; set; }
 
-        public SFCAdaptiveClustering() {
+        public SFCClusteringAlgorithm() {
             MaxCellSize = 31;
             MinCellSize = 3;
             UseClusterPositioning = true;
@@ -109,9 +102,9 @@ namespace Halftone
             int previousIntensity = 0;
 
             double error = 0.0; // current quantization error
-            
+
             // accelerator:
-            double maxCellSizeLog2 = Math.Log(MaxCellSize)/Math.Log(2);
+            double maxCellSizeLog2 = Math.Log(MaxCellSize) / Math.Log(2);
 
             IEnumerator<Coordinate<int>> scanOrderEnum =
                 ScanningOrder.getCoordsEnumerable().GetEnumerator();
@@ -225,4 +218,5 @@ namespace Halftone
             ScanningOrder.init(imageRunInfo);
         }
     }
+
 }

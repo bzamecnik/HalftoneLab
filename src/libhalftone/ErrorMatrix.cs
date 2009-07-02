@@ -250,6 +250,11 @@ namespace Halftone
             public static ErrorMatrix sierraFilterLite;
             // Atkinson
             public static ErrorMatrix atkinson;
+            // Error matrix of Floyd-Steinberg size optimal for
+            // serpentine scanning.
+            // Source: Reinstating Floyd-Steinberg - Improved Metrics for
+            // Quality Assessment of Error Diffusion Algorithms
+            public static ErrorMatrix serpentineOptimal;
 
             static Samples() {
                 nextPixel = new ErrorMatrix(
@@ -325,6 +330,11 @@ namespace Halftone
                         { 1, 1, 1, 0 },
                         { 0, 1, 0, 0 }
                     }, 1, 8);
+                serpentineOptimal = new ErrorMatrix(
+                    new int[2, 3] {
+                        { 0, 0, 7 },
+                        { 4, 5, 0 }
+                    }, 1, 16);
             }
         }
     }

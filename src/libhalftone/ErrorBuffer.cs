@@ -105,7 +105,7 @@ namespace Halftone
         }
     }
 
-    // A simple cyclic buffer (to be used by CellDitherAlgorithm with SFCScanningOrder)
+    // A simple cyclic buffer (to be used by CellHalftoneAlgorithm with SFCScanningOrder)
     // The reason not to use MatrixErrorBuffer is different signature of constructor,
     // and resize(), setError().
     public class LineErrorBuffer : ErrorBuffer

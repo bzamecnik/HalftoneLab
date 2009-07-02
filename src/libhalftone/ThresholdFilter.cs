@@ -4,7 +4,7 @@ using Gimp;
 namespace Halftone
 {
     /// <summary>
-    /// Threshold dither algorithm acts as a base class for dither algorithms
+    /// Threshold halftone algorithm acts as a base class for halftone algorithms
     /// that perform bi-level intensity quantization using a threshold.
     /// </summary>
     /// <remarks>
