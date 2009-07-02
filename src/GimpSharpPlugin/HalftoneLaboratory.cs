@@ -88,15 +88,15 @@ namespace Gimp.HalftoneLab
             ////dynamicMatrixErrorFilter.addRecord(128, ErrorMatrix.Samples.stucki);
             ////dynamicMatrixErrorFilter.addRecord(192, ErrorMatrix.Samples.nextPixel);
 
-            //TresholdDitherAlgorithm tresholdDitherAlgorithm = new TresholdDitherAlgorithm();
-            //tresholdDitherAlgorithm.ErrorFilter = new MatrixErrorFilter(ErrorMatrix.Samples.stucki);
-            ////tresholdDitherAlgorithm.ErrorFilter = new PerturbedErrorFilter(
+            //ThresholdDitherAlgorithm thresholdDitherAlgorithm = new ThresholdDitherAlgorithm();
+            //thresholdDitherAlgorithm.ErrorFilter = new MatrixErrorFilter(ErrorMatrix.Samples.stucki);
+            ////thresholdDitherAlgorithm.ErrorFilter = new PerturbedErrorFilter(
             ////    new MatrixErrorFilter(ErrorMatrix.Samples.stucki))
             ////    {
             ////        PerturbationAmplitude = 0.5
             ////    };
-            ////tresholdDitherAlgorithm.ErrorFilter = new RandomizedMatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
-            //tresholdDitherAlgorithm.run(image);
+            ////thresholdDitherAlgorithm.ErrorFilter = new RandomizedMatrixErrorFilter(ErrorMatrix.Samples.floydSteinberg);
+            //thresholdDitherAlgorithm.run(image);
         }
 
         private void loadAlgorithms() {

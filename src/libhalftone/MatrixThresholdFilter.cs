@@ -4,58 +4,58 @@ using Gimp;
 namespace Halftone
 {
     /// <summary>
-    /// Treshold filter with a tileable matrix.
+    /// Threshold filter with a tileable matrix.
     /// </summary>
     /// <remarks>
-    /// Treshold values are stored in a matrix repeatedly tiling the plane
-    /// (ie. the image). TresholdMatrix module is used for that.
+    /// Threshold values are stored in a matrix repeatedly tiling the plane
+    /// (ie. the image). ThresholdMatrix module is used for that.
     /// </remarks>
     [Serializable]
-    public class MatrixTresholdFilter : TresholdFilter
+    public class MatrixThresholdFilter : ThresholdFilter
     {
-        private TresholdMatrix _matrix;
+        private ThresholdMatrix _matrix;
 
         /// <summary>
-        /// Tileable matrix of treshold values.
+        /// Tileable matrix of threshold values.
         /// </summary>
         /// <remarks>
         /// set(): null value is treated as setting the default matrix.
         /// </remarks>
-        public TresholdMatrix Matrix {
+        public ThresholdMatrix Matrix {
             get { return _matrix; }
             set {
                 if (value != null) {
                     _matrix = value;
                 } else {
-                    _matrix = TresholdMatrix.Generator.simpleTreshold;
+                    _matrix = ThresholdMatrix.Generator.simpleThreshold;
                 }
             }
         }
 
         /// <summary>
-        /// Create a matrix treshold filter with given matrix.
+        /// Create a matrix threshold filter with given matrix.
         /// </summary>
         /// <param name="matrix"></param>
-        public MatrixTresholdFilter(TresholdMatrix matrix) {
+        public MatrixThresholdFilter(ThresholdMatrix matrix) {
             Matrix = matrix;
         }
 
         /// <summary>
-        /// Create a matrix treshold filter with the default matrix
-        /// (currently 1x1 matrix with treshold at 50% grey).
+        /// Create a matrix threshold filter with the default matrix
+        /// (currently 1x1 matrix with threshold at 50% grey).
         /// </summary>
-        public MatrixTresholdFilter() {
-            Matrix = TresholdMatrix.Generator.simpleTreshold;
+        public MatrixThresholdFilter() {
+            Matrix = ThresholdMatrix.Generator.simpleThreshold;
         }
 
         /// <summary>
-        /// Get a treshold value for given pixel from the tileable matrix.
+        /// Get a threshold value for given pixel from the tileable matrix.
         /// </summary>
         /// <param name="intensity">Pixel intensity (not used)</param>
         /// <param name="x">Pixel X coordinate in the image</param>
         /// <param name="y">Pixel Y coordinate in the image</param>
         /// <returns></returns>
-        protected override int treshold(int intensity, int x, int y) {
+        protected override int threshold(int intensity, int x, int y) {
             return Matrix[y, x];
         }
     }

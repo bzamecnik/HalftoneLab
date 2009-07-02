@@ -3,23 +3,23 @@
 namespace Halftone
 {
     /// <summary>
-    /// Treshold filter where treshold values are computed directly using
+    /// Threshold filter where threshold values are computed directly using
     /// a spot function.
     /// </summary>
     [Serializable]
-    public class SpotFunctionTresholdFilter : TresholdFilter
+    public class SpotFunctionThresholdFilter : ThresholdFilter
     {
         public SpotFunction SpotFunc {get; set;}
 
-        public SpotFunctionTresholdFilter() {
+        public SpotFunctionThresholdFilter() {
             SpotFunc = SpotFunction.createDefault();
         }
 
-        public SpotFunctionTresholdFilter(SpotFunction spotFunc) {
+        public SpotFunctionThresholdFilter(SpotFunction spotFunc) {
             SpotFunc = spotFunc;
         }
 
-        protected override int treshold(int intensity, int x, int y) {
+        protected override int threshold(int intensity, int x, int y) {
             return SpotFunc.SpotFunc(x, y);
         }
     }
