@@ -23,12 +23,10 @@ namespace Halftone
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
-            Console.Out.WriteLine("ImageTresholdFilter.init()");
             base.init(imageRunInfo);
+            ImageGenerator.init(imageRunInfo);
             _tresholdImage = Image.createDefatult(
                 imageRunInfo.Width, imageRunInfo.Height);
-            Console.Out.WriteLine("_tresholdImage: {0}", _tresholdImage);
-            ImageGenerator.init(imageRunInfo);
             ImageGenerator.generateImage(_tresholdImage);
         }
 
@@ -41,7 +39,6 @@ namespace Halftone
             public EffectsDelegate Effects { get; set; }
 
             public void generateImage(Image image) {
-                Console.Out.WriteLine("ImageTresholdFilter.Generator.Generator()");
                 image.initBuffer();
                 image.IterateSrcDestByRows((pixel) =>
                 {

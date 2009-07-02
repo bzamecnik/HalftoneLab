@@ -110,14 +110,13 @@ namespace Halftone
 
             List<WeightGroup> weights = new List<WeightGroup>();
             // make a temporary list of weights (groups contain single weights)
-            OriginalMatrix.apply(
-                (int y, int x, double coeff) =>
+            OriginalMatrix.apply((int y, int x, double coeff) =>
                 {
                     WeightGroup group = new WeightGroup();
-                    group.addWeight(new Coordinate<int>(x + OriginalMatrix.SourceOffset, y), coeff);
+                    group.addWeight(new Coordinate<int>(x + OriginalMatrix.SourceOffsetX, y), coeff);
                     weights.Add(group);
                 }
-                );
+            );
             // sort the weights by their value
             weights.Sort(
                 (WeightGroup g1, WeightGroup g2) =>

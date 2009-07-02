@@ -3,19 +3,38 @@ using Gimp;
 
 namespace Halftone
 {
+    // TODO:
+    // - make a definition matrix (which could be iterative) and scaled
+    //   working one
+    // - working matrix could be of double type
+
+    /// <summary>
+    /// Tileable matrix of treshold values.
+    /// </summary>
+    /// <remarks>
+    /// Coefficients are scaled to 0-255 range.
+    /// </remarks>
     [Serializable]
     public class TresholdMatrix : Matrix<int>
     {
-        public TresholdMatrix(int height, int width) {
-            TheMatrix = new int[height, width];
-        }
+        /// <summary>
+        /// Create a treshold matrix of given size.
+        /// </summary>
+        /// <param name="height">matrix height (max Y size), > 0</param>
+        /// <param name="width">matrix height (max X size), > 0</param>
+        public TresholdMatrix(int height, int width)
+            : base(height, width) {}
 
-        public TresholdMatrix(int[,] matrix) {
-            TheMatrix = matrix;
-        }
+        /// <summary>
+        /// Create a treshold matrix from given scaled matrix.
+        /// </summary>
+        /// <param name="matrix">matrix with coefficients scaled to 0-255
+        /// range.</param>
+        public TresholdMatrix(int[,] matrix)
+            : base(matrix) { }
 
         public override Matrix<int> Clone() {
-            return new TresholdMatrix(TheMatrix);
+            return new TresholdMatrix(matrix);
         }
 
         public class Generator
@@ -24,22 +43,22 @@ namespace Halftone
             public static TresholdMatrix simpleTreshold;
             static Generator() {
                 simpleTreshold = new TresholdMatrix(new int[1, 1] { { 128 } });
-                //sampleMatrix = Generator.createFromIterativeMatrix(
-                sampleMatrix = TresholdMatrix.Generator.createFromIterativeMatrix(
+                sampleMatrix =
+                    TresholdMatrix.Generator.createFromIterativeMatrix(
                     new int[,] {
-                    //{ 16, 5,  9, 13 },
-                    //{ 12, 1,  2, 6 },
-                    //{ 8,  3,  4, 10 },
-                    //{ 15, 11, 7, 14 }
+                    //{ 16,  5,  9, 13 },
+                    //{ 12,  1,  2,  6 },
+                    //{  8,  3,  4, 10 },
+                    //{ 15, 11,  7, 14 }
                     
-                    //{62,54,41,23,35,43,59,63},
-                    //{58,50,25,20,29,38,51,55},
-                    //{46,30,13,5,12,16,34,42},
-                    //{21,17,9,1,4,8,28,37},
-                    //{26,18,6,2,3,11,23,33},
-                    //{48,31,14,10,7,15,40,44},
-                    //{53,49,32,19,27,36,52,59},
-                    //{61,57,45,22,39,47,56,64}
+                    //{62, 54, 41, 23, 35, 43, 59, 63},
+                    //{58, 50, 25, 20, 29, 38, 51, 55},
+                    //{46, 30, 13,  5, 12, 16, 34, 42},
+                    //{21, 17,  9,  1,  4,  8, 28, 37},
+                    //{26, 18,  6,  2,  3, 11, 23, 33},
+                    //{48, 31, 14, 10,  7, 15, 40, 44},
+                    //{53, 49, 32, 19, 27, 36, 52, 59},
+                    //{61, 57, 45, 22, 39, 47, 56, 64}
 
                     //{ 46, 35, 23, 22, 32, 43, 48},
                     //{ 36, 16, 11, 10, 15, 34, 40},
@@ -49,26 +68,32 @@ namespace Halftone
                     //{ 42, 33, 19, 17, 29, 41, 44},
                     //{ 47, 39, 27, 26, 38, 45, 49},
 
-                    //{ 16, 5,  9,  13, 32, 19, 25, 39 },
-                    //{ 12, 1,  2,  6,  28, 17, 18, 22 },
-                    //{ 8,  4,  3,  10, 24, 20, 19, 26 },
-                    //{ 15, 11, 7,  14, 31, 27, 23, 30 },
-                    //{ 32, 19, 25, 39, 16, 5,  9, 13  },
-                    //{ 28, 17, 18, 22, 12, 1,  2, 6   },
-                    //{ 24, 20, 19, 26, 8,  4,  3, 10  },
-                    //{ 31, 27, 23, 30, 15, 11, 7, 14  }
+                    //{ 16,  5,  9, 13, 32, 19, 25, 39 },
+                    //{ 12,  1,  2, 6,  28, 17, 18, 22 },
+                    //{  8,  4,  3, 10, 24, 20, 19, 26 },
+                    //{ 15, 11,  7, 14, 31, 27, 23, 30 },
+                    //{ 32, 19, 25, 39, 16,  5,  9, 13 },
+                    //{ 28, 17, 18, 22, 12,  1,  2,  6 },
+                    //{ 24, 20, 19, 26,  8,  4,  3, 10 },
+                    //{ 31, 27, 23, 30, 15, 11,  7, 14 }
+
                     { 32, 10, 18, 26, 34, 56, 48, 40 },
-                    { 24, 2,  4,  12, 42, 64, 62, 54 },
-                    { 16, 8,  6,  20, 50, 58, 60, 46 },
+                    { 24,  2,  4, 12, 42, 64, 62, 54 },
+                    { 16,  8,  6, 20, 50, 58, 60, 46 },
                     { 30, 22, 14, 28, 36, 44, 52, 38 },
                     { 34, 56, 48, 40, 32, 10, 18, 26 },
-                    { 42, 64, 62, 54, 24, 2,  4,  12 },
-                    { 50, 58, 60, 46, 16, 8,  6,  20 },
+                    { 42, 64, 62, 54, 24,  2,  4, 12 },
+                    { 50, 58, 60, 46, 16,  8,  6, 20 },
                     { 36, 44, 52, 38, 30, 22, 14, 28 }
                     
                 });
             }
 
+            /// <summary>
+            /// Scale down coefficients from iterative matrix to 0-255 range.
+            /// </summary>
+            /// <param name="userMatrix">matrix with coefficients in range 1-(h*w)</param>
+            /// <returns>matrix with coefficients in range 0-255</returns>
             public static TresholdMatrix createFromIterativeMatrix(int[,] userMatrix) {
                 int height = userMatrix.GetLength(0);
                 int width = userMatrix.GetLength(1);
@@ -82,11 +107,18 @@ namespace Halftone
                 return matrix;
             }
 
-            // Create dispersed dot matrix of _size 2^N x 2^N where N = magnitude
-            // which is able to represent (2^N*2^N)-1 tones.
-            // A recursive algorithm is used.
+            /// <summary>
+            /// Create a Bayer dispersed dot matrix (recursive tesselation
+            /// matrix) of size 2^N x 2^N (where N is magnitude).
+            /// </summary>
+            /// <remarks>
+            /// It is able to represent (2^N*2^N)-1 tones.
+            /// A recursive algorithm is used.
+            /// </remarks>
+            /// <param name="magnitude">log_2 of matrix size, range: [0, 8]</param>
+            /// <returns>scaled Bayer matrix</returns>
             public static TresholdMatrix createBayerDispersedDotMatrix(int magnitude) {
-                if ((magnitude < 0) || (magnitude > 4)) {
+                if ((magnitude < 0) || (magnitude > 8)) {
                     return null;
                 }
                 if (magnitude == 0) {

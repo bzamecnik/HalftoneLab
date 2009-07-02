@@ -2,11 +2,15 @@ using System;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Matrix error-diffusion filter.
+    /// </summary>
+    /// <see cref="ErrorMatrix"/>
     [Serializable]
     public class MatrixErrorFilter : ErrorFilter
     {
         // matrix of error filter weights
-        ErrorMatrix _matrix;
+        private ErrorMatrix _matrix;
 
         public ErrorMatrix Matrix {
             get { return _matrix; }
@@ -22,7 +26,7 @@ namespace Halftone
 
         // error buffer
         [NonSerialized]
-        MatrixErrorBuffer _buffer;
+        private MatrixErrorBuffer _buffer;
 
         public MatrixErrorBuffer Buffer {
             get { return _buffer; }
@@ -43,9 +47,11 @@ namespace Halftone
 
         // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
-            Matrix.apply(
-                (int y, int x, double coeff) => { Buffer.setError(y, x, coeff * error); }
-                );
+            Matrix.apply((int y, int x, double coeff) =>
+                {
+                    Buffer.setError(y, x, coeff * error);
+                }
+            );
         }
 
         public override void moveNext() {
@@ -54,6 +60,7 @@ namespace Halftone
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
+            Matrix.init(imageRunInfo);
             Buffer = ErrorBuffer.createFromScanningOrder(
                 imageRunInfo.ScanOrder, Matrix.Height,
                 imageRunInfo.Width) as MatrixErrorBuffer;

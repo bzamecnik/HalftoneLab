@@ -2,11 +2,24 @@
 
 namespace Halftone
 {
+    /// <summary>
+    /// Error-diffusion filter with a one-dimensional error matrix and buffer. This can
+    /// be useful eg. for image scanning order based on a space-filling curve.
+    /// </summary>
+    /// <see cref="ErrorMatrix"/>
     [Serializable]
     public class VectorErrorFilter : ErrorFilter
     {
-        ErrorMatrix _matrix; // must be of unit _height
-        public ErrorMatrix ErrorMatrix {
+        private ErrorMatrix _matrix;
+
+        /// <summary>
+        /// Error vector (one-dimensional error matrix of unit height).
+        /// </summary>
+        /// <remarks>
+        /// The internal error buffer is resized automatically when the matrix
+        /// size changes.
+        /// </remarks>
+        public ErrorMatrix Matrix {
             get { return _matrix; }
             protected set {
                 if (value.Height != 1) {
@@ -21,16 +34,27 @@ namespace Halftone
         }
 
         [NonSerialized]
-        LineErrorBuffer _buffer;
-        public LineErrorBuffer Buffer {
+        private LineErrorBuffer _buffer;
+
+        /// <summary>
+        /// One-dimensional error buffer.
+        /// </summary>
+        private LineErrorBuffer Buffer {
             get { return _buffer; }
-            private set { _buffer = value; }
+            set { _buffer = value; }
         }
 
+        /// <summary>
+        /// Create a vector error filter with given error matrix.
+        /// </summary>
+        /// <param name="matrix">Error matrix</param>
         public VectorErrorFilter(ErrorMatrix matrix) {
-            ErrorMatrix = matrix;
+            Matrix = matrix;
         }
 
+        /// <summary>
+        /// Create a vector error filter with a default error matrix.
+        /// </summary>
         public VectorErrorFilter() {
             _matrix = ErrorMatrix.Samples.nextPixel;
         }
@@ -39,11 +63,12 @@ namespace Halftone
             return Buffer.getError();
         }
 
-        // diffuse error value from given pixel to neighbor pixels
         public override void setError(double error) {
-            ErrorMatrix.apply(
-                (int y, int x, double coeff) => { Buffer.setError(x, coeff * error); }
-                );
+            Matrix.apply((int y, int x, double coeff) =>
+                {
+                    Buffer.setError(x, coeff * error);
+                }
+            );
         }
 
         public override void moveNext() {
@@ -52,9 +77,10 @@ namespace Halftone
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
+            Matrix.init(imageRunInfo);
             Buffer = ErrorBuffer.createFromScanningOrder(
-                imageRunInfo.ScanOrder,ErrorMatrix.Height,
-                ErrorMatrix.Width) as LineErrorBuffer;
+                imageRunInfo.ScanOrder, Matrix.Height,
+                Matrix.Width) as LineErrorBuffer;
             // null if the created result is not a LineErrorBuffer
             Initialized = Buffer != null;
         }

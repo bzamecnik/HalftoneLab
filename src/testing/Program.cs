@@ -49,8 +49,8 @@ namespace testing
             //config.saveModule(floydSteinbergErrorMatrix, false);
 
             TresholdMatrix bayerTresholdMatrix =
-                TresholdMatrix.Generator.createBayerDispersedDotMatrix(2);
-            bayerTresholdMatrix.Name = "Bayer matrix 4x4";
+                TresholdMatrix.Generator.createBayerDispersedDotMatrix(3);
+            bayerTresholdMatrix.Name = "Bayer matrix 8x8";
             //config.saveModule(bayerTresholdMatrix, false);
 
             MatrixErrorFilter matrixErrorFilter = new MatrixErrorFilter(floydSteinbergErrorMatrix)
