@@ -6,6 +6,9 @@ using Gtk;
 
 namespace Gimp.HalftoneLab
 {
+    /// <summary>
+    /// Halftone Laboratory user interface as a GIMP plugin.
+    /// </summary>
     class HalftoneLaboratory : Plugin
     {
         private List<HalfoneAlgorithm> algorithms;

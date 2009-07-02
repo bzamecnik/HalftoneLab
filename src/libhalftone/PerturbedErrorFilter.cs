@@ -4,10 +4,32 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Perturbed error filter acts as a wrapper over a MatrixErrorFilter
+    /// and adds random noise (perturbations) to its matrix coefficients.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The sum of all perturbations is ensured to be zero. The amount of
+    /// perturbation can be controlled via PerturbationAmplitude property.
+    /// </para>
+    /// <para>
+    /// Coefficients in the original matrix are sorted by their value and
+    /// grouped into pairs. A random perturbation of varying magnitude is
+    /// added to one coefficient and subtracted from the other.
+    /// The perturbation magnitude depends on minor of the two coeficents.
+    /// If there is an odd number of coefficients the last perturbation is
+    /// divided into a group of three coefficients.
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class PerturbedErrorFilter : ErrorFilter
     {
         private MatrixErrorFilter _childFilter;
+
+        /// <summary>
+        /// Child matrix error filter containing the original matrix.
+        /// </summary>
         public MatrixErrorFilter ChildFilter {
             get {
                 if (_childFilter == null) {
@@ -22,11 +44,21 @@ namespace Halftone
             }
         }
 
+        /// <summary>
+        /// Groups of coefficients (pairs or possible a group of three).
+        /// </summary>
         [NonSerialized]
-        private List<WeightGroup> _weightGroups;
+        private List<CoeffGroup> _coeffGroups;
         
         [NonSerialized]
         private Random _randomGenerator = null;
+
+        /// <summary>
+        /// Random generator used for generating the perturbations.
+        /// </summary>
+        /// <remarks>
+        /// It is created when it is first needed.
+        /// </remarks>
         private Random RandomGenerator {
             get {
                 if (_randomGenerator == null) {
@@ -38,6 +70,11 @@ namespace Halftone
 
         [NonSerialized]
         private ErrorMatrix _originalMatrix;
+
+        /// <summary>
+        /// Original matrix reference. Coefficient groups are created when
+        /// the matrix is set.
+        /// </summary>
         private ErrorMatrix OriginalMatrix {
             get {
                 return _originalMatrix;
@@ -48,11 +85,12 @@ namespace Halftone
             }
         }
 
-        // Note: Creating an empty matrix with the same _size and source offset
-        // as in original matrix would be enough. The values are overwritten
-        // in computePerturbation() anyway.
         [NonSerialized]
-        private ErrorMatrix _perturbedMatrix; // temporary
+        private ErrorMatrix _perturbedMatrix;
+        /// <summary>
+        /// Temporary matrix to store pertubed coefficients from the original
+        /// matrix.
+        /// </summary>
         private ErrorMatrix PerturbedMatrix {
             get {
                 return _perturbedMatrix;
@@ -63,7 +101,10 @@ namespace Halftone
         }
 
         private double _perturbationAmplitude;
-        public double PerturbationAmplitude { // 0.0-1.0
+        /// <summary>
+        /// Amplitude of perturbation (0.0-1.0)
+        /// </summary>
+        public double PerturbationAmplitude { 
             get { return _perturbationAmplitude; }
             set {
                 if ((value >= 0.0) && (value <= 1.0)) {
@@ -72,6 +113,14 @@ namespace Halftone
             }
         }
 
+        /// <summary>
+        /// Create an perturbed error filter over an existing matrix error
+        /// filter.
+        /// </summary>
+        /// <remarks>
+        /// Noise amplitude is at its maximum value by default.
+        /// </remarks>
+        /// <param name="childFilter">Child filter to be perturbed</param>
         public PerturbedErrorFilter(MatrixErrorFilter childFilter) {
             PerturbationAmplitude = 1.0;
             ChildFilter = childFilter;
@@ -94,79 +143,93 @@ namespace Halftone
             computePerturbation();
         }
 
+        /// <summary>
+        /// Prepare matrices, perturbation groups and compute perturbations.
+        /// </summary>
         private void prepare() {
-            if (_weightGroups == null) {
-                _weightGroups = new List<WeightGroup>();
+            if (_coeffGroups == null) {
+                _coeffGroups = new List<CoeffGroup>();
             } else {
-                _weightGroups.Clear();
+                _coeffGroups.Clear();
             }
             OriginalMatrix = ChildFilter.Matrix;
             PerturbedMatrix = (ErrorMatrix)OriginalMatrix.Clone();
             computePerturbation();
         }
 
+        /// <summary>
+        /// Distbute coefficients from the OriginalMatrix to perturbation
+        /// groups.
+        /// </summary>
         private void preparePerturbationGroups() {
             // Note: this must be called everytime the original matrix changes!
 
-            List<WeightGroup> weights = new List<WeightGroup>();
-            // make a temporary list of weights (groups contain single weights)
+            List<CoeffGroup> coeffs = new List<CoeffGroup>();
+            // make a temporary list of coeffs (groups contain single coeffs)
             OriginalMatrix.apply((int y, int x, double coeff) =>
                 {
-                    WeightGroup group = new WeightGroup();
-                    group.addWeight(new Coordinate<int>(x + OriginalMatrix.SourceOffsetX, y), coeff);
-                    weights.Add(group);
+                    CoeffGroup group = new CoeffGroup();
+                    group.addCoeff(new Coordinate<int>(x + OriginalMatrix.SourceOffsetX, y), coeff);
+                    coeffs.Add(group);
                 }
             );
-            // sort the weights by their value
-            weights.Sort(
-                (WeightGroup g1, WeightGroup g2) =>
+            // sort the coeffs by their value
+            coeffs.Sort(
+                (CoeffGroup g1, CoeffGroup g2) =>
                 {
-                    return g1.MaxNoiseAmplitude.CompareTo(g2.MaxNoiseAmplitude);
+                    return g1.MaxNoiseAmplitude.CompareTo(
+                        g2.MaxNoiseAmplitude);
                 }
                 );
-            // Group the weight to pairs, make a group of thee if there's an odd weight.
+            // Group the coefficients to pairs, make a group of three if
+            // there's an odd coefficient.
             // Each group will carry its minimum value.
-            List<WeightGroup>.Enumerator weightIter = weights.GetEnumerator();
-            while (weightIter.MoveNext()) {
-                WeightGroup group1 = weightIter.Current;
-                if (weightIter.MoveNext()) {
-                    // bind two weights together
-                    WeightGroup group2 = weightIter.Current;
-                    group1.addWeight(group2);
-                    _weightGroups.Add(group1);
-                } else if (weights.Count > 0) {
-                    // a space odd weight, bind to to the last group
-                    // (it will contain 3 weights)
-                    _weightGroups[_weightGroups.Count - 1].addWeight(group1);
+            List<CoeffGroup>.Enumerator coeffIter = coeffs.GetEnumerator();
+            while (coeffIter.MoveNext()) {
+                CoeffGroup group1 = coeffIter.Current;
+                if (coeffIter.MoveNext()) {
+                    // bind two coeffs together
+                    CoeffGroup group2 = coeffIter.Current;
+                    group1.addCoeff(group2);
+                    _coeffGroups.Add(group1);
+                } else if (coeffs.Count > 0) {
+                    // a space odd coeff, bind to to the last group
+                    // (it will contain 3 coeffs)
+                    _coeffGroups[_coeffGroups.Count - 1].addCoeff(group1);
                 }
-                // else: single weight, don't perturb at all
+                // else: single coeff, don't perturb at all
             }
-            foreach (WeightGroup group in _weightGroups) {
-                foreach(Coordinate<int> coords in group.WeightCoords) {
-                }
-            }
+            //// ???
+            //foreach (CoeffGroup group in _coeffGroups) {
+            //    foreach(Coordinate<int> coords in group.CoeffCoords) {
+            //    }
+            //}
         }
 
+        /// <summary>
+        /// Perturb OriginalMatrix with results stored to PerturbedMatrix.
+        /// </summary>
         private void computePerturbation() {
-            foreach (WeightGroup group in _weightGroups) {
+            foreach (CoeffGroup group in _coeffGroups) {
                 // [-MaxNoiseAmplitude;+MaxNoiseAmplitude]
-                double perturbation = group.MaxNoiseAmplitude * (RandomGenerator.NextDouble() * 2 - 1);
-                if (group.WeightCoords.Count == 2) {
-                    Coordinate<int> coords = group.WeightCoords[0];
+                double perturbation = group.MaxNoiseAmplitude *
+                    (RandomGenerator.NextDouble() * 2 - 1);
+                if (group.CoeffCoords.Count == 2) {
+                    Coordinate<int> coords = group.CoeffCoords[0];
                     PerturbedMatrix[coords.Y, coords.X] =
                         OriginalMatrix[coords.Y, coords.X] + perturbation;
 
-                    coords = group.WeightCoords[1];
+                    coords = group.CoeffCoords[1];
                     PerturbedMatrix[coords.Y, coords.X] =
                         OriginalMatrix[coords.Y, coords.X] - perturbation;
-                } else if (group.WeightCoords.Count == 3) {
-                    Coordinate<int> coords = group.WeightCoords[0];
+                } else if (group.CoeffCoords.Count == 3) {
+                    Coordinate<int> coords = group.CoeffCoords[0];
                     PerturbedMatrix[coords.Y, coords.X] =
                         OriginalMatrix[coords.Y, coords.X] + perturbation;
 
                     perturbation *= 0.5; // perturbation/2
                     for (int i = 1; i <= 2; i++) {
-                        coords = group.WeightCoords[i];
+                        coords = group.CoeffCoords[i];
                         PerturbedMatrix[coords.Y, coords.X] =
                             OriginalMatrix[coords.Y, coords.X] - perturbation;
                     }
@@ -181,24 +244,49 @@ namespace Halftone
             Initialized = ChildFilter.Initialized;
         }
 
-        private class WeightGroup
+        /// <summary>
+        /// Group of coefficients along with maximum allowed noise amplidute.
+        /// </summary>
+        private class CoeffGroup
         {
-            // maximal allowed noise amplitude = minimal coefficient
+            /// <summary>
+            /// Maximal allowed noise amplitude = minimal coefficient value.
+            /// </summary>
             public Double MaxNoiseAmplitude = Double.MaxValue;
-            public List<Coordinate<int>> WeightCoords;
+            /// <summary>
+            /// List of coefficient coordinates.
+            /// </summary>
+            /// <remarks>
+            /// Values are not relevant here. Moreover they are stored
+            /// in the OriginalMatrix.
+            /// </remarks>
+            public List<Coordinate<int>> CoeffCoords;
 
-            public WeightGroup() {
-                WeightCoords = new List<Coordinate<int>>();
+            /// <summary>
+            /// Create a coefficient group.
+            /// </summary>
+            public CoeffGroup() {
+                CoeffCoords = new List<Coordinate<int>>();
             }
 
-            public void addWeight(Coordinate<int> coords, double coeff) {
+            /// <summary>
+            /// Add a coefficient to the group.
+            /// </summary>
+            /// <param name="coords">Coefficient coordinates</param>
+            /// <param name="coeff">Coefficient value</param>
+            public void addCoeff(Coordinate<int> coords, double coeff) {
                 MaxNoiseAmplitude = Math.Min(MaxNoiseAmplitude, coeff);
-                WeightCoords.Add(coords);
+                CoeffCoords.Add(coords);
             }
 
-            public void addWeight(WeightGroup otherGroup) {
-                if (otherGroup.WeightCoords.Count > 0) {
-                    addWeight(otherGroup.WeightCoords[0], otherGroup.MaxNoiseAmplitude);
+            /// <summary>
+            /// Add coefficients from another group.
+            /// </summary>
+            /// <param name="otherGroup">Other group of coefficients</param>
+            public void addCoeff(CoeffGroup otherGroup) {
+                if (otherGroup.CoeffCoords.Count > 0) {
+                    addCoeff(otherGroup.CoeffCoords[0],
+                        otherGroup.MaxNoiseAmplitude);
                 }
             }
         }

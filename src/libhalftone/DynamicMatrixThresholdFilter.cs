@@ -99,6 +99,7 @@ namespace Halftone
         /// <param name="y">Pixel Y coordinate (> 0)</param>
         /// <returns></returns>
         protected override int threshold(int intensity, int x, int y) {
+            // TODO: intensity should be clipped here to 0-255 range!
             ThresholdTableRecord record = getThresholdRecord(intensity);
             ThresholdMatrix matrix = record.matrix;
             int threshold = matrix[x, y];

@@ -18,26 +18,17 @@ namespace Halftone
         /// <summary>
         /// Threshold filter module. Mandatory.
         /// </summary>
-        public ThresholdFilter ThresholdFilter {
-            get;
-            set;
-        }
+        public ThresholdFilter ThresholdFilter { get; set; }
 		
         /// <summary>
         /// Error filter module. Optional (leave it null not to use it).
         /// </summary>
-        public ErrorFilter ErrorFilter {
-            get;
-            set;
-        }
+        public ErrorFilter ErrorFilter { get; set; }
 
         /// <summary>
         /// Module giving order in which image pixels are processed.
         /// </summary>
-        public ScanningOrder ScanningOrder {
-            get;
-            set;
-        }
+        public ScanningOrder ScanningOrder { get; set; }
 
         /// <summary>
         /// Is error filter set and ready to use?
@@ -71,9 +62,7 @@ namespace Halftone
         /// </summary>
         /// <param name="thresholdFilter"></param>
 		public ThresholdHalftoneAlgorithm(ThresholdFilter thresholdFilter)
-		: this(thresholdFilter, null, new ScanlineScanningOrder())
-		{
-		}
+		    : this(thresholdFilter, null, new ScanlineScanningOrder()) {}
 
         /// <summary>
         /// Create a threshold halftone algorithm skeleton with default threshold
@@ -81,8 +70,8 @@ namespace Halftone
         /// order (scanline).
         /// </summary>
         public ThresholdHalftoneAlgorithm()
-            : this(new MatrixThresholdFilter(), null, new ScanlineScanningOrder()) {
-        }
+            : this(new MatrixThresholdFilter(), null,
+            new ScanlineScanningOrder()) {}
 
         /// <summary>
         /// Run the algorithm over the image.

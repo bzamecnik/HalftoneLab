@@ -198,17 +198,22 @@ namespace testing
             thresholdHalftoneAlgorithm.Description = "";
             config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            euclidDotSpotFunction.Distance = 32;
+            euclidDotSpotFunction.Distance = 32 ;
+            euclidDotSpotFunction.Angle = Math.PI * 0.25;
             thresholdHalftoneAlgorithm.ThresholdFilter =
                 new ImageThresholdFilter()
                 {
                     ImageGenerator = new ImageThresholdFilter.Generator()
                     {
                         SpotFunction = euclidDotSpotFunction,
-                        Effects = ImageThresholdFilter.Generator.pixelizeEffect
+                        Effects = {
+                            //ImageThresholdFilter.Generator.pixelizeEffect,
+                            //ImageThresholdFilter.Generator.rippleEffect
+                            ImageThresholdFilter.Generator.canvasEffect
+                        }
                     }
                 };
-            thresholdHalftoneAlgorithm.Name = "Halftoning with Euclid dot, using Image";
+            thresholdHalftoneAlgorithm.Name = "Halftoning with Euclid dot, using Image, with effects";
             thresholdHalftoneAlgorithm.Description = "";
             config.saveModule(thresholdHalftoneAlgorithm, false);
 

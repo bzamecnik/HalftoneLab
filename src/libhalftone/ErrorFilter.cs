@@ -68,7 +68,8 @@ namespace Halftone
         /// the actual error value can lie outside this interval.
         /// </para>
         /// </summary>
-        /// <param name="error">Error to be diffused from current pixel position.</param>
+        /// <param name="error">Quantization error to be diffused from
+        /// the current pixel</param>
         public abstract void setError(double error);
 
         /// <summary>

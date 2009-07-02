@@ -37,6 +37,9 @@ namespace Halftone
             return new ThresholdMatrix(matrix);
         }
 
+        /// <summary>
+        /// A utility class for generating threshold matrices.
+        /// </summary>
         public class Generator
         {
             public static ThresholdMatrix sampleMatrix;
@@ -90,10 +93,10 @@ namespace Halftone
             }
 
             /// <summary>
-            /// Scale down coefficients from iterative matrix to 0-255 range.
+            /// Scale coefficients from iterative matrix to 0-255 range.
             /// </summary>
             /// <param name="userMatrix">matrix with coefficients in range 1-(h*w)</param>
-            /// <returns>matrix with coefficients in range 0-255</returns>
+            /// <returns>scaled matrix with coefficients in range 0-255</returns>
             public static ThresholdMatrix createFromIterativeMatrix(int[,] userMatrix) {
                 int height = userMatrix.GetLength(0);
                 int width = userMatrix.GetLength(1);
