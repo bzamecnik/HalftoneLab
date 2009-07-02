@@ -4,14 +4,14 @@ using System;
 namespace Halftone
 {
     /// <summary>
-    /// A base class for dither algorithm skeletons.
+    /// A base class for halftoning algorithm skeletons.
     /// </summary>
     /// <remarks>
-    /// Dither algorithms implement the run() function and usually use
+    /// Halftone algorithms implement the run() function and usually use
     /// plugable submodules to do
     /// </remarks>
     [Serializable]
-	public abstract class DitherAlgorithm : Module
+	public abstract class HalfoneAlgorithm : Module
 	{
         /// <summary>
         /// Run the algoritm with current configuration.

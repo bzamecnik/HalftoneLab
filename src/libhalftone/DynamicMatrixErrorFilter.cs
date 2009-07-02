@@ -5,7 +5,7 @@ using System.Linq;
 namespace Halftone
 {
     // TODO:
-    // - join common code of DynamicMatrixErrorFilter and DynamicThresholdFilter
+    // - join common code of DynamicMatrixErrorFilter and DynamicMatrixThresholdFilter
     // - the table should be a fixed size array of records (not a list)
     //   - it is presumed that the each intensity in the table should have one record
 
@@ -16,7 +16,7 @@ namespace Halftone
     /// <remarks>
     /// <para>
     /// Each intensity or intensity range can have its own error matrix. This
-    /// is done before running the dither algorithm using addRecord() or
+    /// is done before running the halftone algorithm using addRecord() or
     /// deleteRecord() functions.
     /// </para>
     /// <para>
@@ -39,7 +39,13 @@ namespace Halftone
         [Serializable]
         class ErrorTableRecord : IComparable<ErrorTableRecord>
         {
+            /// <summary>
+            /// Starting intensity of the range (0-255).
+            /// </summary>
             public int intensityRangeStart;
+            /// <summary>
+            /// Error matrix for that range.
+            /// </summary>
             public ErrorMatrix matrix;
 
             public int CompareTo(ErrorTableRecord other) {
@@ -102,7 +108,8 @@ namespace Halftone
         }
 
         /// <summary>
-        /// Get proper error matrix given a pixel intensity.
+        /// Get an intensity range record (containing an error matrix)
+        /// associated with given pixel intensity.
         /// </summary>
         /// <param name="intensity">Pixel intensity (0-255)</param>
         /// <returns>Proper intensity range record of a default one if the
@@ -126,7 +133,8 @@ namespace Halftone
         /// step further (if there is a free place), otherwise it is
         /// overwritten.
         /// </remarks>
-        /// <param name="intensityRangeStart">Start intensity of the range</param>
+        /// <param name="intensityRangeStart">Start intensity of the range
+        /// (0-255)</param>
         /// <param name="matrix">Error matrix for that range</param>
         public void addRecord(int intensityRangeStart, ErrorMatrix matrix) {
             //if ((intensityRangeStart < 0) || (intensityRangeStart > 255)) { return; }
@@ -155,9 +163,17 @@ namespace Halftone
         /// <remarks>
         /// Do nothing if there is no such a record.
         /// </remarks>
-        /// <param name="intensityRangeStart">Start intensity of the range</param>
+        /// <param name="intensityRangeStart">Start intensity of the range
+        /// (0-255)</param>
         public void deleteRecord(int intensityRangeStart) {
             _recordTable.Remove(intensityRangeStart);
+        }
+
+        /// <summary>
+        /// Clear all intensity range records.
+        /// </summary>
+        public void clearRecords() {
+            _recordTable.Clear();
         }
     }
 }

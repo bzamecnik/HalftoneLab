@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Halftone;
 
 namespace testing
@@ -97,7 +94,7 @@ namespace testing
             };
             //config.saveModule(matrixThresholdFilter, false);
 
-            DynamicThresholdFilter dynamicThresholdFilter = new DynamicThresholdFilter()
+            DynamicMatrixThresholdFilter dynamicThresholdFilter = new DynamicMatrixThresholdFilter()
             {
                 NoiseEnabled = true,
                 Name = "Dynamic threshold filter"
@@ -116,73 +113,73 @@ namespace testing
 
             //config.saveModule(dynamicThresholdFilter, false);
 
-            ThresholdDitherAlgorithm thresholdDitherAlgorithm = new ThresholdDitherAlgorithm()
+            ThresholdHalftoneAlgorithm thresholdHalftoneAlgorithm = new ThresholdHalftoneAlgorithm()
             {
-                Name = "Threshold dither algorithm"
+                Name = "Threshold halftone algorithm"
             };
-            config.saveModule(thresholdDitherAlgorithm, false);
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
-            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            thresholdDitherAlgorithm.Name = "Floyd-Steinberg, scanline";
-            thresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Scanline order";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ErrorFilter = matrixErrorFilter;
+            thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdHalftoneAlgorithm.Name = "Floyd-Steinberg, scanline";
+            thresholdHalftoneAlgorithm.Description = "Floyd-Steinberg error, Scanline order";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
-            thresholdDitherAlgorithm.Name = "Floyd-Steinberg, serpentine";
-            thresholdDitherAlgorithm.Description = "Floyd-Steinberg error, Serpentine order";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ScanningOrder = serpentineScanOrder;
+            thresholdHalftoneAlgorithm.Name = "Floyd-Steinberg, serpentine";
+            thresholdHalftoneAlgorithm.Description = "Floyd-Steinberg error, Serpentine order";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            thresholdDitherAlgorithm.ErrorFilter = null;
-            thresholdDitherAlgorithm.ThresholdFilter = matrixThresholdFilter;
-            thresholdDitherAlgorithm.Name = "Bayer dispersed dither";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdHalftoneAlgorithm.ErrorFilter = null;
+            thresholdHalftoneAlgorithm.ThresholdFilter = matrixThresholdFilter;
+            thresholdHalftoneAlgorithm.Name = "Bayer dispersed halftone";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ThresholdFilter = new MatrixThresholdFilter(ThresholdMatrix.Generator.sampleMatrix);
-            thresholdDitherAlgorithm.Name = "Clustered dot dither";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ThresholdFilter = new MatrixThresholdFilter(ThresholdMatrix.Generator.sampleMatrix);
+            thresholdHalftoneAlgorithm.Name = "Clustered dot halftone";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ThresholdFilter = dynamicThresholdFilter;
-            thresholdDitherAlgorithm.Name = "Dynamic threshold dither";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ThresholdFilter = dynamicThresholdFilter;
+            thresholdHalftoneAlgorithm.Name = "Dynamic threshold halftone";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
             dynamicThresholdFilter.clearThresholdRecords();
             dynamicThresholdFilter.addThresholdRecord(0, ThresholdMatrix.Generator.simpleThreshold, 1.0);
-            thresholdDitherAlgorithm.ThresholdFilter = dynamicThresholdFilter;
-            thresholdDitherAlgorithm.Name = "Simpe blue-noise";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ThresholdFilter = dynamicThresholdFilter;
+            thresholdHalftoneAlgorithm.Name = "Simpe blue-noise";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ErrorFilter = matrixErrorFilter;
-            thresholdDitherAlgorithm.Name = "Blue-noise Floyd-Steinberg, scanline";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ErrorFilter = matrixErrorFilter;
+            thresholdHalftoneAlgorithm.Name = "Blue-noise Floyd-Steinberg, scanline";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ScanningOrder = serpentineScanOrder;
-            thresholdDitherAlgorithm.Name = "Blue-noise, Floyd-Steinberg, serpentine";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ScanningOrder = serpentineScanOrder;
+            thresholdHalftoneAlgorithm.Name = "Blue-noise, Floyd-Steinberg, serpentine";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            thresholdDitherAlgorithm.ThresholdFilter = new MatrixThresholdFilter();
+            thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdHalftoneAlgorithm.ThresholdFilter = new MatrixThresholdFilter();
 
-            //thresholdDitherAlgorithm.ErrorFilter = dynamicMatrixErrorFilter;
-            //thresholdDitherAlgorithm.Name = "Dynamic error filter";
-            //config.saveModule(thresholdDitherAlgorithm, false);
+            //thresholdHalftoneAlgorithm.ErrorFilter = dynamicMatrixErrorFilter;
+            //thresholdHalftoneAlgorithm.Name = "Dynamic error filter";
+            //config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            //thresholdDitherAlgorithm.ErrorFilter = perturbedErrorFilter;
-            //thresholdDitherAlgorithm.Name = "Perturbed error filter";
-            //config.saveModule(thresholdDitherAlgorithm, false);
+            //thresholdHalftoneAlgorithm.ErrorFilter = perturbedErrorFilter;
+            //thresholdHalftoneAlgorithm.Name = "Perturbed error filter";
+            //config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ErrorFilter = randomizedMatrixErrorFilter;
-            thresholdDitherAlgorithm.Name = "Randomized error filter";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ErrorFilter = randomizedMatrixErrorFilter;
+            thresholdHalftoneAlgorithm.Name = "Randomized error filter";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            thresholdDitherAlgorithm.ScanningOrder = hilbertScanOrder;
-            thresholdDitherAlgorithm.ErrorFilter = vectorErrorFilter;
-            thresholdDitherAlgorithm.Name = "SFC Threshold dither algorithm";
-            thresholdDitherAlgorithm.Description = "Hilbert SFC order, next pixel vector error filter";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ScanningOrder = hilbertScanOrder;
+            thresholdHalftoneAlgorithm.ErrorFilter = vectorErrorFilter;
+            thresholdHalftoneAlgorithm.Name = "SFC Threshold halftone algorithm";
+            thresholdHalftoneAlgorithm.Description = "Hilbert SFC order, next pixel vector error filter";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            SFCAdaptiveClustering sfcAdaptiveClustering = new SFCAdaptiveClustering()
+            SFCClusteringAlgorithm sfcAdaptiveClustering = new SFCClusteringAlgorithm()
             {
                 Name = "SFC Clustering",
                 ScanningOrder = hilbertScanOrder,
@@ -193,16 +190,16 @@ namespace testing
             SpotFunction euclidDotSpotFunction = new SpotFunction(
                         SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8);
 
-            thresholdDitherAlgorithm.ThresholdFilter =
+            thresholdHalftoneAlgorithm.ThresholdFilter =
                 new SpotFunctionThresholdFilter(euclidDotSpotFunction);
-            thresholdDitherAlgorithm.ScanningOrder = scanlineScanOrder;
-            thresholdDitherAlgorithm.ErrorFilter = null;
-            thresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, direct";
-            thresholdDitherAlgorithm.Description = "";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdHalftoneAlgorithm.ErrorFilter = null;
+            thresholdHalftoneAlgorithm.Name = "Halftoning with Euclid dot, direct";
+            thresholdHalftoneAlgorithm.Description = "";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
             euclidDotSpotFunction.Distance = 32;
-            thresholdDitherAlgorithm.ThresholdFilter =
+            thresholdHalftoneAlgorithm.ThresholdFilter =
                 new ImageThresholdFilter()
                 {
                     ImageGenerator = new ImageThresholdFilter.Generator()
@@ -211,9 +208,9 @@ namespace testing
                         Effects = ImageThresholdFilter.Generator.pixelizeEffect
                     }
                 };
-            thresholdDitherAlgorithm.Name = "Halftoning with Euclid dot, using Image";
-            thresholdDitherAlgorithm.Description = "";
-            config.saveModule(thresholdDitherAlgorithm, false);
+            thresholdHalftoneAlgorithm.Name = "Halftoning with Euclid dot, using Image";
+            thresholdHalftoneAlgorithm.Description = "";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
 
             config.save();
 

@@ -4,7 +4,7 @@ using Gimp;
 namespace Halftone
 {
     /// <summary>
-    /// Threshold dither algorithm acts as a base class for dither algorithms
+    /// Threshold halftone algorithm acts as a base class for halftone algorithms
     /// which perform bi-level intensity quantization using a threshold filter.
     /// Optional error-diffusion can be accomplished as well.
     /// </summary>
@@ -13,7 +13,7 @@ namespace Halftone
     /// ScanningOrder module.
     /// </remarks>
     [Serializable]
-	public class ThresholdDitherAlgorithm : DitherAlgorithm
+	public class ThresholdHalftoneAlgorithm : HalfoneAlgorithm
 	{
         /// <summary>
         /// Threshold filter module. Mandatory.
@@ -49,12 +49,12 @@ namespace Halftone
         }
 
         /// <summary>
-        /// Create a threshold dither algorithm skeleton.
+        /// Create a threshold halftone algorithm skeleton.
         /// </summary>
         /// <param name="thresholdFilter">Threshold filter</param>
         /// <param name="errorFilter">Error filter (optional)</param>
         /// <param name="scanningOrder">Scanning order</param>
-		public ThresholdDitherAlgorithm(
+		public ThresholdHalftoneAlgorithm(
             ThresholdFilter thresholdFilter,
             ErrorFilter errorFilter,
             ScanningOrder scanningOrder
@@ -66,21 +66,21 @@ namespace Halftone
 		}
 		
         /// <summary>
-        /// Create a threshold dither algorithm skeleton with no error filter
+        /// Create a threshold halftone algorithm skeleton with no error filter
         /// and default scanning order (scanline).
         /// </summary>
         /// <param name="thresholdFilter"></param>
-		public ThresholdDitherAlgorithm(ThresholdFilter thresholdFilter)
+		public ThresholdHalftoneAlgorithm(ThresholdFilter thresholdFilter)
 		: this(thresholdFilter, null, new ScanlineScanningOrder())
 		{
 		}
 
         /// <summary>
-        /// Create a threshold dither algorithm skeleton with default threshold
+        /// Create a threshold halftone algorithm skeleton with default threshold
         /// filter (MatrixThresholdFilter), no error filter and default scanning
         /// order (scanline).
         /// </summary>
-        public ThresholdDitherAlgorithm()
+        public ThresholdHalftoneAlgorithm()
             : this(new MatrixThresholdFilter(), null, new ScanlineScanningOrder()) {
         }
 
@@ -111,10 +111,10 @@ namespace Halftone
                 {
                     double error = ErrorFilter.getError();
                     double original = (double)pixel[0] + error;
-                    Pixel dithered = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
-                    ErrorFilter.setError(original - (double)dithered[0]);
+                    Pixel quantized = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
+                    ErrorFilter.setError(original - (double)quantized[0]);
                     ErrorFilter.moveNext();
-                    return dithered;
+                    return quantized;
                 });
             } else {
                 // error diffusion disabled
