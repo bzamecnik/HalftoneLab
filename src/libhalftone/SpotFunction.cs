@@ -5,8 +5,14 @@ using System.Text;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Spot functions define screening dot growth depending on intensity.
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
     [Serializable]
-    public class SpotFunction
+    public class SpotFunction : Module
     {
         public delegate SpotFuncDelegate SpotFuncPrototypeDelegate(double angle, double distance);
         public delegate int SpotFuncDelegate(int x, int y);
@@ -69,13 +75,31 @@ namespace Halftone
             }
         }
 
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            initSpotFunction();
+        }
+
+        /// <summary>
+        /// Utility functions for SpotFunction.
+        /// </summary>
         [Serializable]
-        public class Util
+        protected class Util
         {
+            /// <summary>
+            /// Rotate coordinates (inX, inY) by a given angle to
+            /// (outX, outY).
+            /// </summary>
+            /// <param name="inX">Input X coordinate</param>
+            /// <param name="inY">Input Y coordinate</param>
+            /// <param name="angle">Rotation angle in radians.</param>
+            /// <param name="outX">Output X coordinate</param>
+            /// <param name="outY">Output Y coordinate</param>
             public static void rotate(
                 double inX, double inY,
                 double angle,
-                out double outX, out double outY) {
+                out double outX, out double outY)
+            {
                 double sin = Math.Sin(angle);
                 double cos = Math.Cos(angle);
                 outX = inX * sin + inY * cos;
@@ -83,6 +107,9 @@ namespace Halftone
             }
         }
 
+        /// <summary>
+        /// Samples of commonly used spot functions.
+        /// </summary>
         [Serializable]
         public class Samples
         {

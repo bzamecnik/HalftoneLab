@@ -4,11 +4,72 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Scanning order iterates over image pixels giving their coordinates.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// It passes through all pixel exactly once.
+    /// </para>
+    /// <para>
+    /// Scanning order needs to be initialized before being used.
+    /// </para>
+    /// <para>
+    /// There are two interfaces for iterating over image pixels.
+    /// You can enumerate coordinates using getCoordsEnumerable().
+    /// It is easy to use and simple to implement, but you can't query on
+    /// next pixel existence. The other is a combination of hasNext(),
+    /// next(), CurrentX and CurrentY.
+    /// </para>
+    /// </remarks>
+    /// <example>Example of using getCoordsEnumerable() interface and
+    /// a foreach loop:
+    /// <code>
+    /// ScanningOrder scanOrder = new ScanlineScaningOrder();
+    /// scanOrder.init(width, height);
+    /// foreach (Coordinate<int> coords in scanOrder.getCoordsEnumerable()) {
+    ///     // use coords.X, coords.Y somehow
+    /// }
+    /// </code>
+    /// </example>
+    /// <example>Example of using getCoordsEnumerable() interface and
+    /// an enumerator:
+    /// <code>
+    /// ScanningOrder scanOrder = new ScanlineScaningOrder();
+    /// scanOrder.init(width, height);
+    /// IEnumerator<Coordinate<int>> coordsEnum =
+    ///     scanOrder.getCoordsEnumerable().GetEnumerator();
+    /// for (... other loop ...) {
+    ///     if (coordsEnum.MoveNext()) {
+    ///         // use coordsEnum.Current.X, coordsEnum.Current.Y somehow
+    ///     } else {
+    ///         break;
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
+    /// <example>Example of using hasNext(), next() interface:
+    /// <code>
+    /// ScanningOrder scanOrder = new ScanlineScaningOrder();
+    /// scanOrder.init(width, height);
+    /// while (scanOrder.hasNext()) {
+    ///     scanOrder.next();
+    ///     // use scanOrder.CurrentX, scanOrder.CurrentY somehow
+    /// }
+    /// </code>
+    /// </example>
     [Serializable]
     public abstract class ScanningOrder : Module
     {
-        public int CurrentX { get; protected set; } // (from 0)
-        public int CurrentY { get; protected set; } // (from 0) 
+        /// <summary>
+        /// Current X coordinate (numbered from 0).
+        /// </summary>
+        public int CurrentX { get; protected set; }
+        /// <summary>
+        /// Current X coordinate (numbered from 0).
+        /// </summary>
+        public int CurrentY { get; protected set; }
+
         //[NonSerialized]
         //private Coordinate<int> _currentCoords;
         //public Coordinate<int> CurrentCoords {
@@ -26,6 +87,7 @@ namespace Halftone
         //        _currentCoords = value;
         //    }
         //}
+
         [NonSerialized]
         protected int _width; // image dimensions
         [NonSerialized]
@@ -36,12 +98,41 @@ namespace Halftone
             init(imageRunInfo.Width, imageRunInfo.Height);
         }
 
+        /// <summary>
+        /// Initialize the scanning order with image dimensions.
+        /// </summary>
+        /// <param name="width">Image width</param>
+        /// <param name="height">Image height</param>
         public abstract void init(int width, int height);
+
+        /// <summary>
+        /// Move to next coordinates.
+        /// </summary>
         public abstract void next();
+        
+        /// <summary>
+        /// Is there any pixel not yet visited?
+        /// </summary>
+        /// <returns>True if there are still pixel to visit</returns>
         public abstract bool hasNext();
+        
+        /// <summary>
+        /// Coordinates iterator.
+        /// </summary>
+        /// <remarks>
+        
+        /// </remarks>
+        /// <returns></returns>
         public abstract IEnumerable<Coordinate<int>> getCoordsEnumerable();
     }
 
+    /// <summary>
+    /// Scanline scanning order. Scan in natural order, line by line.
+    /// </summary>
+    /// <remarks>
+    /// It passes through the image in lines going in X coordinate
+    /// (0 -> width -1) direction ordeded in Y direction (0 -> height - 1).
+    /// </remarks>
     [Serializable]
     public class ScanlineScanningOrder : ScanningOrder
     {
@@ -70,6 +161,14 @@ namespace Halftone
         }
     }
 
+    /// <summary>
+    /// Serpentine scanning order. Scan in zig-zag lines.
+    /// </summary>
+    /// <remarks>
+    /// It passes through the image in lines going ordeded in Y direction
+    /// (0 -> height - 1). Odd lines go in X coordinate (0 -> width -1)
+    /// direction, even line in the opposite one (width - 1 -> 0).
+    /// </remarks>
     [Serializable]
     public class SerpentineScanningOrder : ScanningOrder
     {
@@ -110,16 +209,33 @@ namespace Halftone
         }
     }
 
+    /// <summary>
+    /// Scanning order traversing a space-filling curve.
+    /// </summary>
     [Serializable]
     public abstract class SFCScanningOrder : ScanningOrder
     {
     }
 
+    /// <summary>
+    /// Scanning order traversing Hilbert space-filling curve.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The algorithm used for generating Hilbert curve is taken from paper
+    /// Greg Breinholt & Christoph Schierz:
+    ///   Generating Hilbert's space-filling curve by recursion
+    /// (Swiss Federal Institute of Technology)
+    /// </para>
+    /// <para>
+    /// As Hilbert curve is defined only for squares of 2^N side we find
+    /// the smallest such square containing the image rectangle and skip
+    /// all the coordinates outside the image.
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class HilbertScanningOrder : SFCScanningOrder {
-        // - Algorithm 781 - generating Hilbert's space-filling curve by recursion.pdf
-        //   - by GREG BREINHOLT and CHRISTOPH SCHIERZ
-        //   - Swiss Federal Institute of Technology
+        
 
         [NonSerialized]
         private int _size; // _size of a square side (2^N)

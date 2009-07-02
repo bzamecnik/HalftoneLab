@@ -103,6 +103,7 @@ namespace Halftone
         /// <param name="error">Quantization error value</param>
         /// <param name="intensity">Source pixel intensity</param>
         public void setError(double error, int intensity) {
+            // TODO: intensity should be clipped here to 0-255 range!
             Matrix = getRecord(intensity).matrix;
             base.setError(error);
         }
