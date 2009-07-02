@@ -44,7 +44,7 @@ namespace Halftone
             // - the weight are distributed continuously not randomly
             //   (eg. there are no gaps when there are less weights than is capacity for them)
             double remaining = 1.0;
-            IEnumerator<Coordinate<int>> iter = Matrix.GetWeights().GetEnumerator();
+            IEnumerator<Coordinate<int>> iter = Matrix.getCoeffOffsets().GetEnumerator();
             for (int i = 0; i < newCoeffCount; i++) {
                 if (!iter.MoveNext()) {
                     break;

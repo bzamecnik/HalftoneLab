@@ -5,17 +5,44 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Configuration manager holds module configurations and takes care
+    /// of its persistence. Module configuration consist of stucture of
+    /// how module objects are interconnected and of their parameter 
+    /// settings. Each configuration is accessible via its type and textual
+    /// name.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Module configuration is persisted to a file. Binary serialization
+    /// method from .NET is used for persistence. File name must be given
+    /// using ConfigFileName property before .
+    /// </para>
+    /// </remarks>
     public class ConfigManager
     {
         private List<Module> _savedModules;
 
+        /// <summary>
+        /// Configuration file name.
+        /// </summary>
         public string ConfigFileName { get; set; }
 
+        /// <summary>
+        /// Create a configuration manager instance.
+        /// </summary>
         public ConfigManager() {
             _savedModules = new List<Module>();
         }
 
-        // load config from file to memory
+        /// <summary>
+        /// Load configuration from file to memory.
+        /// </summary>
+        /// <remarks>
+        /// Configuration file name is taken from ConfigFileName property.
+        /// If there is any module in the file this function overwrites any
+        /// modules held by the configuration manager in memory.
+        /// </remarks>
         public void load() {
             Stream streamRead = null;
             try {
@@ -35,8 +62,13 @@ namespace Halftone
             }
         }
 
-        // save config from memory to file (possibly creating a new file
-        // or overwriting an existing file)
+        /// <summary>
+        /// Save configuration from memory to file (possibly creating a new
+        /// file or overwriting an existing file).
+        /// </summary>
+        /// <remarks>
+        /// Configuration file name is taken from ConfigFileName property.
+        /// </remarks>
         public void save() {
             Stream streamWrite = null;
             try {
@@ -50,25 +82,51 @@ namespace Halftone
             }
         }
 
-        // find all items matching a predicate
+        /// <summary>
+        /// Find all modules matching a predicate.
+        /// </summary>
+        /// <param name="predicate">Predicate taking a module a returning true
+        /// if modules is accepted.</param>
+        /// <returns>List of modules matching a predicate</returns>
         public List<Module> findAllModules(Predicate<Module> predicate) {
             return _savedModules.FindAll(predicate);
         }
 
+        /// <summary>
+        /// Get a list of all module configurations held by the manager.
+        /// </summary>
+        /// <returns>List of all module configurations.</returns>
         public List<Module> listAllModules() {
             return _savedModules;
         }
 
+        /// <summary>
+        /// Persistently remove all the module configurations.
+        /// </summary>
         public void clear() {
             _savedModules.Clear();
             save();
         }
 
-        // save an item
+        /// <summary>
+        /// Save a module configuration to the manager.
+        /// Changes are persisted automatically.
+        /// </summary>
+        /// <param name="module">Module to be saved.</param>
+        /// <see cref="saveModule(Module module, bool saveImmediately)"/>
         public void saveModule(Module module) {
             saveModule(module, true);
         }
-
+        
+        /// <summary>
+        /// Save a module configuration to the manager. Choose whether to
+        /// persist the change automatically or manually using save()
+        /// function. Manual saving can be useful when adding modules to the
+        /// manager in a batch. Then persistence is done at the end once for
+        /// all modules.
+        /// </summary>
+        /// <param name="module">Module to be saved.</param>
+        /// <param name="saveImmediately">Save automatically now or manually then?</param>
         public void saveModule(Module module, bool saveImmediately) {
             Module moduleCopy = module.deepCopy();
             int index = _savedModules.FindIndex(
@@ -87,7 +145,12 @@ namespace Halftone
             }
         }
 
-        // delete an item (items) matching a predicate
+        /// <summary>
+        /// Delete a module matching a type and name.
+        /// Changes are persisted automatically.
+        /// </summary>
+        /// <param name="type">Module type</param>
+        /// <param name="name">Module configuration name</param>
         public void deleteModule(Type type, string name) {
             _savedModules.RemoveAll(
                 (module) => (type == module.GetType()) && (name == module.Name)

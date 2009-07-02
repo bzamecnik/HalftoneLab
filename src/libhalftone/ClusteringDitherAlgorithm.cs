@@ -5,9 +5,16 @@ using Gimp;
 namespace Halftone
 {
     [Serializable]
-	public abstract class ClusteringDitherAlgorithm : DitherAlgorithm
+	public abstract class CellDitherAlgorithm : DitherAlgorithm
 	{
 	}
+
+    // TODO:
+    // - make a new algorithm:
+    //   - traverse the image on an SFC using cells
+    //   - compute average or median of each cell -> adaptive treshold
+    //   - make tresholding for pixels in that cell
+    // - cell sizes could be varied adaptively using image gradient
 
     // TODO:
     // - solve problem of outputting the last cell
@@ -21,7 +28,7 @@ namespace Halftone
     //     - external Laplace transformation of the whole image
 
     [Serializable]
-    public class SFCAdaptiveClustering : ClusteringDitherAlgorithm
+    public class SFCAdaptiveClustering : CellDitherAlgorithm
     {
         // error filter (optional)
         public VectorErrorFilter ErrorFilter {
@@ -63,9 +70,9 @@ namespace Halftone
             UseAdaptiveClustering = true;
             //UseClusterPositioning = false;
             //ErrorFilter = null;
-            Console.Out.WriteLine("cluster positioning: {0}", UseClusterPositioning);
-            Console.Out.WriteLine("adative clustering: {0}", UseAdaptiveClustering);
-            Console.Out.WriteLine("error filter: {0}", ErrorFilterEnabled);
+            //Console.Out.WriteLine("cluster positioning: {0}", UseClusterPositioning);
+            //Console.Out.WriteLine("adative clustering: {0}", UseAdaptiveClustering);
+            //Console.Out.WriteLine("error filter: {0}", ErrorFilterEnabled);
 
             Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
             {
