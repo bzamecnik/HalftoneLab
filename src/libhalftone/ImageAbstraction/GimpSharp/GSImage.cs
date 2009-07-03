@@ -4,26 +4,47 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Image implementation using GimpSharp facilities.
+    /// </summary>
+    /// <remarks>
+    /// GSImage can use image resources allocated by Gimp.
+    /// In addition is uses an internal buffer to speed things up.
+    /// </remarks>
     public class GSImage : Image
     {
         private Drawable _drawable;
         private Rectangle _rectangle;
         private Gimp.Image _image;
-        private byte[] _imageBuffer; // TODO: this should be a local variable probably
+        private byte[] _imageBuffer;
 
+        /// <summary>
+        /// Underlying Gimp# Drawable. It correspond to one layer.
+        /// </summary>
         public Drawable Drawable {
             get { return _drawable; }
         }
 
+        /// <summary>
+        /// Underlying Gimp# Image. It can consist of several layers.
+        /// </summary>
         public Gimp.Image Image {
             get { return _image; }
         }
 
+        /// <summary>
+        /// Progress indicator to show how much of the image has been
+        /// processed already.
+        /// </summary>
         public Progress Progress { get;  set; }
 
         public override int Width { get { return _rectangle.Width; } }
         public override int Height { get { return _rectangle.Height; } }
 
+        /// <summary>
+        /// Create a GSImage backed with an existing Drawable.
+        /// </summary>
+        /// <param name="drawable"></param>
         public GSImage(Drawable drawable) {
             _drawable = drawable;
             _rectangle = _drawable.MaskBounds;
@@ -31,6 +52,11 @@ namespace Halftone
             Progress = new Progress("Halftone Laboratory");
         }
 
+        /// <summary>
+        /// Create a GSImage backed with a new Gimp# Image.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public GSImage(int width, int height) {
             _image = new Gimp.Image(width, height, ImageBaseType.Gray);
             Layer layer = new Layer(_image, "default", width, height,
@@ -197,31 +223,30 @@ namespace Halftone
 
         // TODO: doesn't work properly, debug!
 
-        public override void IterateSrcDestNoOrder(
-            IterFuncSrcDest pixelFunc)
-        {
-            PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
-            PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
-            double progressPercentage = 0;
-            double progressUnit = (double)(Gimp.Gimp.TileWidth * Gimp.Gimp.TileHeight) / (double)(Width * Height);
-            for (IntPtr pr = PixelRgn.Register(srcPR, destPR); pr != IntPtr.Zero;
-                pr = PixelRgn.Process(pr))
-            {
-                int yEnd = destPR.Y + destPR.H;
-                int xEnd = destPR.X + destPR.W;
-                for (int y = destPR.Y; y < yEnd; y++) {
-                    for (int x = destPR.X; x < xEnd; x++) {
-                        destPR[y, x] = pixelFunc(srcPR[y, x]);
-                    }
-                }
-                progressPercentage += progressUnit;
-                Progress.Update(progressPercentage);
-            }
-            _drawable.Flush();
-            _drawable.MergeShadow(true);
-            _drawable.Update(_rectangle);
-
-        }
+        //public override void IterateSrcDestNoOrder(
+        //    IterFuncSrcDest pixelFunc)
+        //{
+        //    PixelRgn srcPR = new PixelRgn(_drawable, _rectangle, false, false);
+        //    PixelRgn destPR = new PixelRgn(_drawable, _rectangle, true, true);
+        //    double progressPercentage = 0;
+        //    double progressUnit = (double)(Gimp.Gimp.TileWidth * Gimp.Gimp.TileHeight) / (double)(Width * Height);
+        //    for (IntPtr pr = PixelRgn.Register(srcPR, destPR); pr != IntPtr.Zero;
+        //        pr = PixelRgn.Process(pr))
+        //    {
+        //        int yEnd = destPR.Y + destPR.H;
+        //        int xEnd = destPR.X + destPR.W;
+        //        for (int y = destPR.Y; y < yEnd; y++) {
+        //            for (int x = destPR.X; x < xEnd; x++) {
+        //                destPR[y, x] = pixelFunc(srcPR[y, x]);
+        //            }
+        //        }
+        //        progressPercentage += progressUnit;
+        //        Progress.Update(progressPercentage);
+        //    }
+        //    _drawable.Flush();
+        //    _drawable.MergeShadow(true);
+        //    _drawable.Update(_rectangle);
+        //}
 
         public override Pixel getPixel(int x, int y) {
             Pixel pixel = new Pixel(_drawable.Bpp);

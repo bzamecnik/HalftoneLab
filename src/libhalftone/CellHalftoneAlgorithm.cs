@@ -4,10 +4,13 @@ namespace Halftone
 {
     /// <summary>
     /// A halftone algorithm which processes the pixels in continuous groups
-    /// (called cells), performs a computation on the whole cell and then
-    /// ouputs its resulting pixels. This is to differentiate it from other
-    /// algorithms where the computation on pixels is performed separately.
+    /// (cells), performs a computation on the whole cell and then ouputs
+    /// its resulting pixels.
     /// </summary>
+    /// <remarks>
+    /// This is to differentiate it from other
+    /// algorithms where the computation on pixels is performed separately.
+    /// </remarks>
     [Serializable]
 	public abstract class CellHalftoneAlgorithm : HalfoneAlgorithm
 	{

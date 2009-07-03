@@ -4,9 +4,25 @@ using Gimp;
 
 namespace Halftone
 {
+    /// <summary>
+    /// Randomized matrix error-diffusion filter is able to generate
+    /// matrix coefficients randomly.
+    /// </summary>
+    /// <remarks>
+    /// It can use an existing matrix as a template for coefficient positions
+    /// and position of the source pixel. The other way is to randomize
+    /// even the number of coefficients up to the the original matrix
+    /// capacity.
+    /// </remarks>
+    /// <see cref="ErrorMatrix"/>
+    /// <see cref="MatrixErrorFilter"/>
     [Serializable]
     public class RandomizedMatrixErrorFilter : MatrixErrorFilter
     {
+        /// <summary>
+        /// Randomize the number of coefficients in the matrix
+        /// or match the template matrix?
+        /// </summary>
         public bool RandomizeCoeffCount { get; set; }
 
         [NonSerialized]
@@ -20,9 +36,18 @@ namespace Halftone
             }
         }
 
+        /// <summary>
+        /// Create a randomized matrix error filter using an existing
+        /// matrix as a template.
+        /// </summary>
+        /// <param name="matrix">Template error matrix</param>
         public RandomizedMatrixErrorFilter(ErrorMatrix matrix)
             : base(matrix) { }
 
+        /// <summary>
+        /// Create a randomized matrix error filter using a default
+        /// error matrix as a template.
+        /// </summary>
         public RandomizedMatrixErrorFilter() : base() { }
 
         public override void moveNext() {
@@ -30,6 +55,13 @@ namespace Halftone
             generateCoefficients();
         }
 
+        /// <summary>
+        /// Generate matrix coefficients randomly.
+        /// </summary>
+        /// <remarks>
+        /// Ensure that sum of the coefficitents is equal to 1.0 in order
+        /// to distribute exactly 100% of the quantization error.
+        /// </remarks>
         private void generateCoefficients() {
             int newCoeffCount;
             if (RandomizeCoeffCount) {
