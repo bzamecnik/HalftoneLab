@@ -9,7 +9,21 @@ namespace Halftone
     /// Spot functions define screening dot growth depending on intensity.
     /// </summary>
     /// <remarks>
-    /// 
+    /// <para>
+    /// Spot functions define continuous periodic 2-D functions with values
+    /// in range (0.0-1.0). They are parametrized by angle and period
+    /// (distance).
+    /// </para>
+    /// <para>
+    /// Technically spot functions are defined as prototypes using lambda
+    /// functions. When parameters are known, they are 'instantiated' to
+    /// other lambda functions as normal real value 2-D functions.
+    /// </para>
+    /// <para>
+    /// To use a spot function you have to set SpotFuncPrototype property
+    /// and optionally set Angle and Distance properties. Then the spot
+    /// function is available in SpotFunc property.
+    /// </para>
     /// </remarks>
     [Serializable]
     public class SpotFunction : Module
@@ -18,6 +32,13 @@ namespace Halftone
         public delegate int SpotFuncDelegate(int x, int y);
 
         private double _angle = 0;
+        
+        /// <summary>
+        /// Angle of rotation of the screen.
+        /// </summary>
+        /// <value>
+        /// In radians. Default: 0.
+        /// </value>
         public double Angle {
             get { return _angle; }
             set {
@@ -26,6 +47,14 @@ namespace Halftone
             }
         }
         private double _distance = 10;
+
+        /// <summary>
+        /// Distance between screen elements (inverse of frequency)
+        /// = PPI (pixels per inch) / LPI (lines per inch).
+        /// </summary>
+        /// <value>
+        /// In 2-D plane units corresponding to pixels.
+        /// </value>
         public double Distance {
             get { return _distance; }
             set {
@@ -35,6 +64,11 @@ namespace Halftone
         }
 
         private SpotFuncPrototypeDelegate _spotFuncPrototype;
+
+        /// <summary>
+        /// Spot function prototype. There you set the prototype and the
+        /// finished spot function will be available in SpotFunc property.
+        /// </summary>
         public SpotFuncPrototypeDelegate SpotFuncPrototype {
             get { return _spotFuncPrototype; }
             set {
@@ -45,6 +79,11 @@ namespace Halftone
 
         [NonSerialized]
         private SpotFuncDelegate _spotFunc;
+
+        /// <summary>
+        /// Spot function made of a prototype which has been set to
+        /// SpotFuncPrototype property.
+        /// </summary>
         public SpotFuncDelegate SpotFunc {
             get {
                 if (_spotFunc == null) {
@@ -55,6 +94,19 @@ namespace Halftone
             private set { _spotFunc = value; }
         }
 
+        /// <summary>
+        /// Create a spot function with some default parameters.
+        /// </summary>
+        public SpotFunction()
+            : this(SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8) {}
+
+        /// <summary>
+        /// Create a spot function given a prototype and some parameters.
+        /// </summary>
+        /// <param name="spotFuncPrototype">Spot function prototype</param>
+        /// <param name="angle">Screen angle in radians (usually 0-2*PI but
+        /// any real value will do the job)</param>
+        /// <param name="distance">Distance between screen elements</param>
         public SpotFunction(SpotFuncPrototypeDelegate spotFuncPrototype,
             double angle, double distance)
         {
@@ -63,12 +115,9 @@ namespace Halftone
             SpotFuncPrototype = spotFuncPrototype;            
         }
 
-        public static SpotFunction createDefault()
-        {
-            return new SpotFunction(
-                SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8);
-        }
-
+        /// <summary>
+        /// Initialize the spot function from its prototype.
+        /// </summary>
         private void initSpotFunction() {
             if (SpotFuncPrototype != null) {
                 SpotFunc = SpotFuncPrototype(Angle, Distance);
@@ -87,8 +136,7 @@ namespace Halftone
         protected class Util
         {
             /// <summary>
-            /// Rotate coordinates (inX, inY) by a given angle to
-            /// (outX, outY).
+            /// Rotate coordinates (inX, inY) by given angle to (outX, outY).
             /// </summary>
             /// <param name="inX">Input X coordinate</param>
             /// <param name="inY">Input Y coordinate</param>
@@ -113,7 +161,9 @@ namespace Halftone
         [Serializable]
         public class Samples
         {
+            // Euclid dot, growth: circle -> square (at 50% grey) -> circle
             public static SpotFuncPrototypeDelegate euclidDot;
+            // Euclid dot with some noise
             public static SpotFuncPrototypeDelegate perturbedEuclidDot;
             public static SpotFuncPrototypeDelegate squareDot;
             public static SpotFuncPrototypeDelegate line;

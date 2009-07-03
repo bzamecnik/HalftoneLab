@@ -7,12 +7,15 @@ namespace Halftone
 {
     /// <summary>
     /// Configuration manager holds module configurations and takes care
-    /// of its persistence. Module configuration consist of stucture of
+    /// of its persistence.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Module configuration consist of stucture of
     /// how module objects are interconnected and of their parameter 
     /// settings. Each configuration is accessible via its type and textual
     /// name.
-    /// </summary>
-    /// <remarks>
+    /// </para>
     /// <para>
     /// Module configuration is persisted to a file. Binary serialization
     /// method from .NET is used for persistence. File name must be given

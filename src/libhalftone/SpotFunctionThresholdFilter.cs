@@ -20,7 +20,7 @@ namespace Halftone
         /// spot function.
         /// </summary>
         public SpotFunctionThresholdFilter() {
-            SpotFunc = SpotFunction.createDefault();
+            SpotFunc = new SpotFunction();
         }
 
         /// <summary>
