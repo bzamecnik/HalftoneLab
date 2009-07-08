@@ -12,8 +12,9 @@ namespace Halftone
     /// Order in which image pixels are processed is given by a
     /// ScanningOrder module.
     /// </remarks>
+    [Module(TypeName="Thresholding")]
     [Serializable]
-    public class ThresholdHalftoneAlgorithm : HalfoneAlgorithm
+    public class ThresholdHalftoneAlgorithm : HalftoneAlgorithm
     {
         /// <summary>
         /// Threshold filter module. Mandatory.

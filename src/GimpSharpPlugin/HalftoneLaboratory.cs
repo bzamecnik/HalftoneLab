@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Halftone;
-
 using Gtk;
+using Halftone;
 
 namespace Gimp.HalftoneLab
 {
@@ -11,8 +10,8 @@ namespace Gimp.HalftoneLab
     /// </summary>
     class HalftoneLaboratory : Plugin
     {
-        private List<HalfoneAlgorithm> algorithms;
-        private HalfoneAlgorithm selectedAlgorithm;
+        private List<HalftoneAlgorithm> algorithms;
+        private HalftoneAlgorithm selectedAlgorithm;
         [SaveAttribute("algorithm")]
         private string selectedAlgorithmName;
         private ConfigManager configManager;
@@ -49,7 +48,7 @@ namespace Gimp.HalftoneLab
 
             loadAlgorithms();
             ComboBox algorithmCombo = ComboBox.NewText();
-            foreach (HalfoneAlgorithm alg in algorithms) {
+            foreach (HalftoneAlgorithm alg in algorithms) {
                 algorithmCombo.AppendText(alg.Name);
             }
             algorithmCombo.Changed += delegate
@@ -61,6 +60,20 @@ namespace Gimp.HalftoneLab
                 }
             };
             algorithmCombo.Active = 0;
+
+            vbox.PackStart(algorithmCombo, false, false, 0);
+
+            //Button editButton = new Button("Edit ThresholdHalftoneAlgorithm");
+            //editButton.Clicked += delegate
+            //{
+            //    ThresholdHalftoneAlgorithmDialog algDialog =
+            //        new ThresholdHalftoneAlgorithmDialog();
+            //    ThresholdHalftoneAlgorithm module =
+            //        algDialog.runConfiguration() as ThresholdHalftoneAlgorithm;
+            //    Console.WriteLine(module);
+            //};
+            //editButton.Show();
+            //dialog.VBox.PackStart(editButton);
 
             vbox.PackStart(algorithmCombo, false, false, 0);
 
@@ -91,8 +104,8 @@ namespace Gimp.HalftoneLab
             configManager = new ConfigManager() { ConfigFileName = "halftonelab.cfg" };
             configManager.load();
             algorithms = configManager.findAllModules(
-                module => module is HalfoneAlgorithm
-                ).ConvertAll<HalfoneAlgorithm>(module => module as HalfoneAlgorithm);
+                module => module is HalftoneAlgorithm
+                ).ConvertAll<HalftoneAlgorithm>(module => module as HalftoneAlgorithm);
         }
     }
 }

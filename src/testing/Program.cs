@@ -1,12 +1,48 @@
 ﻿using System;
 using Halftone;
+using Gtk;
+using Gimp.HalftoneLab;
 
 namespace testing
 {
     class Program
     {
         static void Main(string[] args) {
-            ConfigManagerTest.run();
+            //ConfigManagerTest.run();
+            ConfigGUI.run();
+        }
+    }
+
+    class ConfigGUI {
+        public static void run() {
+            Application.Init();
+
+            Window window = new Window("hello world");
+            window.DeleteEvent += new DeleteEventHandler(
+                delegate { Application.Quit(); });
+
+            HalftoneAlgorithm module;
+            SubmoduleSelector<HalftoneAlgorithm>
+                halftoneAlgorithmSelector =
+                new SubmoduleSelector<HalftoneAlgorithm>();
+            halftoneAlgorithmSelector.ModuleChanged += delegate
+            {
+                module = halftoneAlgorithmSelector.Module;
+                Console.WriteLine(module);
+            };
+
+            Table table = new Table(1, 2, false);
+            table.Attach(new Label("Halftone algorithm"), 0, 1, 0, 1,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            table.Attach(halftoneAlgorithmSelector, 1, 2, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            table.ShowAll();
+
+            window.Add(table);
+            window.Show();
+
+            Application.Run();
         }
     }
 

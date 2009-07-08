@@ -63,6 +63,7 @@
     <Compile Include="MatrixThresholdFilter.cs" />
     <Compile Include="imageAbstraction\Pixel.cs" />
     <Compile Include="Module.cs" />
+    <Compile Include="ModuleAttribute.cs" />
     <Compile Include="PerturbedErrorFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="imageAbstraction\ScanningOrder.cs" />

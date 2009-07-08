@@ -73,15 +73,29 @@
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigDialog.cs" />
     <Compile Include="HalftoneLaboratory.cs" />
+    <Compile Include="ModuleRegistry.cs" />
+    <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\ErrorMatrixDialog.cs" />
+    <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\MatrixThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\PerturbedErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\RandomizedMatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\SFCClusteringAlgorithmDialog.cs" />
+    <Compile Include="moduleUI\SpotFunctionDialog.cs" />
+    <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\ThresholdHalftoneAlgorithmDialog.cs" />
+    <Compile Include="moduleUI\ThresholdMatrixDialog.cs" />
+    <Compile Include="moduleUI\VectorErrorFilterDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubmoduleSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libhalftone\libhalftone.csproj">
