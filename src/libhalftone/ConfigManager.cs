@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -120,7 +120,7 @@ namespace Halftone
         public void saveModule(Module module) {
             saveModule(module, true);
         }
-        
+
         /// <summary>
         /// Save a module configuration to the manager. Choose whether to
         /// persist the change automatically or manually using save()

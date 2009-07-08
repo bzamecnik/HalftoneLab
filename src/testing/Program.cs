@@ -207,9 +207,9 @@ namespace testing
                     {
                         SpotFunction = euclidDotSpotFunction,
                         Effects = {
-                            //ImageThresholdFilter.Generator.pixelizeEffect,
-                            //ImageThresholdFilter.Generator.rippleEffect
-                            ImageThresholdFilter.Generator.canvasEffect
+                            ImageThresholdFilter.Generator.pixelizeEffect,
+                            ImageThresholdFilter.Generator.rippleEffect
+                            //ImageThresholdFilter.Generator.canvasEffect
                         }
                     }
                 };

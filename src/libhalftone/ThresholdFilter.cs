@@ -4,6 +4,7 @@ using Gimp;
 namespace Halftone
 {
     /// <summary>
+    /// TODO: correct this!!!
     /// Threshold halftone algorithm acts as a base class for halftone algorithms
     /// that perform bi-level intensity quantization using a threshold.
     /// </summary>
@@ -23,7 +24,7 @@ namespace Halftone
     /// </remarks>
     [Serializable]
     public abstract class ThresholdFilter : Module
-	{
+    {
         /// <summary>
         /// Quantize pixel intensity to two levels. Input and output pixel
         /// is of Pixel type.
@@ -31,14 +32,14 @@ namespace Halftone
         /// <param name="pixel">Input pixel with intensity (0-255) and
         /// coordinates</param>
         /// <returns>Pixel with quantized intensity (0-255)</returns>
-		public Pixel quantize(Pixel pixel) {
+        public Pixel quantize(Pixel pixel) {
             // TODO: get rid of the condition:
             pixel[0] = (pixel[0] < threshold(pixel[0], pixel.X, pixel.Y))
                 ? 0 : 255;
             // show thresholding map:
             //pixel[0] = threshold(pixel[0], pixel.X, pixel.Y); // DEBUG
-			return pixel;
-		}
+            return pixel;
+        }
 
         /// <summary>
         /// Quantize pixel intensity to two levels.
@@ -81,5 +82,5 @@ namespace Halftone
         /// <param name="y">Pixel Y coordinate</param>
         /// <returns>Threshold value (0-255)</returns>
         protected abstract int threshold(int intensity, int x, int y);
-	}
+    }
 }
