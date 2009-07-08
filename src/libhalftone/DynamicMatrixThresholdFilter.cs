@@ -52,7 +52,7 @@ namespace Halftone
         private SortedList<int, ThresholdTableRecord> _thresholdTable;
 
         [NonSerialized]
-        Random _randomGenerator = null;
+        private Random _randomGenerator = null;
 
         private Random RandomGenerator {
             get {

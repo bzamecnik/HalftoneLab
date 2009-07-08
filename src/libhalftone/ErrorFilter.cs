@@ -31,7 +31,7 @@ namespace Halftone
     /// </remarks>
     [Serializable]
     public abstract class ErrorFilter : Module
-	{
+    {
         /// <summary>
         /// Indicates being successful prepared after Module.init() function
         /// call. This usually means that an internal error buffer is alright.
@@ -57,7 +57,7 @@ namespace Halftone
         /// </summary>
         /// <returns>Accumulated error for current pixel position.</returns>
         public abstract double getError();
-        
+
         /// <summary>
         /// <para>
         /// Diffuse quantization error value from current pixel to
@@ -77,5 +77,5 @@ namespace Halftone
         /// It might use different scanning order strategies.
         /// </summary>
         public abstract void moveNext();
-	}
+    }
 }

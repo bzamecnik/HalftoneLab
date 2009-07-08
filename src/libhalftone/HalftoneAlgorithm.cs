@@ -11,8 +11,8 @@ namespace Halftone
     /// plugable submodules to do
     /// </remarks>
     [Serializable]
-	public abstract class HalfoneAlgorithm : Module
-	{
+    public abstract class HalfoneAlgorithm : Module
+    {
         /// <summary>
         /// Run the algoritm with current configuration.
         /// Image contents are overwritten with its halftoned version.
@@ -24,5 +24,5 @@ namespace Halftone
         /// <param name="image">Both input and output image.</param>
         public abstract void run(Image image);
         // TODO: global progress
-	}
+    }
 }

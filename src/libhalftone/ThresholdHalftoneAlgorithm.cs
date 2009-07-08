@@ -13,13 +13,13 @@ namespace Halftone
     /// ScanningOrder module.
     /// </remarks>
     [Serializable]
-	public class ThresholdHalftoneAlgorithm : HalfoneAlgorithm
-	{
+    public class ThresholdHalftoneAlgorithm : HalfoneAlgorithm
+    {
         /// <summary>
         /// Threshold filter module. Mandatory.
         /// </summary>
         public ThresholdFilter ThresholdFilter { get; set; }
-		
+
         /// <summary>
         /// Error filter module. Optional (leave it null not to use it).
         /// </summary>
@@ -45,24 +45,24 @@ namespace Halftone
         /// <param name="thresholdFilter">Threshold filter</param>
         /// <param name="errorFilter">Error filter (optional)</param>
         /// <param name="scanningOrder">Scanning order</param>
-		public ThresholdHalftoneAlgorithm(
+        public ThresholdHalftoneAlgorithm(
             ThresholdFilter thresholdFilter,
             ErrorFilter errorFilter,
             ScanningOrder scanningOrder
             )
-		{
-			ThresholdFilter = thresholdFilter;
-			ErrorFilter = errorFilter;
+        {
+            ThresholdFilter = thresholdFilter;
+            ErrorFilter = errorFilter;
             ScanningOrder = scanningOrder;
-		}
-		
+        }
+
         /// <summary>
         /// Create a threshold halftone algorithm skeleton with no error filter
         /// and default scanning order (scanline).
         /// </summary>
         /// <param name="thresholdFilter"></param>
-		public ThresholdHalftoneAlgorithm(ThresholdFilter thresholdFilter)
-		    : this(thresholdFilter, null, new ScanlineScanningOrder()) {}
+        public ThresholdHalftoneAlgorithm(ThresholdFilter thresholdFilter)
+            : this(thresholdFilter, null, new ScanlineScanningOrder()) {}
 
         /// <summary>
         /// Create a threshold halftone algorithm skeleton with default threshold
@@ -81,7 +81,7 @@ namespace Halftone
         /// to the copy and at the end replace the original with the copy.
         /// </remarks>
         /// <param name="image">Image - both input and output</param>
-		public override void run(Image image) {
+        public override void run(Image image) {
             if ((ThresholdFilter == null) || (ScanningOrder == null)) {
                 return; // TODO: throw an exception
             }
@@ -92,7 +92,7 @@ namespace Halftone
                 Width = image.Width
             };
             init(imageRunInfo);
-            
+
             Image.IterFuncSrcDest pixelFunc;
             if (ErrorFilterEnabled) {
                 // error diffusion enabled
@@ -110,7 +110,7 @@ namespace Halftone
                 pixelFunc = ((pixel) => ThresholdFilter.quantize(pixel));
             }
             image.IterateSrcDestDirect(pixelFunc, ScanningOrder);
-		}
+        }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
@@ -120,5 +120,5 @@ namespace Halftone
             ThresholdFilter.init(imageRunInfo);
             ScanningOrder.init(imageRunInfo);
         }
-	}
+    }
 }
