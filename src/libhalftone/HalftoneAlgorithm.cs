@@ -11,7 +11,7 @@ namespace Halftone
     /// plugable submodules to do
     /// </remarks>
     [Serializable]
-    public abstract class HalfoneAlgorithm : Module
+    public abstract class HalftoneAlgorithm : Module
     {
         /// <summary>
         /// Run the algoritm with current configuration.

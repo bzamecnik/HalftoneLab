@@ -33,6 +33,12 @@ namespace Halftone
         public ThresholdMatrix(int[,] matrix)
             : base(matrix) { }
 
+        /// <summary>
+        /// Create a default threshold matrix with one coefficient at 128.
+        /// </summary>
+        public ThresholdMatrix()
+            : this(new int[1, 1] { { 128 } }) { }
+
         public override Matrix<int> Clone() {
             return new ThresholdMatrix(matrix);
         }

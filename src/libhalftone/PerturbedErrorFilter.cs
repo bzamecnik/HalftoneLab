@@ -126,6 +126,12 @@ namespace Halftone
             ChildFilter = childFilter;
         }
 
+        /// <summary>
+        /// Create a default perturbed error filter.
+        /// </summary>
+        public PerturbedErrorFilter()
+            : this(new MatrixErrorFilter()) {}
+
         public override double getError() {
             return ChildFilter.getError();
         }
@@ -195,9 +201,11 @@ namespace Halftone
                 } else if (coeffs.Count > 0) {
                     // a space odd coeff, bind to to the last group
                     // (it will contain 3 coeffs)
-                    _coeffGroups[_coeffGroups.Count - 1].addCoeff(group1);
+                    if (_coeffGroups.Count > 0) {
+                        _coeffGroups[_coeffGroups.Count - 1].addCoeff(group1);
+                    }
+                    // else: single coeff, don't perturb at all
                 }
-                // else: single coeff, don't perturb at all
             }
             //// ???
             //foreach (CoeffGroup group in _coeffGroups) {

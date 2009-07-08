@@ -12,7 +12,7 @@ namespace Halftone
     /// algorithms where the computation on pixels is performed separately.
     /// </remarks>
     [Serializable]
-    public abstract class CellHalftoneAlgorithm : HalfoneAlgorithm
+    public abstract class CellHalftoneAlgorithm : HalftoneAlgorithm
     {
     }
 

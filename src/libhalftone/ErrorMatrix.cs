@@ -147,6 +147,12 @@ namespace Halftone
         }
 
         /// <summary>
+        /// Create a default error matrix.
+        /// </summary>
+        public ErrorMatrix()
+            : this(new int[,] {{0, 1}}, 1, 1) { }
+
+        /// <summary>
         /// Compute a cached matrix of coefficient values.
         /// Scale the working matrix coefficients if necessary.
         /// Their sum must be equal to 1.0.
