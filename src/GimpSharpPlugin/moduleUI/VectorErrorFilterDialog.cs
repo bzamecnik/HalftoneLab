@@ -22,7 +22,7 @@ namespace Gimp.HalftoneLab
                 module = modifiedModule as VectorErrorFilter;
             }
 
-            errorMatrixEditButton = new Button("Edit");
+            errorMatrixEditButton = new Button("gtk-edit");
             errorMatrixEditButton.Clicked += delegate
             {
                 if (module != null) {

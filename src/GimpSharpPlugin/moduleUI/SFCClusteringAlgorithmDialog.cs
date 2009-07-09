@@ -58,14 +58,20 @@ namespace Gimp.HalftoneLab
                 module.ScanningOrder = scanningOrderSelector.Module;
             };
 
-            maxCellSizeSpinButton = new SpinButton(1, 100, 1);
+            maxCellSizeSpinButton = new SpinButton(1, 100, 1)
+            {
+                Numeric = true
+            };
             maxCellSizeSpinButton.Value = module.MaxCellSize;
             maxCellSizeSpinButton.Changed += delegate
             {
                 module.MaxCellSize = maxCellSizeSpinButton.ValueAsInt;
             };
 
-            minCellSizeSpinButton = new SpinButton(1, 99, 1);
+            minCellSizeSpinButton = new SpinButton(1, 99, 1)
+            {
+                Numeric = true
+            };
             minCellSizeSpinButton.Value = module.MinCellSize;
             minCellSizeSpinButton.Changed += delegate
             {

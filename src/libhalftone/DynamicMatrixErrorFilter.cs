@@ -37,8 +37,10 @@ namespace Halftone
         /// and searching there.
         /// </remarks>
         [Serializable]
-        class ErrorTableRecord : IComparable<ErrorTableRecord>
+        public class ErrorTableRecord : IComparable<ErrorTableRecord>
         {
+            // TODO: use properties
+
             /// <summary>
             /// Starting intensity of the range (0-255).
             /// </summary>
@@ -47,6 +49,16 @@ namespace Halftone
             /// Error matrix for that range.
             /// </summary>
             public ErrorMatrix matrix;
+
+            public ErrorTableRecord(int intensityRangeStart,
+                ErrorMatrix matrix)
+            {
+                this.intensityRangeStart = intensityRangeStart;
+                this.matrix = matrix;
+            }
+
+            public ErrorTableRecord()
+                : this(0, ErrorMatrix.Samples.Default) { }
 
             public int CompareTo(ErrorTableRecord other) {
                 return intensityRangeStart.CompareTo(other.intensityRangeStart);
@@ -76,11 +88,7 @@ namespace Halftone
         /// <remarks>
         /// It can be used when the intensity range table is empty.
         /// </remarks>
-        private static ErrorTableRecord _defaultRecord = new ErrorTableRecord()
-        {
-            intensityRangeStart = 0,
-            matrix = ErrorMatrix.Samples.Default
-        };
+        private static ErrorTableRecord _defaultRecord = new ErrorTableRecord();
 
         /// <summary>
         /// Create a dynamic matrix error filter.
@@ -113,14 +121,26 @@ namespace Halftone
         /// associated with given pixel intensity.
         /// </summary>
         /// <param name="intensity">Pixel intensity (0-255)</param>
-        /// <returns>Proper intensity range record of a default one if the
+        /// <returns>Proper intensity range record or a default one if the
         /// intensity range table is empty</returns>
-        ErrorTableRecord getRecord(int intensity) {
+        public ErrorTableRecord getRecord(int intensity) {
+            return getRecord(intensity, true);
+        }
+
+        /// <summary>
+        /// Get an intensity range record (containing an error matrix)
+        /// associated with given pixel intensity.
+        /// </summary>
+        /// <param name="intensity">Pixel intensity (0-255)</param>
+        /// <param name="getDefault">Replace null with a default record?</param>
+        /// <returns>Proper intensity range record or a null if the
+        /// intensity range table is empty</returns>
+        public ErrorTableRecord getRecord(int intensity, bool getDefault) {
             // this is an upper bound, lower bound idea from:
             // http://stackoverflow.com/questions/594518/is-there-a-lower-bound-function-in-c-on-a-sortedlist
             ErrorTableRecord record = _recordTable.LastOrDefault(
                 x => x.Key <= intensity).Value;
-            if (record == null) {
+            if ((record == null) && getDefault) {
                 record = _defaultRecord;
             }
             return record;
@@ -130,32 +150,31 @@ namespace Halftone
         /// Add a new intensity range record to the table.
         /// </summary>
         /// <remarks>
-        /// If there already is a record with the same intensity move it one
-        /// step further (if there is a free place), otherwise it is
+        /// If there already is a record with the same intensity it is
         /// overwritten.
         /// </remarks>
         /// <param name="intensityRangeStart">Start intensity of the range
         /// (0-255)</param>
         /// <param name="matrix">Error matrix for that range</param>
-        public void addRecord(int intensityRangeStart, ErrorMatrix matrix) {
+        public bool addRecord(int intensityRangeStart, ErrorMatrix matrix) {
             //if ((intensityRangeStart < 0) || (intensityRangeStart > 255)) { return; }
-            ErrorTableRecord newRecord = new ErrorTableRecord()
-            {
-                intensityRangeStart = intensityRangeStart,
-                matrix = matrix,
-            };
+            ErrorTableRecord newRecord = new ErrorTableRecord(intensityRangeStart,
+                matrix);
             if (_recordTable.ContainsKey(intensityRangeStart)) {
-                if (!_recordTable.ContainsKey(intensityRangeStart + 1)) {
-                    // copy existing record one step further
-                    _recordTable.Add(intensityRangeStart + 1,
-                        _recordTable[intensityRangeStart]);
-                }
+                ////move it one step further (if there is a free place)
+                //if (!_recordTable.ContainsKey(intensityRangeStart + 1)) {
+                //    // copy existing record one step further
+                //    _recordTable.Add(intensityRangeStart + 1,
+                //        _recordTable[intensityRangeStart]);
+                //}
                 // replace the record with new one
                 _recordTable[intensityRangeStart] = newRecord;
+                return false;
             } else {
                 // add a new record
                 _recordTable.Add(intensityRangeStart, newRecord);
             }
+            return true;
         }
 
         /// <summary>
@@ -168,6 +187,10 @@ namespace Halftone
         /// (0-255)</param>
         public void deleteRecord(int intensityRangeStart) {
             _recordTable.Remove(intensityRangeStart);
+        }
+
+        public IEnumerable<ErrorTableRecord> listRecords() {
+            return _recordTable.Values.AsEnumerable();
         }
 
         /// <summary>

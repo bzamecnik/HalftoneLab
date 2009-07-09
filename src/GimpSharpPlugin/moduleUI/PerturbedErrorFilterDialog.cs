@@ -8,7 +8,7 @@ namespace Gimp.HalftoneLab
     {
         private PerturbedErrorFilter module;
         private SubmoduleSelector<MatrixErrorFilter> childFilterSelector;
-        private SpinButton perturbationAmplitudeSpinButton;
+        private HScale perturbationAmplitudeHScale;
         private Table table;
 
         public PerturbedErrorFilterDialog()
@@ -31,12 +31,12 @@ namespace Gimp.HalftoneLab
                 module.ChildFilter = childFilterSelector.Module;
             };
 
-            perturbationAmplitudeSpinButton = new SpinButton(0.0, 1.0, 0.1);
-            perturbationAmplitudeSpinButton.Value =
+            perturbationAmplitudeHScale = new HScale(0.0, 1.0, 0.01);
+            perturbationAmplitudeHScale.Value =
                 module.PerturbationAmplitude;
-            perturbationAmplitudeSpinButton.Changed += delegate
+            perturbationAmplitudeHScale.ValueChanged += delegate
             {
-                module.PerturbationAmplitude = perturbationAmplitudeSpinButton.Value;
+                module.PerturbationAmplitude = perturbationAmplitudeHScale.Value;
             };
 
             table = new Table(2, 2, false)
@@ -50,7 +50,7 @@ namespace Gimp.HalftoneLab
             table.Attach(new Label("Perturbation amplitude")
                 { Xalign = 0.0f }, 0, 1, 1, 2, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
-            table.Attach(perturbationAmplitudeSpinButton, 1, 2, 1, 2,
+            table.Attach(perturbationAmplitudeHScale, 1, 2, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
             table.ShowAll();
