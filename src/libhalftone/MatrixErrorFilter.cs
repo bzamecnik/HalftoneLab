@@ -14,13 +14,15 @@ namespace Halftone
 
         public ErrorMatrix Matrix {
             get { return _matrix; }
-            protected set {
-                // Resize the buffer if a matrix with different _height is set
-                // Note: buffer _width depends on image _size
-                if ((Buffer != null) && (value.Height != _matrix.Height)) {
-                    Buffer.resize(_matrix.Height, Buffer.Width);
+            set {
+                if (value != null) {
+                    // Resize the buffer if a matrix with different _height is set
+                    // Note: buffer _width depends on image _size
+                    if ((Buffer != null) && (value.Height != _matrix.Height)) {
+                        Buffer.resize(_matrix.Height, Buffer.Width);
+                    }
+                    _matrix = value;
                 }
-                _matrix = value;
             }
         }
 

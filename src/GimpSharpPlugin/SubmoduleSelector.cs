@@ -6,7 +6,8 @@ namespace Gimp.HalftoneLab
 {
     // TODO:
     // *- show ModuleAttribute.TypeName as ComboBox text
-    // - show ModuleAttribute.TypeDescription as ComboBox tool-tip
+    // - show ModuleAttribute.TypeDescription as a ComboBox tool-tip
+    //   or in a separate frame
     // *- null checkbox
 
     public class SubmoduleSelector<ModuleType> : Table
@@ -68,6 +69,7 @@ namespace Gimp.HalftoneLab
         public SubmoduleSelector(ModuleType existingModule)
             : base(1, 3, false)
         {
+            ColumnSpacing = RowSpacing = 5;
             editButton = new Button("Edit");
             nullCheckButton = new CheckButton("Null");
             Module = existingModule;
@@ -75,13 +77,18 @@ namespace Gimp.HalftoneLab
 
             ModuleRegistry moduleRegistry = ModuleRegistry.Instance;
 
+            nullCheckButton.Toggled += delegate
+            {
+                IsNull = nullCheckButton.Active;
+            };
+
             typeStore = new ListStore(typeof(string), typeof(Type));
             string[] errorFilterSubtypes = moduleRegistry.getSubmodules(
                 typeof(ModuleType).Name);
             foreach (string moduleTypeName in errorFilterSubtypes) {
                 Type type = moduleRegistry.getModuleType(moduleTypeName);
                 ModuleAttribute attribute =
-                    ModuleRegistry.getModuleAttribute(type);
+                    moduleRegistry.getModuleAttribute(moduleTypeName);
                 string text = ((attribute != null) && (attribute.TypeName != null))
                     ? attribute.TypeName : moduleTypeName;
                 typeStore.AppendValues(text, type);
@@ -91,6 +98,7 @@ namespace Gimp.HalftoneLab
             typeComboBox.PackStart(renderer, true);
             typeComboBox.SetAttributes(renderer, "text", 0);
             
+            nullCheckButton.Active = Module == null;
             // set existing module type as active
             if (Module != null) {
                 string activeTypeName = Module.GetType().Name;
@@ -104,8 +112,8 @@ namespace Gimp.HalftoneLab
                 if (selectedModule != null) {
                     Module = selectedModule;
                 }
+                nullCheckButton.Active = Module == null;
             };
-            typeComboBox.ShowAll();
 
             editButton.Clicked += delegate
             {
@@ -124,13 +132,6 @@ namespace Gimp.HalftoneLab
                     }
                 }
             };
-            editButton.Show();
-
-            nullCheckButton.Toggled += delegate
-            {
-                IsNull = nullCheckButton.Active;
-            };
-            nullCheckButton.Show();
 
             Attach(typeComboBox, 0, 1, 0, 1,
                     AttachOptions.Fill | AttachOptions.Expand,
@@ -139,7 +140,7 @@ namespace Gimp.HalftoneLab
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             Attach(nullCheckButton, 2, 3, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            Show();
+            ShowAll();
         }
 
         private Type ActiveModuleType {

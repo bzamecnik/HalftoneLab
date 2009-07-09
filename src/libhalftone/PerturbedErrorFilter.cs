@@ -40,7 +40,7 @@ namespace Halftone
             }
             set {
                 _childFilter = value;
-                prepare();
+                //prepare();
             }
         }
 

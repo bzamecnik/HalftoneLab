@@ -21,8 +21,8 @@ namespace Halftone
         /// </remarks>
         public ErrorMatrix Matrix {
             get { return _matrix; }
-            protected set {
-                if (value.Height != 1) {
+            set {
+                if ((value == null) || (value.Height != 1)) {
                     return;
                 }
                 // Resize the buffer if a matrix with different _width is set

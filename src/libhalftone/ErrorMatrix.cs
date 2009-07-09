@@ -43,14 +43,14 @@ namespace Halftone
         /// Matrix height (= max Y coordinate + 1).
         /// </summary>
         public int Height {
-            get { return _workingMatrix.GetLength(0); }
+            get { return _definitionMatrix.GetLength(0); }
         }
 
         /// <summary>
         /// Matrix width (= max X coordinate + 1).
         /// </summary>
         public int Width {
-            get { return _workingMatrix.GetLength(1); }
+            get { return _definitionMatrix.GetLength(1); }
         }
 
         /// <summary>

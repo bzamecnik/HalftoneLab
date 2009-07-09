@@ -20,6 +20,7 @@ namespace Halftone
     /// Adaptive clustering algorithm on a Space-Filling Curve by
     /// Velho & Gomes.
     /// </summary>
+    [Module(TypeName="SFC clustering algorithm")]
     [Serializable]
     public class SFCClusteringAlgorithm : CellHalftoneAlgorithm
     {
@@ -29,16 +30,19 @@ namespace Halftone
             set;
         }
 
-        public ScanningOrder ScanningOrder { // TODO: SFCScanningOrder
+        public SFCScanningOrder ScanningOrder { // TODO: SFCScanningOrder
             get;
             set;
         }
 
         bool ErrorFilterEnabled {
             get {
-                return (ErrorFilter != null) && ErrorFilter.Initialized;
+                return UseErrorFilter && (ErrorFilter != null) &&
+                    ErrorFilter.Initialized;
             }
         }
+
+        public bool UseErrorFilter { get; set; }
 
         // Maximum cell size
         public int MaxCellSize { get; set; }
@@ -53,6 +57,9 @@ namespace Halftone
         public bool UseAdaptiveClustering { get; set; }
 
         public SFCClusteringAlgorithm() {
+            ErrorFilter = new VectorErrorFilter();
+            UseErrorFilter = true;
+            ScanningOrder = new HilbertScanningOrder();
             MaxCellSize = 31;
             MinCellSize = 3;
             UseClusterPositioning = true;

@@ -17,7 +17,7 @@ namespace testing
         public static void run() {
             Application.Init();
 
-            Window window = new Window("hello world");
+            Window window = new Window("Halftone Laboratory");
             window.DeleteEvent += new DeleteEventHandler(
                 delegate { Application.Quit(); });
 
@@ -31,7 +31,8 @@ namespace testing
                 Console.WriteLine(module);
             };
 
-            Table table = new Table(1, 2, false);
+            Table table = new Table(1, 2, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
             table.Attach(new Label("Halftone algorithm"), 0, 1, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(halftoneAlgorithmSelector, 1, 2, 0, 1,
@@ -69,7 +70,7 @@ namespace testing
             };
             //config.saveModule(serpentineScanOrder, false);
 
-            ScanningOrder hilbertScanOrder = new HilbertScanningOrder()
+            SFCScanningOrder hilbertScanOrder = new HilbertScanningOrder()
             {
                 Name = "Hilbert",
                 Description = "Hilbert Space-Filling Curve"

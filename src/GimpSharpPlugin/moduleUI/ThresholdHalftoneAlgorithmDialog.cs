@@ -7,11 +7,9 @@ namespace Gimp.HalftoneLab
     public class ThresholdHalftoneAlgorithmDialog : ConfigDialog
     {
         private ThresholdHalftoneAlgorithm module;
-        private Label thresholdFilterLabel;
-        private Label errorFilterLabel;
-        private Label scanningOrderLabel;
         private SubmoduleSelector<ThresholdFilter> thresholdFilterSelector;
         private SubmoduleSelector<ErrorFilter> errorFilterSelector;
+        private CheckButton useErrorFilterCheckButton;
         private SubmoduleSelector<ScanningOrder> scanningOrderSelector;
         private Table table;
 
@@ -20,14 +18,13 @@ namespace Gimp.HalftoneLab
 
         public ThresholdHalftoneAlgorithmDialog(
             ThresholdHalftoneAlgorithm existingModule)
-            : base(existingModule) {
+            : base(existingModule)
+        {
             module = modifiedModule as ThresholdHalftoneAlgorithm;
-            thresholdFilterLabel = new Label("Threshold filter");
-            thresholdFilterLabel.Show();
-            errorFilterLabel = new Label("Error filter");
-            errorFilterLabel.Show();
-            scanningOrderLabel = new Label("Scanning order");
-            scanningOrderLabel.Show();
+            if (module == null) {
+                modifiedModule = new ThresholdHalftoneAlgorithm();
+                module = modifiedModule as ThresholdHalftoneAlgorithm;
+            }
 
             thresholdFilterSelector = new SubmoduleSelector<ThresholdFilter>(
                 module.ThresholdFilter);
@@ -44,6 +41,22 @@ namespace Gimp.HalftoneLab
             errorFilterSelector.ModuleChanged += delegate
             {
                 module.ErrorFilter = errorFilterSelector.Module;
+                useErrorFilterCheckButton.Active &=
+                    errorFilterSelector.Module != null;
+                useErrorFilterCheckButton.Sensitive =
+                    errorFilterSelector.Module != null;
+            };
+
+            useErrorFilterCheckButton = new CheckButton(
+                "Use error filter?");
+            useErrorFilterCheckButton.Active =
+                module.UseErrorFilter;
+            useErrorFilterCheckButton.Sensitive =
+                    errorFilterSelector.Module != null;
+            useErrorFilterCheckButton.Toggled += delegate
+            {
+                module.UseErrorFilter =
+                    useErrorFilterCheckButton.Active;
             };
 
             scanningOrderSelector = new SubmoduleSelector<ScanningOrder>(
@@ -53,23 +66,32 @@ namespace Gimp.HalftoneLab
                 module.ScanningOrder = scanningOrderSelector.Module;
             };
 
-            table = new Table(3, 2, false);
-            table.Attach(thresholdFilterLabel, 0, 1, 0, 1,
+            table = new Table(3, 2, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+            
+            table.Attach(new Label("Threshold filter") { Xalign = 0.0f}, 0, 1, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(thresholdFilterSelector, 1, 2, 0, 1,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            table.Attach(errorFilterLabel, 0, 1, 1, 2,
+
+            table.Attach(new Label("Error filter") { Xalign = 0.0f }, 0, 1, 1, 2,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(errorFilterSelector, 1, 2, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            table.Attach(scanningOrderLabel, 0, 1, 2, 3,
-                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            table.Attach(scanningOrderSelector, 1, 2, 2, 3,
+
+            table.Attach(useErrorFilterCheckButton, 0, 2, 2, 3,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            table.Show();
+
+            table.Attach(new Label("Scanning order") { Xalign = 0.0f },
+                0, 1, 3, 4, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            table.Attach(scanningOrderSelector, 1, 2, 3, 4,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+
+            table.ShowAll();
             VBox.PackStart(table);
         }
     }
