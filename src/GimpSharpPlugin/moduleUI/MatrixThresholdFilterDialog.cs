@@ -23,7 +23,7 @@ namespace Gimp.HalftoneLab
                 module = modifiedModule as MatrixThresholdFilter;
             }
 
-            thresholdMatrixEditButton = new Button("Edit");
+            thresholdMatrixEditButton = new Button("gtk-edit");
             thresholdMatrixEditButton.Clicked += delegate
             {
                 if (module != null) {

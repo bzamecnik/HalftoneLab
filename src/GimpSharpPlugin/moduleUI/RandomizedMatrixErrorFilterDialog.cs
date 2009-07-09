@@ -24,7 +24,7 @@ namespace Gimp.HalftoneLab
                 module = modifiedModule as RandomizedMatrixErrorFilter;
             }
 
-            errorMatrixEditButton = new Button("Edit");
+            errorMatrixEditButton = new Button("gtk-edit");
             errorMatrixEditButton.Clicked += delegate
             {
                 ErrorMatrix configuredMatrix = null;
@@ -44,7 +44,8 @@ namespace Gimp.HalftoneLab
                     randCoeffCountCheckButton.Active;
             };
 
-            table = new Table(2, 2, false) { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+            table = new Table(2, 2, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
             table.Attach(new Label("Error matrix") { Xalign = 0.0f },
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink,
                 0, 0);

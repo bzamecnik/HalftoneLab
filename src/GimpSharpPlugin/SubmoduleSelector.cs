@@ -70,8 +70,8 @@ namespace Gimp.HalftoneLab
             : base(1, 3, false)
         {
             ColumnSpacing = RowSpacing = 5;
-            editButton = new Button("Edit");
-            nullCheckButton = new CheckButton("Null");
+            editButton = new Button("gtk-edit");
+            nullCheckButton = new CheckButton("null");
             Module = existingModule;
             AllowNull = false;
 
