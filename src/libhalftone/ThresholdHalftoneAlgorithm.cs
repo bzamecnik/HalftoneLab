@@ -12,7 +12,7 @@ namespace Halftone
     /// Order in which image pixels are processed is given by a
     /// ScanningOrder module.
     /// </remarks>
-    [Module(TypeName="Thresholding")]
+    [Module(TypeName="Thresholding algorithm")]
     [Serializable]
     public class ThresholdHalftoneAlgorithm : HalftoneAlgorithm
     {
@@ -27,6 +27,11 @@ namespace Halftone
         public ErrorFilter ErrorFilter { get; set; }
 
         /// <summary>
+        /// Turn error filter on/off.
+        /// </summary>
+        public bool UseErrorFilter { get; set; }
+
+        /// <summary>
         /// Module giving order in which image pixels are processed.
         /// </summary>
         public ScanningOrder ScanningOrder { get; set; }
@@ -36,7 +41,8 @@ namespace Halftone
         /// </summary>
         private bool ErrorFilterEnabled {
             get {
-                return (ErrorFilter != null) && ErrorFilter.Initialized;
+                return (UseErrorFilter) && (ErrorFilter != null) &&
+                    ErrorFilter.Initialized;
             }
         }
 
@@ -54,6 +60,7 @@ namespace Halftone
         {
             ThresholdFilter = thresholdFilter;
             ErrorFilter = errorFilter;
+            UseErrorFilter = errorFilter != null;
             ScanningOrder = scanningOrder;
         }
 

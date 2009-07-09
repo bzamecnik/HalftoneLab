@@ -10,19 +10,18 @@ namespace Gimp.HalftoneLab
         // - put all concrete subclasses of given module class in a tree
 
         public class ModuleInfo {
-            public string moduleTypeName;
             public Type moduleType;
             public Type dialogType;
             public string[] submodules;
+            public ModuleAttribute moduleAttribute;
 
-            public ModuleInfo(string moduleTypeName, Type moduleType,
-                Type dialogType, string[] submodules)
+            public ModuleInfo(Type moduleType, Type dialogType,
+                string[] submodules)
             {
-                this.moduleTypeName = moduleTypeName;
                 this.moduleType = moduleType;
                 this.dialogType = dialogType;
                 this.submodules = submodules;
-
+                this.moduleAttribute = getModuleAttribute(moduleType);
             }
         }
 
@@ -67,7 +66,9 @@ namespace Gimp.HalftoneLab
             addModule(typeof(PerturbedErrorFilter),
                 typeof(PerturbedErrorFilterDialog), null);
             addModule(typeof(VectorErrorFilter),
-                typeof(VectorErrorFilterDialog), null);
+                typeof(VectorErrorFilterDialog),
+                new string[] { "VectorErrorFilter" }
+                );
             addModule(typeof(MatrixErrorFilter),
                 typeof(MatrixErrorFilterDialog), new string[] {
                     "MatrixErrorFilter",
@@ -118,22 +119,6 @@ namespace Gimp.HalftoneLab
                 null, new string[] {
                     "HilbertScanningOrder"
                 });
-            
-
-            //addModule(typeof(FooErrorFilter), typeof(FooErrorFilterDialog),
-            //    new string[] {"SpecialFooErrorFilter"});
-            //addModule(typeof(BarErrorFilter), typeof(BarErrorFilterDialog),
-            //    null);
-            //addModule(typeof(SpecialFooErrorFilter),
-            //    typeof(SpecialFooErrorFilterDialog), null);
-            //addModule(typeof(OuterFilter), typeof(OuterFilter), null);
-            //addModule(typeof(ErrorFilter), null, new string[] {
-            //    "FooErrorFilter", "BarErrorFilter", "SpecialFooErrorFilter"
-            //    });
-            //addModule(typeof(Module), null, new string[] {
-            //    "FooErrorFilter", "BarErrorFilter", "SpecialFooErrorFilter",
-            //    "OuterFilter"
-            //    });
         }
 
         public Type getModuleType(string moduleTypeName) {
@@ -155,12 +140,17 @@ namespace Gimp.HalftoneLab
             return (submodules != null) ? submodules : new string[0];
         }
 
+        public ModuleAttribute getModuleAttribute(string moduleTypeName) {
+            ModuleInfo record = null;
+            registry.TryGetValue(moduleTypeName, out record);
+            return (record != null) ? record.moduleAttribute : null;
+        }
+
         private void addModule(Type moduleType, Type dialogType,
             string[] submodules)
         {
-            string moduleTypeName = moduleType.Name;
-            registry.Add(moduleTypeName, new ModuleInfo(moduleTypeName,
-                moduleType, dialogType, submodules));
+            registry.Add(moduleType.Name, new ModuleInfo(moduleType,
+                dialogType, submodules));
         }
 
         public static ModuleAttribute getModuleAttribute(Type moduleType) {

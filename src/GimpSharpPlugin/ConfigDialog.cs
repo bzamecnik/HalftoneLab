@@ -12,7 +12,10 @@ namespace Gimp.HalftoneLab
         protected ConfigDialog(Module module) {
             originalModule = module;
             modifiedModule = (Module)module.deepCopy();
-            Title = module.GetType().Name.ToString();
+            string moduleName = module.GetType().Name;
+            ModuleAttribute attribute =
+                ModuleRegistry.Instance.getModuleAttribute(moduleName);
+            Title = (attribute != null) ? attribute.TypeName : moduleName;
             Modal = true;
 
             AddButton("OK", ResponseType.Ok);
