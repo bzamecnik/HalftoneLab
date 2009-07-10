@@ -101,7 +101,7 @@ namespace Gimp.HalftoneLab
             table = new Table(7, 2, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
 
-            table.Attach(new Label("Error filter") { Xalign = 0.0f },
+            table.Attach(new Label("Error filter:") { Xalign = 0.0f },
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(errorFilterSelector, 1, 2, 0, 1,
                 AttachOptions.Fill | AttachOptions.Expand,
@@ -111,20 +111,20 @@ namespace Gimp.HalftoneLab
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(new Label("Scanning order") { Xalign = 0.0f },
+            table.Attach(new Label("Scanning order:") { Xalign = 0.0f },
                 0, 1, 2, 3, AttachOptions.Fill, AttachOptions.Shrink,
                 0, 0);
             table.Attach(scanningOrderSelector, 1, 2, 2, 3,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(new Label("Max cell size") { Xalign = 0.0f },
+            table.Attach(new Label("Max cell size:") { Xalign = 0.0f },
                 0, 1, 3, 4, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(maxCellSizeSpinButton, 1, 2, 3, 4,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(new Label("Min cell size") { Xalign = 0.0f },
+            table.Attach(new Label("Min cell size:") { Xalign = 0.0f },
                 0, 1, 4, 5, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(minCellSizeSpinButton, 1, 2, 4, 5,
                 AttachOptions.Fill | AttachOptions.Expand,

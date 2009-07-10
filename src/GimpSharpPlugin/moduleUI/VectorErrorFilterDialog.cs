@@ -7,8 +7,8 @@ namespace Gimp.HalftoneLab
     public class VectorErrorFilterDialog : ConfigDialog
     {
         private VectorErrorFilter module;
-        private Button errorMatrixEditButton;
         private Table table;
+        private ErrorVectorPanel vectorPanel;
 
         public VectorErrorFilterDialog()
             : this(new VectorErrorFilter()) { }
@@ -22,28 +22,25 @@ namespace Gimp.HalftoneLab
                 module = modifiedModule as VectorErrorFilter;
             }
 
-            errorMatrixEditButton = new Button("gtk-edit");
-            errorMatrixEditButton.Clicked += delegate
-            {
-                if (module != null) {
-                    ErrorMatrix configuredMatrix = null;
-                    configuredMatrix = ConfigDialog.configureModule(
-                        "ErrorMatrix", module.Matrix) as ErrorMatrix;
-                    if (configuredMatrix != null) {
-                        module.Matrix = configuredMatrix;
-                    }
-                }
-            };
+            vectorPanel = new ErrorVectorPanel((uint)module.Matrix.Width);
+            vectorPanel.Matrix = module.Matrix.DefinitionMatrix;
+            vectorPanel.Divisor = module.Matrix.Divisor;
+            vectorPanel.SourceOffsetX = module.Matrix.SourceOffsetX;
 
-            table = new Table(2, 2, false) { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
-            table.Attach(new Label("Error vector") { Xalign = 0.0f },
-                0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink,
-                0, 0);
-            table.Attach(errorMatrixEditButton, 1, 2, 0, 1,
+            table = new Table(2, 1, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+            table.Attach(new Label("Error vector:") { Xalign = 0.0f },
+                0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            table.Attach(vectorPanel, 0, 1, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
-                AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill | AttachOptions.Expand, 0, 0);
             table.ShowAll();
             VBox.PackStart(table);
+        }
+
+        protected override void save() {
+            module.Matrix = new ErrorMatrix(vectorPanel.Matrix,
+                vectorPanel.SourceOffsetX, vectorPanel.Divisor);
         }
     }
 }

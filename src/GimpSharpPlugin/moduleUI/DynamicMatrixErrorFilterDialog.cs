@@ -96,7 +96,7 @@ namespace Gimp.HalftoneLab
             table = new Table(5, 2, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
             
-            table.Attach(new Label("Intensity range table")
+            table.Attach(new Label("Intensity range table:")
                 { Xalign = 0.0f }, 0, 2, 0, 1, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
@@ -251,14 +251,14 @@ namespace Gimp.HalftoneLab
                 table = new Table(3, 2, false)
                     { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
 
-                table.Attach(new Label("Intensity range start")
+                table.Attach(new Label("Intensity range start:")
                     { Xalign = 0.0f }, 0, 1, 0, 1, AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
 
                 table.Attach(intensitySpinButton, 1, 2, 0, 1,
                     AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
-                table.Attach(new Label("Error matrix") { Xalign = 0.0f },
+                table.Attach(new Label("Error matrix:") { Xalign = 0.0f },
                     0, 1, 1, 2, AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
 
