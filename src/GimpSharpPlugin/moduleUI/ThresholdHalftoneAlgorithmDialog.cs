@@ -69,13 +69,13 @@ namespace Gimp.HalftoneLab
             table = new Table(3, 2, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
             
-            table.Attach(new Label("Threshold filter") { Xalign = 0.0f}, 0, 1, 0, 1,
+            table.Attach(new Label("Threshold filter:") { Xalign = 0.0f}, 0, 1, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(thresholdFilterSelector, 1, 2, 0, 1,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(new Label("Error filter") { Xalign = 0.0f }, 0, 1, 1, 2,
+            table.Attach(new Label("Error filter:") { Xalign = 0.0f }, 0, 1, 1, 2,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(errorFilterSelector, 1, 2, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
@@ -85,7 +85,7 @@ namespace Gimp.HalftoneLab
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(new Label("Scanning order") { Xalign = 0.0f },
+            table.Attach(new Label("Scanning order:") { Xalign = 0.0f },
                 0, 1, 3, 4, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(scanningOrderSelector, 1, 2, 3, 4,
                 AttachOptions.Fill | AttachOptions.Expand,

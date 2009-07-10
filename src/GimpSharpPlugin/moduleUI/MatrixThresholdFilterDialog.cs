@@ -39,7 +39,7 @@ namespace Gimp.HalftoneLab
 
             table = new Table(2, 2, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
-            table.Attach(new Label("Threshold matrix") { Xalign = 0.0f },
+            table.Attach(new Label("Threshold matrix:") { Xalign = 0.0f },
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink,
                 0, 0);
             table.Attach(thresholdMatrixEditButton, 1, 2, 0, 1,

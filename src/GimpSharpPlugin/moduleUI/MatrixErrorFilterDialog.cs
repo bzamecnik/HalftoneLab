@@ -30,7 +30,7 @@ namespace Gimp.HalftoneLab
 
             table = new Table(2, 1, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
-            table.Attach(new Label("Error matrix") { Xalign = 0.0f },
+            table.Attach(new Label("Error matrix:") { Xalign = 0.0f },
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(matrixPanel, 0, 1, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,

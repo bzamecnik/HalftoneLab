@@ -54,8 +54,13 @@ namespace Gimp.HalftoneLab
                 if (AllowNull) {
                     bool changed = (isNull != value);
                     isNull = value;
-                    if (changed && (ModuleChanged != null)) {
-                        ModuleChanged(this, new EventArgs());
+                    if (changed) {
+                        if (editButton != null) {
+                            editButton.Sensitive = (module != null) && !isNull;
+                        }
+                        if (ModuleChanged != null) {
+                            ModuleChanged(this, new EventArgs());
+                        }
                     }
                 }
             }
