@@ -27,9 +27,12 @@ namespace Gimp.HalftoneLab
             Response += new ResponseHandler(
                 (object obj, ResponseArgs respArgs) =>
                 {
-                    configuredModule =
-                        (respArgs.ResponseId == ResponseType.Ok) ?
-                        modifiedModule : originalModule;
+                    if (respArgs.ResponseId == ResponseType.Ok) {
+                        save();
+                        configuredModule = modifiedModule;
+                    } else {
+                        configuredModule = originalModule;
+                    }
                 }
               );
             Run();
@@ -74,5 +77,9 @@ namespace Gimp.HalftoneLab
                 type.GetConstructor(new Type[0]);
             return (ci != null) ? ci.Invoke(null) as Module : null;
         }
+
+        // save form contents to the configured module
+        // called on response OK
+        protected virtual void save() { }
     }
 }
