@@ -7,7 +7,7 @@ namespace Gimp.HalftoneLab
     public class ErrorMatrixDialog : ConfigDialog
     {
         private ErrorMatrix module;
-        private Table table;
+        private ErrorMatrixPanel matrixPanel;
 
         public ErrorMatrixDialog()
             : this(new ErrorMatrix()) { }
@@ -15,6 +15,11 @@ namespace Gimp.HalftoneLab
         public ErrorMatrixDialog(ErrorMatrix existingModule)
             : base(existingModule)
         {
+            module = modifiedModule as ErrorMatrix;
+            if (module == null) {
+                modifiedModule = new ErrorMatrix();
+                module = modifiedModule as ErrorMatrix;
+            }
         }
     }
 }

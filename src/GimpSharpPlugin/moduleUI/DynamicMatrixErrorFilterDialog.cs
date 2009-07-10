@@ -130,7 +130,7 @@ namespace Gimp.HalftoneLab
             // TODO: possibly add a string column for ErrorMatrix name
             recordStore = new ListStore(
                 typeof(DynamicMatrixErrorFilter.ErrorTableRecord));
-            // make list store records sorted
+            // make the list store records sorted
             recordStore.SetSortFunc(0,
                     (TreeModel model, TreeIter iter1, TreeIter iter2) =>
                     ((DynamicMatrixErrorFilter.ErrorTableRecord)
@@ -220,6 +220,7 @@ namespace Gimp.HalftoneLab
             private Table table;
             private SpinButton intensitySpinButton;
             private Button errorMatrixEditButton;
+            ErrorMatrixPanel matrixPanel;
             private DynamicMatrixErrorFilter.ErrorTableRecord record;
 
             public ErrorTableRecordDialog()
@@ -240,23 +241,14 @@ namespace Gimp.HalftoneLab
 
                 intensitySpinButton = new SpinButton(0, 255, 1);
                 intensitySpinButton.Value = record.intensityRangeStart;
-                intensitySpinButton.Changed += delegate
-                {
-                    record.intensityRangeStart = intensitySpinButton.ValueAsInt;
-                };
 
-                errorMatrixEditButton = new Button("gtk-edit");
-                errorMatrixEditButton.Clicked += delegate
-                {
-                    ErrorMatrix configuredMatrix = null;
-                    configuredMatrix = ConfigDialog.configureModule(
-                        "ErrorMatrix", record.matrix) as ErrorMatrix;
-                    if (configuredMatrix != null) {
-                        record.matrix = configuredMatrix;
-                    }
-                };
+                matrixPanel = new ErrorMatrixPanel((uint)record.matrix.Height,
+                (uint)record.matrix.Width);
+                matrixPanel.Matrix = record.matrix.DefinitionMatrix;
+                matrixPanel.Divisor = record.matrix.Divisor;
+                matrixPanel.SourceOffsetX = record.matrix.SourceOffsetX;
 
-                table = new Table(2, 2, false)
+                table = new Table(3, 2, false)
                     { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
 
                 table.Attach(new Label("Intensity range start")
@@ -270,11 +262,18 @@ namespace Gimp.HalftoneLab
                     0, 1, 1, 2, AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
 
-                table.Attach(errorMatrixEditButton, 1, 2, 1, 2,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+                table.Attach(matrixPanel, 0, 2, 2, 3,
+                    AttachOptions.Fill | AttachOptions.Expand,
+                    AttachOptions.Shrink, 0, 0);
 
                 table.ShowAll();
                 VBox.PackStart(table);
+            }
+
+            void save() {
+                record.intensityRangeStart = intensitySpinButton.ValueAsInt;
+                record.matrix = new ErrorMatrix(matrixPanel.Matrix,
+                        matrixPanel.SourceOffsetX, matrixPanel.Divisor);
             }
 
             public DynamicMatrixErrorFilter.ErrorTableRecord runConfiguration()
@@ -284,9 +283,11 @@ namespace Gimp.HalftoneLab
                 Response += new ResponseHandler(
                     (object obj, ResponseArgs respArgs) =>
                     {
-                        configuredRecord =
-                            (respArgs.ResponseId == ResponseType.Ok) ?
-                            record : null;
+                        configuredRecord = null;
+                        if (respArgs.ResponseId == ResponseType.Ok) {
+                            save();
+                            configuredRecord = record;
+                        }
                     }
                   );
                 Run();

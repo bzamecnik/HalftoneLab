@@ -30,7 +30,15 @@ namespace Halftone
     public class ErrorMatrix : Module
     {
         private int[,] _definitionMatrix;
+        public int[,] DefinitionMatrix {
+            get { return _definitionMatrix; }
+        }
+
         private int _divisor;
+        public int Divisor {
+            get { return _divisor; }
+        }
+
         /// <summary>
         /// A cache matrix containing elements from _definitionMatrix divided
         /// by _divisor. It needs to be computed again after deserialization
@@ -91,8 +99,13 @@ namespace Halftone
         /// </summary>
         public int CoefficientCount {
             get {
-                // TODO: exclude zero weights ( |offset| < epsilon)
-                return Height * Width - SourceOffsetX; // this is a stub
+                int sum = 0;
+                foreach (Coordinate<int> coord in getCoeffOffsets()) {
+                    if (_definitionMatrix[coord.X, coord.Y] != 0) {
+                        sum++;
+                    }
+                }
+                return sum;
             }
         }
 
