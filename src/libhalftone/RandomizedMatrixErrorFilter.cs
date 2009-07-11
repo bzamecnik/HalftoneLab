@@ -92,5 +92,9 @@ namespace Halftone
                 Matrix[coords.Y, coords.X] = remaining;
             }
         }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+        }
     }
 }

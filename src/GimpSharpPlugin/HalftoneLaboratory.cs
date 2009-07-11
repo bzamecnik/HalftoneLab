@@ -79,9 +79,6 @@ namespace Gimp.HalftoneLab
         }
 
         override protected void Render(Drawable drawable) {
-            //RunProcedure("plug_in_pixelize", drawable.Image, drawable, 4);
-            //return;
-
             Halftone.Image image = new GSImage(drawable);
             if (algorithms == null) {
                 loadAlgorithms();
