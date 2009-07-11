@@ -14,13 +14,13 @@ namespace Halftone
     /// </remarks>
     /// <typeparam name="T">Matrix element type</typeparam>
     [Serializable]
-    public abstract class Matrix<T> : Module
+    public abstract class Matrix<DefinitionType, WorkingType> : Module
     {
         /// <summary>
         /// The matrix itself.
         /// </summary>
-        protected T[,] _definitionMatrix;
-        public T[,] DefinitionMatrix {
+        private DefinitionType[,] _definitionMatrix;
+        public DefinitionType[,] DefinitionMatrix {
             get { return _definitionMatrix; }
             set {
                 _definitionMatrix = value;
@@ -42,7 +42,7 @@ namespace Halftone
             get { return _definitionMatrix.GetLength(1); }
         }
 
-        protected abstract T[,] WorkingMatrix {
+        protected abstract WorkingType[,] WorkingMatrix {
             get;
             set;
         }
@@ -54,7 +54,7 @@ namespace Halftone
         /// <param name="y">Y coordinate (zero based)</param>
         /// <param name="x">X coordinate (zero based)</param>
         /// <returns></returns>
-        public T this[int y, int x] {
+        public WorkingType this[int y, int x] {
             get {
                 return WorkingMatrix[y % Height, x % Width];
             }
@@ -69,7 +69,7 @@ namespace Halftone
         /// Clone the matrix. Make a shallow copy.
         /// </summary>
         /// <returns>Cloned matrix.</returns>
-        public abstract Matrix<T> Clone();
+        public abstract Matrix<DefinitionType, WorkingType> Clone();
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);

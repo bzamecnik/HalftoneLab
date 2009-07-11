@@ -194,5 +194,12 @@ namespace Halftone
         public void clearThresholdRecords() {
             _thresholdTable.Clear();
         }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            foreach (ThresholdTableRecord record in _thresholdTable.Values) {
+                record.matrix.init(imageRunInfo);
+            }
+        }
     }
 }

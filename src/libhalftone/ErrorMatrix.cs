@@ -23,43 +23,43 @@ namespace Halftone
     /// </para>
     /// <para>
     /// Currently ErrorMatrix doesn't support omni-directional error matrices.
-    /// To support that you need to integrate _sourcePixelOffsetY variable
+    /// To support that you need to integrate SourcePixelOffsetY variable
     /// and treat CoefficientCount and CoefficientCapacity differently.
     /// </para>
     /// </remarks>
     [Serializable]
-    public class ErrorMatrix : Module
+    public class ErrorMatrix : Matrix<int, double>
     {
-        private int[,] _definitionMatrix;
-        public int[,] DefinitionMatrix {
-            get { return _definitionMatrix; }
-        }
-
         private int _divisor;
         public int Divisor {
             get { return _divisor; }
+            protected set { _divisor = value; }
         }
 
         /// <summary>
-        /// A cache matrix containing elements from _definitionMatrix divided
-        /// by _divisor. It needs to be computed again after deserialization
+        /// A cache matrix containing elements from DefinitionMatrix divided
+        /// by Divisor. It needs to be computed again after deserialization
         /// (in init() function).
         /// </summary>
         [NonSerialized]
         private double[,] _workingMatrix;
+        protected override double[,] WorkingMatrix {
+            get { return _workingMatrix; }
+            set { _workingMatrix = value; }
+        }
 
         /// <summary>
         /// Matrix height (= max Y coordinate + 1).
         /// </summary>
         public int Height {
-            get { return _definitionMatrix.GetLength(0); }
+            get { return DefinitionMatrix.GetLength(0); }
         }
 
         /// <summary>
         /// Matrix width (= max X coordinate + 1).
         /// </summary>
         public int Width {
-            get { return _definitionMatrix.GetLength(1); }
+            get { return DefinitionMatrix.GetLength(1); }
         }
 
         /// <summary>
@@ -71,18 +71,17 @@ namespace Halftone
         /// <returns></returns>
         public double this[int y, int x] {
             get {
-                return _workingMatrix[y % Height, x % Width];
+                return WorkingMatrix[y % Height, x % Width];
             }
             set {
-                _workingMatrix[y % Height, x % Width] = value;
+                WorkingMatrix[y % Height, x % Width] = value;
             }
         }
 
         private int _sourcePixelOffsetX;
-
         /// <summary>
-        /// Horizontal (X) offset of source pixel, that is pixel currently processed
-        /// from where the quantization error is distributed.
+        /// Horizontal (X) offset of source pixel, that is pixel currently
+        /// processed from where the quantization error is distributed.
         /// </summary>
         /// <remarks>
         /// A vertical (Y) offset > 0 wouldn't make sense here as we cannot
@@ -102,7 +101,7 @@ namespace Halftone
             get {
                 int sum = 0;
                 foreach (Coordinate<int> coord in getCoeffOffsets()) {
-                    if (_definitionMatrix[coord.X, coord.Y] != 0) {
+                    if (DefinitionMatrix[coord.Y, coord.X] != 0) {
                         sum++;
                     }
                 }
@@ -136,14 +135,13 @@ namespace Halftone
         /// <param name="sourcePixelOffsetX">X offset of the source pixel</param>
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX) {
             SourceOffsetX = sourcePixelOffsetX;
-            _definitionMatrix = (int[,])coeffs.Clone();
             // compute the divisor as a sum of all coefficients.
             int coeffSum = 0;
             foreach (int coef in coeffs) {
                 coeffSum += coef;
             }
-            _divisor = coeffSum;
-            computeWorkingMatrix();
+            Divisor = coeffSum;
+            DefinitionMatrix = (int[,])coeffs.Clone();
         }
 
         /// <summary>
@@ -155,9 +153,8 @@ namespace Halftone
         /// <param name="divisor">Divisor of coefficients</param>
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX, int divisor) {
             SourceOffsetX = sourcePixelOffsetX;
-            _definitionMatrix = (int[,])coeffs.Clone();
-            _divisor = divisor;
-            computeWorkingMatrix();
+            Divisor = divisor;
+            DefinitionMatrix = (int[,])coeffs.Clone();
         }
 
         /// <summary>
@@ -171,15 +168,14 @@ namespace Halftone
         /// Scale the working matrix coefficients if necessary.
         /// Their sum must be equal to 1.0.
         /// </summary>
-        private void computeWorkingMatrix() {
-            _workingMatrix = new double[
-                _definitionMatrix.GetLength(0),
-                _definitionMatrix.GetLength(1)];
-            if ((_divisor != 0) || (_divisor != 1)) {
-                double divisorInverse = 1.0 / (double)_divisor;
+        protected override void computeWorkingMatrix() {
+            WorkingMatrix = new double[Height, Width];
+            if ((Divisor != 0) || (Divisor != 1)) {
+                double divisorInverse = 1.0 / (double)Divisor;
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
-                        _workingMatrix[y, x] = _definitionMatrix[y, x] * divisorInverse;
+                        WorkingMatrix[y, x] =
+                            DefinitionMatrix[y, x] * divisorInverse;
                     }
                 }
             }
@@ -187,7 +183,6 @@ namespace Halftone
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
-            computeWorkingMatrix();
         }
 
         /// <summary>
@@ -197,7 +192,8 @@ namespace Halftone
         public void apply(ApplyFunc func) {
             // the first line goes from the source position
             foreach (Coordinate<int> offset in getCoeffOffsets()) {
-                func(offset.Y, offset.X - SourceOffsetX, _workingMatrix[offset.Y, offset.X]);
+                func(offset.Y, offset.X - SourceOffsetX,
+                    WorkingMatrix[offset.Y, offset.X]);
             }
 
             //// old code:
@@ -215,8 +211,8 @@ namespace Halftone
         /// Clone the matrix.
         /// </summary>
         /// <returns>Cloned error matrix</returns>
-        public ErrorMatrix Clone() {
-            return new ErrorMatrix(_definitionMatrix, SourceOffsetX, _divisor);
+        public override Matrix<int, double> Clone() {
+            return new ErrorMatrix(DefinitionMatrix, SourceOffsetX, Divisor);
         }
 
         /// <summary>
@@ -239,7 +235,7 @@ namespace Halftone
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            if (_definitionMatrix != null) {
+            if (DefinitionMatrix != null) {
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
                         sb.AppendFormat("{0} ", this[y, x]);

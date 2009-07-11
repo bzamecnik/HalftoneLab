@@ -58,5 +58,10 @@ namespace Halftone
         protected override int threshold(int intensity, int x, int y) {
             return Matrix[y, x];
         }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            Matrix.init(imageRunInfo);
+        }
     }
 }

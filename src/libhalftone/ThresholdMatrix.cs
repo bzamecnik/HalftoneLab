@@ -15,8 +15,9 @@ namespace Halftone
     /// Coefficients are scaled to 0-255 range.
     /// </remarks>
     [Serializable]
-    public class ThresholdMatrix : Matrix<int>
+    public class ThresholdMatrix : Matrix<int, int>
     {
+        [NonSerialized]
         private int[,] _workingMatrix;
         protected override int[,] WorkingMatrix {
             get { return _workingMatrix; }
@@ -46,7 +47,7 @@ namespace Halftone
         public ThresholdMatrix()
             : this(new int[1, 1] { { 128 } }) { }
 
-        public override Matrix<int> Clone() {
+        public override Matrix<int, int> Clone() {
             return new ThresholdMatrix(DefinitionMatrix);
         }
 
@@ -73,6 +74,10 @@ namespace Halftone
                 }
             }
             return matrix;
+        }
+
+        public override void init(Halftone.Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
         }
 
         /// <summary>

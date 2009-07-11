@@ -35,5 +35,10 @@ namespace Halftone
         protected override int threshold(int intensity, int x, int y) {
             return SpotFunc.SpotFunc(x, y);
         }
+
+        public override void init(Halftone.Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            SpotFunc.init(imageRunInfo);
+        }
     }
 }
