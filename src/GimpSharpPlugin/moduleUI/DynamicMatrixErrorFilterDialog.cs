@@ -49,7 +49,7 @@ namespace Gimp.HalftoneLab
             addRecordButton.Clicked += delegate
             {
                 ErrorTableRecordDialog dialog = new ErrorTableRecordDialog();
-                DynamicMatrixErrorFilter.ErrorTableRecord record =
+                DynamicMatrixErrorFilter.ErrorRecord record =
                     dialog.runConfiguration();
                 addRecord(record);
             };
@@ -60,13 +60,13 @@ namespace Gimp.HalftoneLab
                 TreeIter selectedIter = getSelectedRowIter();
                 int selectedIntensity = getIntensityFromRow(selectedIter);
                 if (selectedIntensity >= 0) {
-                    DynamicMatrixErrorFilter.ErrorTableRecord record =
-                        module.getRecord(selectedIntensity, false);
+                    DynamicMatrixErrorFilter.ErrorRecord record = module.MatrixTable.getRecord(
+                        selectedIntensity, false);
                     ErrorTableRecordDialog dialog =
                         new ErrorTableRecordDialog(record);
                     record = dialog.runConfiguration();
                     if (record != null) {
-                        if (record.intensityRangeStart == selectedIntensity) {
+                        if (record.keyRangeStart == selectedIntensity) {
                             recordStore.SetValue(selectedIter, 0, record);
                         } else {
                             deleteRecord(ref selectedIter, selectedIntensity);
@@ -89,7 +89,7 @@ namespace Gimp.HalftoneLab
             clearRecordsButton = new Button("Clear all");
             clearRecordsButton.Clicked += delegate
             {
-                module.clearRecords();
+                module.MatrixTable.clearRecords();
                 recordStore.Clear();
             };
 
@@ -129,18 +129,18 @@ namespace Gimp.HalftoneLab
         public void initRecordTable(DynamicMatrixErrorFilter module) {
             // TODO: possibly add a string column for ErrorMatrix name
             recordStore = new ListStore(
-                typeof(DynamicMatrixErrorFilter.ErrorTableRecord));
+                typeof(DynamicMatrixErrorFilter.ErrorRecord));
             // make the list store records sorted
             recordStore.SetSortFunc(0,
                     (TreeModel model, TreeIter iter1, TreeIter iter2) =>
-                    ((DynamicMatrixErrorFilter.ErrorTableRecord)
+                    ((DynamicMatrixErrorFilter.ErrorRecord)
                     recordStore.GetValue(iter1, 0)).CompareTo(
-                    ((DynamicMatrixErrorFilter.ErrorTableRecord)
+                    ((DynamicMatrixErrorFilter.ErrorRecord)
                     recordStore.GetValue(iter2, 0)))
                 );
             recordStore.SetSortColumnId(0, SortType.Ascending);
-            foreach (DynamicMatrixErrorFilter.ErrorTableRecord record in
-                module.listRecords())
+            foreach (DynamicMatrixErrorFilter.ErrorRecord record in
+                module.MatrixTable.listRecords())
             {
                 recordStore.AppendValues(record);
             }
@@ -153,11 +153,11 @@ namespace Gimp.HalftoneLab
                 (TreeViewColumn column, CellRenderer cell,
                     TreeModel model, TreeIter iter) =>
                     {
-                        DynamicMatrixErrorFilter.ErrorTableRecord record =
-                            (DynamicMatrixErrorFilter.ErrorTableRecord)
+                        DynamicMatrixErrorFilter.ErrorRecord record =
+                            (DynamicMatrixErrorFilter.ErrorRecord)
                                 recordStore.GetValue(iter, 0);
                         (cell as CellRendererText).Text =
-                            record.intensityRangeStart.ToString();
+                            record.keyRangeStart.ToString();
                     }
                 );
 
@@ -174,12 +174,12 @@ namespace Gimp.HalftoneLab
             TreeIter iter;
             recordStore.GetIterFirst(out iter);
             if (!recordStore.IterIsValid(iter)) { return iter; }
-            DynamicMatrixErrorFilter.ErrorTableRecord record = null;
+            DynamicMatrixErrorFilter.ErrorRecord record = null;
             do {
                 record = recordStore.GetValue(iter, 0)
-                    as DynamicMatrixErrorFilter.ErrorTableRecord;
+                    as DynamicMatrixErrorFilter.ErrorRecord;
                 if ((record != null) &&
-                    (record.intensityRangeStart == intensity))
+                    (record.keyRangeStart == intensity))
                 {
                     return iter;
                 }
@@ -189,20 +189,19 @@ namespace Gimp.HalftoneLab
 
         int getIntensityFromRow(TreeIter iter) {
             if (recordStore.IterIsValid(iter)) {
-                return ((DynamicMatrixErrorFilter.ErrorTableRecord)
-                    recordStore.GetValue(iter, 0)).intensityRangeStart;
+                return ((DynamicMatrixErrorFilter.ErrorRecord)
+                    recordStore.GetValue(iter, 0)).keyRangeStart;
             }
             return -1;
         }
 
-        void addRecord(DynamicMatrixErrorFilter.ErrorTableRecord record) {
+        void addRecord(DynamicMatrixErrorFilter.ErrorRecord record) {
             if (record != null) {
-                module.addRecord(record.intensityRangeStart,
-                    record.matrix);
+                module.MatrixTable.addRecord(record);
                 // if there is another record with the same intensity
                 // delete it from the list store
                 TreeIter iter =
-                    getIterByIntensity(record.intensityRangeStart);
+                    getIterByIntensity(record.keyRangeStart);
                 if (recordStore.IterIsValid(iter)) {
                     recordStore.SetValue(iter, 0, record);
                 } else {
@@ -213,7 +212,7 @@ namespace Gimp.HalftoneLab
 
         void deleteRecord(ref TreeIter iter, int intensity) {
             recordStore.Remove(ref iter);
-            module.deleteRecord(intensity);
+            module.MatrixTable.deleteRecord(intensity);
         }
 
         public class ErrorTableRecordDialog : Dialog {
@@ -221,13 +220,13 @@ namespace Gimp.HalftoneLab
             private SpinButton intensitySpinButton;
             private Button errorMatrixEditButton;
             ErrorMatrixPanel matrixPanel;
-            private DynamicMatrixErrorFilter.ErrorTableRecord record;
+            private DynamicMatrixErrorFilter.ErrorRecord record;
 
             public ErrorTableRecordDialog()
                 : this(null) { }
 
-            public ErrorTableRecordDialog(
-                DynamicMatrixErrorFilter.ErrorTableRecord editedRecord)
+            public ErrorTableRecordDialog(DynamicMatrixErrorFilter.ErrorRecord
+                editedRecord)
             {
                 Title = "Intensity record editing";
                 Modal = true;
@@ -236,11 +235,11 @@ namespace Gimp.HalftoneLab
 
                 record = editedRecord;
                 if (record == null) {
-                    record = new DynamicMatrixErrorFilter.ErrorTableRecord();
+                    record = new DynamicMatrixErrorFilter.ErrorRecord();
                 }
 
                 intensitySpinButton = new SpinButton(0, 255, 1);
-                intensitySpinButton.Value = record.intensityRangeStart;
+                intensitySpinButton.Value = record.keyRangeStart;
 
                 matrixPanel = new ErrorMatrixPanel((uint)record.matrix.Height,
                 (uint)record.matrix.Width);
@@ -271,15 +270,15 @@ namespace Gimp.HalftoneLab
             }
 
             void save() {
-                record.intensityRangeStart = intensitySpinButton.ValueAsInt;
+                record.keyRangeStart = intensitySpinButton.ValueAsInt;
                 record.matrix = new ErrorMatrix(matrixPanel.Matrix,
                         matrixPanel.SourceOffsetX, matrixPanel.Divisor);
             }
 
-            public DynamicMatrixErrorFilter.ErrorTableRecord runConfiguration()
+            public DynamicMatrixErrorFilter.ErrorRecord runConfiguration()
             {
-                DynamicMatrixErrorFilter.ErrorTableRecord configuredRecord =
-                    null;
+                DynamicMatrixErrorFilter.ErrorRecord
+                    configuredRecord = null;
                 Response += new ResponseHandler(
                     (object obj, ResponseArgs respArgs) =>
                     {

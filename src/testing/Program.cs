@@ -8,8 +8,8 @@ namespace testing
     class Program
     {
         static void Main(string[] args) {
-            ConfigManagerTest.run();
-            //ConfigGUI.run();
+           ConfigManagerTest.run();
+           //ConfigGUI.run();
         }
     }
 
@@ -119,10 +119,10 @@ namespace testing
             {
                 Name = "Dynamic error filter"
             };
-            dynamicMatrixErrorFilter.addRecord(0, ErrorMatrix.Samples.floydSteinberg);
-            dynamicMatrixErrorFilter.addRecord(64, ErrorMatrix.Samples.jarvisJudiceNinke);
-            dynamicMatrixErrorFilter.addRecord(128, ErrorMatrix.Samples.stucki);
-            dynamicMatrixErrorFilter.addRecord(192, ErrorMatrix.Samples.nextPixel);
+            dynamicMatrixErrorFilter.MatrixTable.addRecord(new DynamicMatrixErrorFilter.ErrorRecord(0, ErrorMatrix.Samples.floydSteinberg));
+            dynamicMatrixErrorFilter.MatrixTable.addRecord(new DynamicMatrixErrorFilter.ErrorRecord(64, ErrorMatrix.Samples.jarvisJudiceNinke));
+            dynamicMatrixErrorFilter.MatrixTable.addRecord(new DynamicMatrixErrorFilter.ErrorRecord(128, ErrorMatrix.Samples.stucki));
+            dynamicMatrixErrorFilter.MatrixTable.addRecord(new DynamicMatrixErrorFilter.ErrorRecord(192, ErrorMatrix.Samples.nextPixel));
             //config.saveModule(dynamicMatrixErrorFilter, false);
 
             MatrixThresholdFilter matrixThresholdFilter = new MatrixThresholdFilter(bayerThresholdMatrix)
@@ -136,17 +136,17 @@ namespace testing
                 NoiseEnabled = true,
                 Name = "Dynamic threshold filter"
             };
-            dynamicThresholdFilter.addThresholdRecord(0, ThresholdMatrix.Generator.sampleMatrix, 0.0);
-            dynamicThresholdFilter.addThresholdRecord(32, ThresholdMatrix.Generator.sampleMatrix, 0.125);
-            dynamicThresholdFilter.addThresholdRecord(64, ThresholdMatrix.Generator.sampleMatrix, 0.25);
-            dynamicThresholdFilter.addThresholdRecord(96, ThresholdMatrix.Generator.sampleMatrix, 0.375);
-            dynamicThresholdFilter.addThresholdRecord(128, ThresholdMatrix.Generator.sampleMatrix, 0.5);
-            dynamicThresholdFilter.addThresholdRecord(160, ThresholdMatrix.Generator.sampleMatrix, 0.625);
-            dynamicThresholdFilter.addThresholdRecord(192, ThresholdMatrix.Generator.sampleMatrix, 0.75);
-            dynamicThresholdFilter.addThresholdRecord(224, ThresholdMatrix.Generator.sampleMatrix, 0.875);
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(0, ThresholdMatrix.Generator.sampleMatrix, 0.0));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(32, ThresholdMatrix.Generator.sampleMatrix, 0.125));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(64, ThresholdMatrix.Generator.sampleMatrix, 0.25));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(96, ThresholdMatrix.Generator.sampleMatrix, 0.375));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(128, ThresholdMatrix.Generator.sampleMatrix, 0.5));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(160, ThresholdMatrix.Generator.sampleMatrix, 0.625));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(192, ThresholdMatrix.Generator.sampleMatrix, 0.75));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(224, ThresholdMatrix.Generator.sampleMatrix, 0.875));
 
-            dynamicThresholdFilter.addThresholdRecord(100, ThresholdMatrix.Generator.simpleThreshold);
-            dynamicThresholdFilter.addThresholdRecord(150, ThresholdMatrix.Generator.createBayerDispersedDotMatrix(3));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(100, ThresholdMatrix.Generator.simpleThreshold));
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(150, ThresholdMatrix.Generator.createBayerDispersedDotMatrix(3)));
 
             //config.saveModule(dynamicThresholdFilter, false);
 
@@ -187,8 +187,8 @@ namespace testing
             thresholdHalftoneAlgorithm.Name = "Dynamic threshold halftone";
             config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            dynamicThresholdFilter.clearThresholdRecords();
-            dynamicThresholdFilter.addThresholdRecord(0, ThresholdMatrix.Generator.simpleThreshold, 1.0);
+            dynamicThresholdFilter.MatrixTable.clearRecords();
+            dynamicThresholdFilter.MatrixTable.addRecord(new DynamicMatrixThresholdFilter.ThresholdRecord(0, ThresholdMatrix.Generator.simpleThreshold, 1.0));
             thresholdHalftoneAlgorithm.ThresholdFilter = dynamicThresholdFilter;
             thresholdHalftoneAlgorithm.Name = "Simpe blue-noise";
             config.saveModule(thresholdHalftoneAlgorithm, false);

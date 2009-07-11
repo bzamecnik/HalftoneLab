@@ -48,36 +48,6 @@ namespace Halftone
             set { _workingMatrix = value; }
         }
 
-        /// <summary>
-        /// Matrix height (= max Y coordinate + 1).
-        /// </summary>
-        public int Height {
-            get { return DefinitionMatrix.GetLength(0); }
-        }
-
-        /// <summary>
-        /// Matrix width (= max X coordinate + 1).
-        /// </summary>
-        public int Width {
-            get { return DefinitionMatrix.GetLength(1); }
-        }
-
-        /// <summary>
-        /// Access matrix elements using by coordinates with modulo
-        /// operation applied.
-        /// </summary>
-        /// <param name="y">Y coordinate (zero based)</param>
-        /// <param name="x">X coordinate (zero based)</param>
-        /// <returns></returns>
-        public double this[int y, int x] {
-            get {
-                return WorkingMatrix[y % Height, x % Width];
-            }
-            set {
-                WorkingMatrix[y % Height, x % Width] = value;
-            }
-        }
-
         private int _sourcePixelOffsetX;
         /// <summary>
         /// Horizontal (X) offset of source pixel, that is pixel currently

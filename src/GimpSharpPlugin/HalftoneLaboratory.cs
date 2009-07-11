@@ -12,7 +12,7 @@ namespace Gimp.HalftoneLab
     {
         private List<HalftoneAlgorithm> algorithms;
         private HalftoneAlgorithm selectedAlgorithm;
-        [SaveAttribute("algorithm")]
+        //[SaveAttribute("algorithm")]
         private string selectedAlgorithmName;
         private ConfigManager configManager;
 
@@ -23,6 +23,7 @@ namespace Gimp.HalftoneLab
         HalftoneLaboratory(string[] args)
             : base(args, "HalftoneLaboratory")
         {
+            selectedAlgorithmName = "";
             Console.Out.WriteLine("HalftoneLaboratory()");
         }
 
@@ -43,25 +44,25 @@ namespace Gimp.HalftoneLab
             GimpDialog dialog = DialogNew("Halftone Laboratory", "HalftoneLab",
                 IntPtr.Zero, 0, Gimp.StandardHelpFunc, "HalftoneLab");
 
-            VBox vbox = new VBox(false, 12) { BorderWidth = 12 };
-            dialog.VBox.PackStart(vbox, true, true, 0);
+            //VBox vbox = new VBox(false, 12) { BorderWidth = 12 };
+            //dialog.VBox.PackStart(vbox, true, true, 0);
 
-            loadAlgorithms();
-            ComboBox algorithmCombo = ComboBox.NewText();
-            foreach (HalftoneAlgorithm alg in algorithms) {
-                algorithmCombo.AppendText(alg.Name);
-            }
-            algorithmCombo.Changed += delegate
-            {
-                selectedAlgorithm = algorithms.Find(
-                    alg => alg.Name == algorithmCombo.ActiveText);
-                if (selectedAlgorithm != null) {
-                    selectedAlgorithmName = selectedAlgorithm.Name;
-                }
-            };
-            algorithmCombo.Active = 0;
+            //loadAlgorithms();
+            //ComboBox algorithmCombo = ComboBox.NewText();
+            //foreach (HalftoneAlgorithm alg in algorithms) {
+            //    algorithmCombo.AppendText(alg.Name);
+            //}
+            //algorithmCombo.Changed += delegate
+            //{
+            //    selectedAlgorithm = algorithms.Find(
+            //        alg => alg.Name == algorithmCombo.ActiveText);
+            //    if (selectedAlgorithm != null) {
+            //        selectedAlgorithmName = selectedAlgorithm.Name;
+            //    }
+            //};
+            //algorithmCombo.Active = 0;
 
-            vbox.PackStart(algorithmCombo, false, false, 0);
+            //vbox.PackStart(algorithmCombo, false, false, 0);
 
             //Button editButton = new Button("Edit ThresholdHalftoneAlgorithm");
             //editButton.Clicked += delegate
@@ -74,6 +75,26 @@ namespace Gimp.HalftoneLab
             //};
             //editButton.Show();
             //dialog.VBox.PackStart(editButton);
+
+            SubmoduleSelector<HalftoneAlgorithm>
+                halftoneAlgorithmSelector =
+                new SubmoduleSelector<HalftoneAlgorithm>();
+            halftoneAlgorithmSelector.ModuleChanged += delegate
+            {
+                selectedAlgorithm = halftoneAlgorithmSelector.Module;
+                Console.WriteLine(selectedAlgorithm);
+            };
+
+            Table table = new Table(1, 2, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+            table.Attach(new Label("Halftone algorithm"), 0, 1, 0, 1,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            table.Attach(halftoneAlgorithmSelector, 1, 2, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            table.ShowAll();
+
+            dialog.VBox.PackStart(table);
 
             return dialog;
         }
