@@ -15,14 +15,7 @@ namespace Halftone
         public ErrorMatrix Matrix {
             get { return _matrix; }
             set {
-                if (value != null) {
-                    // Resize the buffer if a matrix with different _height is set
-                    // Note: buffer _width depends on image _size
-                    if ((Buffer != null) && (value.Height != _matrix.Height)) {
-                        Buffer.resize(_matrix.Height, Buffer.Width);
-                    }
-                    _matrix = value;
-                }
+                setMatrix(value, true);
             }
         }
 
@@ -32,7 +25,7 @@ namespace Halftone
 
         public MatrixErrorBuffer Buffer {
             get { return _buffer; }
-            private set { _buffer = value; }
+            protected set { _buffer = value; }
         }
         
         public MatrixErrorFilter(ErrorMatrix matrix) {
@@ -58,6 +51,18 @@ namespace Halftone
 
         public override void moveNext() {
             Buffer.moveNext();
+        }
+
+        protected void setMatrix(ErrorMatrix matrix, bool resizeBuffer) {
+            if (matrix != null) {
+                // Resize the buffer if a matrix with different _height is set
+                // Note: buffer _width depends on image _size
+                if (resizeBuffer && (Buffer != null) &&
+                    (matrix.Height != _matrix.Height)) {
+                    Buffer.resize(_matrix.Height, Buffer.Width);
+                }
+                _matrix = matrix;
+            }
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {

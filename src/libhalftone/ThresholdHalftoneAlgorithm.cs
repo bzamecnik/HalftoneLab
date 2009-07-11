@@ -21,10 +21,17 @@ namespace Halftone
         /// </summary>
         public ThresholdFilter ThresholdFilter { get; set; }
 
+        private ErrorFilter _errorFilter;
         /// <summary>
         /// Error filter module. Optional (leave it null not to use it).
         /// </summary>
-        public ErrorFilter ErrorFilter { get; set; }
+        public ErrorFilter ErrorFilter {
+            get { return _errorFilter; }
+            set {
+                _errorFilter = value;
+                UseErrorFilter = _errorFilter != null;
+            }
+        }
 
         /// <summary>
         /// Turn error filter on/off.
@@ -104,15 +111,36 @@ namespace Halftone
             Image.IterFuncSrcDest pixelFunc;
             if (ErrorFilterEnabled) {
                 // error diffusion enabled
-                pixelFunc = ((pixel) => 
-                {
-                    double error = ErrorFilter.getError();
-                    double original = (double)pixel[0] + error;
-                    Pixel quantized = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
-                    ErrorFilter.setError(original - (double)quantized[0]);
-                    ErrorFilter.moveNext();
-                    return quantized;
-                });
+
+                // TODO: duplicating code for different setError()
+                // variants is not nice...
+                // The 'is' shouldn't be inside the anonymous function
+                // for performance reasons.
+                if (ErrorFilter is DynamicErrorFilter) {
+                    DynamicErrorFilter dynamicErrorFilter =
+                        ErrorFilter as DynamicErrorFilter;
+                    pixelFunc = ((pixel) =>
+                    {
+                        double error = ErrorFilter.getError();
+                        double original = (double)pixel[0] + error;
+                        Pixel quantized = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
+                        dynamicErrorFilter.setError(
+                            original - (double)quantized[0],
+                            (int)original);
+                        ErrorFilter.moveNext();
+                        return quantized;
+                    });
+                } else {
+                    pixelFunc = ((pixel) =>
+                    {
+                        double error = ErrorFilter.getError();
+                        double original = (double)pixel[0] + error;
+                        Pixel quantized = ThresholdFilter.quantize(original, pixel.X, pixel.Y);
+                        ErrorFilter.setError(original - (double)quantized[0]);
+                        ErrorFilter.moveNext();
+                        return quantized;
+                    });
+                }
             } else {
                 // error diffusion disabled
                 pixelFunc = ((pixel) => ThresholdFilter.quantize(pixel));

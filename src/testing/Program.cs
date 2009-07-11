@@ -8,8 +8,8 @@ namespace testing
     class Program
     {
         static void Main(string[] args) {
-            //ConfigManagerTest.run();
-            ConfigGUI.run();
+            ConfigManagerTest.run();
+            //ConfigGUI.run();
         }
     }
 
@@ -165,6 +165,12 @@ namespace testing
             thresholdHalftoneAlgorithm.ScanningOrder = serpentineScanOrder;
             thresholdHalftoneAlgorithm.Name = "Floyd-Steinberg, serpentine";
             thresholdHalftoneAlgorithm.Description = "Floyd-Steinberg error, Serpentine order";
+            config.saveModule(thresholdHalftoneAlgorithm, false);
+
+            thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
+            thresholdHalftoneAlgorithm.ErrorFilter = dynamicMatrixErrorFilter;
+            thresholdHalftoneAlgorithm.Name = "Dynamic error filter";
+            thresholdHalftoneAlgorithm.Description = "floydSteinberg, jarvisJudiceNinke, stucki, nextPixel, Scanline order";
             config.saveModule(thresholdHalftoneAlgorithm, false);
 
             thresholdHalftoneAlgorithm.ScanningOrder = scanlineScanOrder;
