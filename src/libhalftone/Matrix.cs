@@ -14,25 +14,37 @@ namespace Halftone
     /// </remarks>
     /// <typeparam name="T">Matrix element type</typeparam>
     [Serializable]
-    public class Matrix<T> : Module
+    public abstract class Matrix<T> : Module
     {
         /// <summary>
         /// The matrix itself.
         /// </summary>
-        public T[,] matrix;
+        protected T[,] _definitionMatrix;
+        public T[,] DefinitionMatrix {
+            get { return _definitionMatrix; }
+            set {
+                _definitionMatrix = value;
+                computeWorkingMatrix();
+            }
+        }
 
         /// <summary>
         /// Matrix height (= max Y coordinate + 1).
         /// </summary>
         public int Height {
-            get { return matrix.GetLength(0); }
+            get { return _definitionMatrix.GetLength(0); }
         }
 
         /// <summary>
         /// Matrix width (= max X coordinate + 1).
         /// </summary>
         public int Width {
-            get { return matrix.GetLength(1); }
+            get { return _definitionMatrix.GetLength(1); }
+        }
+
+        protected abstract T[,] WorkingMatrix {
+            get;
+            set;
         }
 
         /// <summary>
@@ -44,31 +56,24 @@ namespace Halftone
         /// <returns></returns>
         public T this[int y, int x] {
             get {
-                return matrix[y % Height, x % Width];
+                return WorkingMatrix[y % Height, x % Width];
             }
             set {
-                matrix[y % Height, x % Width] = value;
+                WorkingMatrix[y % Height, x % Width] = value;
             }
         }
 
-        public Matrix(int height, int width) {
-            matrix = new T[height, width];
-        }
-
-        public Matrix(T[,] matrix) {
-            if (matrix != null) {
-                this.matrix = matrix;
-            } else {
-                this.matrix = new T[1, 1]; // TODO: throw an exception
-            }
-        }
+        protected abstract void computeWorkingMatrix();
 
         /// <summary>
         /// Clone the matrix. Make a shallow copy.
         /// </summary>
         /// <returns>Cloned matrix.</returns>
-        public virtual Matrix<T> Clone() {
-            return new Matrix<T>(matrix);
+        public abstract Matrix<T> Clone();
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            computeWorkingMatrix();
         }
 
         /// <summary>

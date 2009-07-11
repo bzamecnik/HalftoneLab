@@ -17,21 +17,28 @@ namespace Halftone
     [Serializable]
     public class ThresholdMatrix : Matrix<int>
     {
-        /// <summary>
-        /// Create a threshold matrix of given size.
-        /// </summary>
-        /// <param name="height">matrix height (max Y size), > 0</param>
-        /// <param name="width">matrix height (max X size), > 0</param>
-        public ThresholdMatrix(int height, int width)
-            : base(height, width) {}
+        private int[,] _workingMatrix;
+        protected override int[,] WorkingMatrix {
+            get { return _workingMatrix; }
+            set { _workingMatrix = value; }
+        }
+
+        // true if definition matrix is iterative
+        // false if already scaled
+        private bool _iterative;
+
+        public ThresholdMatrix(int[,] matrix, bool iterative) {
+            _iterative = iterative;
+            DefinitionMatrix = matrix;
+        }
 
         /// <summary>
-        /// Create a threshold matrix from given scaled matrix.
+        /// Create a threshold matrix from given iterative matrix.
         /// </summary>
         /// <param name="matrix">matrix with coefficients scaled to 0-255
         /// range.</param>
         public ThresholdMatrix(int[,] matrix)
-            : base(matrix) { }
+            : this(matrix, true) { }
 
         /// <summary>
         /// Create a default threshold matrix with one coefficient at 128.
@@ -40,7 +47,32 @@ namespace Halftone
             : this(new int[1, 1] { { 128 } }) { }
 
         public override Matrix<int> Clone() {
-            return new ThresholdMatrix(matrix);
+            return new ThresholdMatrix(DefinitionMatrix);
+        }
+
+        protected override void computeWorkingMatrix() {
+            _workingMatrix = (_iterative) ?
+                scaleFromIterativeMatrix(DefinitionMatrix) :
+                DefinitionMatrix;
+        }
+
+        /// <summary>
+        /// Scale coefficients from iterative matrix to 0-255 range.
+        /// </summary>
+        /// <param name="iterativeMatrix">matrix with coefficients in
+        /// range 1-(h*w)</param>
+        /// <returns>scaled matrix with coefficients in range 0-255</returns>
+        private static int[,] scaleFromIterativeMatrix(int[,] iterativeMatrix) {
+            int height = iterativeMatrix.GetLength(0);
+            int width = iterativeMatrix.GetLength(1);
+            double coeff = (double)255 / (height * width + 1);
+            int[,] matrix = new int[height, width];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    matrix[y, x] = (int)(iterativeMatrix[y, x] * coeff);
+                }
+            }
+            return matrix;
         }
 
         /// <summary>
@@ -51,9 +83,8 @@ namespace Halftone
             public static ThresholdMatrix sampleMatrix;
             public static ThresholdMatrix simpleThreshold;
             static Generator() {
-                simpleThreshold = new ThresholdMatrix(new int[1, 1] { { 128 } });
-                sampleMatrix =
-                    ThresholdMatrix.Generator.createFromIterativeMatrix(
+                simpleThreshold = new ThresholdMatrix(new int[1, 1] { { 128 } }, false);
+                sampleMatrix = new ThresholdMatrix(
                     new int[,] {
                     //{ 16,  5,  9, 13 },
                     //{ 12,  1,  2,  6 },
@@ -99,24 +130,6 @@ namespace Halftone
             }
 
             /// <summary>
-            /// Scale coefficients from iterative matrix to 0-255 range.
-            /// </summary>
-            /// <param name="userMatrix">matrix with coefficients in range 1-(h*w)</param>
-            /// <returns>scaled matrix with coefficients in range 0-255</returns>
-            public static ThresholdMatrix createFromIterativeMatrix(int[,] userMatrix) {
-                int height = userMatrix.GetLength(0);
-                int width = userMatrix.GetLength(1);
-                double coeff = (double)255 / (height * width + 1);
-                ThresholdMatrix matrix = new ThresholdMatrix(height, width);
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        matrix[y, x] = (int)(userMatrix[y, x] * coeff);
-                    }
-                }
-                return matrix;
-            }
-
-            /// <summary>
             /// Create a Bayer dispersed dot matrix (recursive tesselation
             /// matrix) of size 2^N x 2^N (where N is magnitude).
             /// </summary>
@@ -131,7 +144,7 @@ namespace Halftone
                     return null;
                 }
                 if (magnitude == 0) {
-                    return createFromIterativeMatrix(new int[1, 1] { { 0 } });
+                    return new ThresholdMatrix(new int[1, 1] { { 0 } });
                 } else {
                     int[,] offsets = { { 0, 0 }, { 1, 1 }, { 0, 1 }, { 1, 0 } };
                     int[,] matrix = new int[2, 2] { { 0, 2 }, { 3, 1 } };
@@ -155,7 +168,7 @@ namespace Halftone
                             matrix[y, x]++;
                         }
                     }
-                    return createFromIterativeMatrix(matrix);
+                    return new ThresholdMatrix(matrix);
                 }
             }
         }

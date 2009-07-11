@@ -75,8 +75,6 @@ namespace Gimp.HalftoneLab
             //editButton.Show();
             //dialog.VBox.PackStart(editButton);
 
-            vbox.PackStart(algorithmCombo, false, false, 0);
-
             return dialog;
         }
 

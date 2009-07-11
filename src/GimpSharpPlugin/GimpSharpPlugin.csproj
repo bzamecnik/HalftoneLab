@@ -83,7 +83,6 @@
     <Compile Include="ModuleRegistry.cs" />
     <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
     <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
-    <Compile Include="moduleUI\ErrorMatrixDialog.cs" />
     <Compile Include="ErrorMatrixPanel.cs" />
     <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
@@ -95,8 +94,7 @@
     <Compile Include="moduleUI\SpotFunctionDialog.cs" />
     <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\ThresholdHalftoneAlgorithmDialog.cs" />
-    <Compile Include="moduleUI\ThresholdMatrixDialog.cs" />
-    <Compile Include="moduleUI\ThresholdMatrixPanel.cs" />
+    <Compile Include="ThresholdMatrixPanel.cs" />
     <Compile Include="moduleUI\VectorErrorFilterDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubmoduleSelector.cs" />

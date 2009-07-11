@@ -112,7 +112,7 @@ namespace Halftone
         /// <param name="intensity">Source pixel intensity</param>
         public void setError(double error, int intensity) {
             // TODO: intensity should be clipped here to 0-255 range!
-            Matrix = getRecord(intensity).matrix;
+            setMatrix(getRecord(intensity).matrix, false);
             base.setError(error);
         }
 
@@ -198,6 +198,20 @@ namespace Halftone
         /// </summary>
         public void clearRecords() {
             _recordTable.Clear();
+        }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            //base.init(imageRunInfo);
+            int maxMatrixHeight = 0;
+            foreach (ErrorTableRecord record in _recordTable.Values) {
+                record.matrix.init(imageRunInfo);
+                maxMatrixHeight = Math.Max(maxMatrixHeight,
+                    record.matrix.Height);
+            }
+            Buffer = ErrorBuffer.createFromScanningOrder(
+                imageRunInfo.ScanOrder, maxMatrixHeight,
+                imageRunInfo.Width) as MatrixErrorBuffer;
+            Initialized = Buffer != null;
         }
     }
 }

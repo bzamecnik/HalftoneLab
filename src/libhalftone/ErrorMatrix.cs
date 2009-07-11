@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Gimp;
 
 namespace Halftone
@@ -236,11 +237,27 @@ namespace Halftone
             yield break;
         }
 
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            if (_definitionMatrix != null) {
+                for (int y = 0; y < Height; y++) {
+                    for (int x = 0; x < Width; x++) {
+                        sb.AppendFormat("{0} ", this[y, x]);
+                    }
+                    sb.AppendLine();
+                }
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Samples of most commonly used error-diffusion matrices.
         /// </summary>
         public static class Samples
         {
+            // TODO: make a key-value based dictionary
+            // which can be listed
+
             public static ErrorMatrix Default;
             // the simplest error-diffusion matrix
             public static ErrorMatrix nextPixel;

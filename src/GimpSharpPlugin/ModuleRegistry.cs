@@ -83,11 +83,6 @@ namespace Gimp.HalftoneLab
                     "PerturbedErrorFilter",
                     "VectorErrorFilter"
                 });
-
-            addModule(typeof(ErrorMatrix),
-                typeof(ErrorMatrixDialog), null);
-            addModule(typeof(ThresholdMatrix),
-                typeof(ThresholdMatrixDialog), null);
             
             addModule(typeof(ThresholdHalftoneAlgorithm),
                 typeof(ThresholdHalftoneAlgorithmDialog), null);
