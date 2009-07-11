@@ -7,8 +7,8 @@ namespace Gimp.HalftoneLab
     public class MatrixThresholdFilterDialog : ConfigDialog
     {
         private MatrixThresholdFilter module;
-        private Button thresholdMatrixEditButton;
         private Table table;
+        private ThresholdMatrixPanel matrixPanel;
 
         public MatrixThresholdFilterDialog()
             : this(new MatrixThresholdFilter()) { }
@@ -23,30 +23,27 @@ namespace Gimp.HalftoneLab
                 module = modifiedModule as MatrixThresholdFilter;
             }
 
-            thresholdMatrixEditButton = new Button("gtk-edit");
-            thresholdMatrixEditButton.Clicked += delegate
-            {
-                if (module != null) {
-                    ThresholdMatrix configuredMatrix = null;
-                    configuredMatrix = ConfigDialog.configureModule(
-                        "ThresholdMatrix", module.Matrix)
-                            as ThresholdMatrix;
-                    if (configuredMatrix != null) {
-                        module.Matrix = configuredMatrix;
-                    }
-                }
-            };
+            matrixPanel = new ThresholdMatrixPanel(
+                (uint)module.Matrix.Height,
+                (uint)module.Matrix.Width);
+            matrixPanel.Matrix = module.Matrix.DefinitionMatrix;
+            matrixPanel.Iterative = module.Matrix.Iterative;
 
-            table = new Table(2, 2, false)
+            table = new Table(2, 1, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
             table.Attach(new Label("Threshold matrix:") { Xalign = 0.0f },
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink,
                 0, 0);
-            table.Attach(thresholdMatrixEditButton, 1, 2, 0, 1,
+            table.Attach(matrixPanel, 0, 1, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
-                AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill | AttachOptions.Expand, 0, 0);
             table.ShowAll();
             VBox.PackStart(table);
+        }
+
+        protected override void save() {
+            module.Matrix = new ThresholdMatrix(matrixPanel.Matrix,
+                matrixPanel.Iterative);
         }
     }
 }

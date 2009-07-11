@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gimp;
 
 namespace Halftone
@@ -27,6 +27,9 @@ namespace Halftone
         // true if definition matrix is iterative
         // false if already scaled
         private bool _iterative;
+        public bool Iterative {
+            get { return _iterative; }
+        }
 
         public ThresholdMatrix(int[,] matrix, bool iterative) {
             _iterative = iterative;
@@ -45,7 +48,7 @@ namespace Halftone
         /// Create a default threshold matrix with one coefficient at 128.
         /// </summary>
         public ThresholdMatrix()
-            : this(new int[1, 1] { { 128 } }) { }
+            : this(new int[1, 1] { { 128 } }, false) { }
 
         public override Matrix<int, int> Clone() {
             return new ThresholdMatrix(DefinitionMatrix);
