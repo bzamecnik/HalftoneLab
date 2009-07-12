@@ -10,8 +10,7 @@ namespace Gimp.HalftoneLab
     /// </summary>
     class HalftoneLaboratory : Plugin
     {
-        private List<HalftoneMethod> algorithms;
-        private HalftoneMethod selectedAlgorithm;
+        private HalftoneAlgorithm selectedAlgorithm;
         //[SaveAttribute("algorithm")]
         private string selectedAlgorithmName;
         private ConfigManager configManager;
@@ -44,55 +43,35 @@ namespace Gimp.HalftoneLab
             GimpDialog dialog = DialogNew("Halftone Laboratory", "HalftoneLab",
                 IntPtr.Zero, 0, Gimp.StandardHelpFunc, "HalftoneLab");
 
-            //VBox vbox = new VBox(false, 12) { BorderWidth = 12 };
-            //dialog.VBox.PackStart(vbox, true, true, 0);
+            Table table = new Table(2, 1, false);
 
-            //loadAlgorithms();
-            //ComboBox algorithmCombo = ComboBox.NewText();
-            //foreach (HalftoneMethod alg in algorithms) {
-            //    algorithmCombo.AppendText(alg.Name);
-            //}
-            //algorithmCombo.Changed += delegate
-            //{
-            //    selectedAlgorithm = algorithms.Find(
-            //        alg => alg.Name == algorithmCombo.ActiveText);
-            //    if (selectedAlgorithm != null) {
-            //        selectedAlgorithmName = selectedAlgorithm.Name;
-            //    }
-            //};
-            //algorithmCombo.Active = 0;
+            initConfigManager();
 
-            //vbox.PackStart(algorithmCombo, false, false, 0);
+            Console.WriteLine("selected algorithm: {0}", selectedAlgorithm);
+            Console.WriteLine("config manager: {0}", configManager);
 
-            //Button editButton = new Button("Edit ThresholdHalftoneMethod");
-            //editButton.Clicked += delegate
-            //{
-            //    ThresholdHalftoneMethodDialog algDialog =
-            //        new ThresholdHalftoneMethodDialog();
-            //    ThresholdHalftoneMethod module =
-            //        algDialog.runConfiguration() as ThresholdHalftoneMethod;
-            //    Console.WriteLine(module);
-            //};
-            //editButton.Show();
-            //dialog.VBox.PackStart(editButton);
+            ConfigPanel<HalftoneAlgorithm> configPanel =
+                new ConfigPanel<HalftoneAlgorithm>(configManager);
+            HalftoneAlgorithmPanel algorithmPanel =
+                new HalftoneAlgorithmPanel(selectedAlgorithm);
 
-            SubmoduleSelector<HalftoneMethod>
-                halftoneAlgorithmSelector =
-                new SubmoduleSelector<HalftoneMethod>();
-            halftoneAlgorithmSelector.ModuleChanged += delegate
+            configPanel.ModuleChanged += delegate
             {
-                selectedAlgorithm = halftoneAlgorithmSelector.Module;
+                algorithmPanel.Module = configPanel.CurrentModule;
+            };
+            algorithmPanel.ModuleChanged += delegate
+            {
+                selectedAlgorithm = algorithmPanel.Module;
+                configPanel.CurrentModule = selectedAlgorithm;
+                selectedAlgorithmName = (selectedAlgorithm != null) ?
+                    selectedAlgorithm.Name : "";
                 Console.WriteLine(selectedAlgorithm);
             };
 
-            Table table = new Table(1, 2, false)
-                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
-            table.Attach(new Label("Halftone algorithm"), 0, 1, 0, 1,
-                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            table.Attach(halftoneAlgorithmSelector, 1, 2, 0, 1,
-                AttachOptions.Fill | AttachOptions.Expand,
+            table.Attach(configPanel, 0, 1, 0, 1, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
-            table.ShowAll();
+            table.Attach(algorithmPanel, 0, 1, 1, 2, AttachOptions.Fill |
+                AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
             dialog.VBox.PackStart(table);
 
@@ -101,27 +80,30 @@ namespace Gimp.HalftoneLab
 
         override protected void Render(Drawable drawable) {
             Halftone.Image image = new GSImage(drawable);
-            if (algorithms == null) {
-                loadAlgorithms();
-            }
-            if ((selectedAlgorithm == null) && (algorithms != null)) {
-                selectedAlgorithm = algorithms.Find(
-                    alg => alg.Name == selectedAlgorithmName);
+            if (configManager == null) {
+                initConfigManager();
             }
             if (selectedAlgorithm != null) {
-                Console.Out.WriteLine("algorithm name: {0}", selectedAlgorithm.Name);
-                Console.Out.WriteLine("description: {0}", selectedAlgorithm.Description);
+                Console.Out.WriteLine("Algorithm name: {0}", selectedAlgorithm.Name);
+                Console.Out.WriteLine("Description: {0}", selectedAlgorithm.Description);
                 selectedAlgorithm.run(image);
             }
         }
 
-        private void loadAlgorithms() {
-            Console.Out.WriteLine("loadAlgorithms()");
-            configManager = new ConfigManager() { ConfigFileName = "halftonelab.cfg" };
+        private void initConfigManager() {
+            configManager = new ConfigManager()
+            {
+                // TODO: find user home directory
+                ConfigFileName = "halftonelab.cfg"
+            };
             configManager.load();
-            algorithms = configManager.findAllModules(
-                module => module is HalftoneMethod
-                ).ConvertAll<HalftoneMethod>(module => module as HalftoneMethod);
+            if (selectedAlgorithmName != "") {
+                selectedAlgorithm = configManager.getModule<HalftoneAlgorithm>(
+                    selectedAlgorithmName);
+            }
+            if (selectedAlgorithm == null) {
+                selectedAlgorithm = new HalftoneAlgorithm();
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class PerturbedErrorFilterDialog : ConfigDialog
+    public class PerturbedErrorFilterDialog : ModuleDialog
     {
         private PerturbedErrorFilter module;
         private SubmoduleSelector<MatrixErrorFilter> childFilterSelector;

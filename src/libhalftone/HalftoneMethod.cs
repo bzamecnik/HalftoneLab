@@ -1,8 +1,9 @@
 using System;
-//using Gimp;
 
 namespace Halftone
 {
+    // TODO: global progress
+
     /// <summary>
     /// A base class for halftoning algorithm skeletons.
     /// </summary>
@@ -11,7 +12,7 @@ namespace Halftone
     /// plugable submodules to do
     /// </remarks>
     [Serializable]
-    public abstract class HalftoneMethod : Module
+    public abstract class HalftoneMethod : Module, IImageFilter
     {
         /// <summary>
         /// Run the algoritm with current configuration.
@@ -23,6 +24,9 @@ namespace Halftone
         /// </remarks>
         /// <param name="image">Both input and output image.</param>
         public abstract void run(Image image);
-        // TODO: global progress
+
+        public static HalftoneMethod createDefault() {
+            return new ThresholdHalftoneMethod();
+        }
     }
 }

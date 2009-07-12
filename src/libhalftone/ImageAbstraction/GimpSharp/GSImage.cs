@@ -46,6 +46,7 @@ namespace Halftone
         /// </summary>
         /// <param name="drawable"></param>
         public GSImage(Drawable drawable) {
+            _image = drawable.Image;
             _drawable = drawable;
             _rectangle = _drawable.MaskBounds;
             Tile.CacheDefault(_drawable);

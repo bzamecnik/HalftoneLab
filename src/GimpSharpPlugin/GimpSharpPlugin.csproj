@@ -77,13 +77,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigDialog.cs" />
+    <Compile Include="ConfigPanel.cs" />
+    <Compile Include="ModuleDialog.cs" />
     <Compile Include="ErrorVectorPanel.cs" />
     <Compile Include="HalftoneLaboratory.cs" />
     <Compile Include="ModuleRegistry.cs" />
     <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
     <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
     <Compile Include="ErrorMatrixPanel.cs" />
+    <Compile Include="HalftoneAlgorithmPanel.cs" />
     <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
     <Compile Include="MatrixPanel.cs" />

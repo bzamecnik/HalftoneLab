@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    class MatrixErrorFilterDialog : ConfigDialog
+    class MatrixErrorFilterDialog : ModuleDialog
     {
         private MatrixErrorFilter module;
         private Table table;

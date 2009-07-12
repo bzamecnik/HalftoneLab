@@ -18,19 +18,13 @@ namespace Gimp.HalftoneLab
         private Button editButton;
         private CheckButton nullCheckButton;
 
+        private string[] errorFilterSubtypes;
+
         private ModuleType module;
         public ModuleType Module {
             get { return (!AllowNull || !IsNull) ? module : null; }
-            private set {
-                module = value;
-                if (editButton != null) {
-                    editButton.Sensitive = ((module != null) &&
-                    (ModuleRegistry.Instance.getDialogType(
-                        module.GetType().Name) != null));
-                }
-                if (ModuleChanged != null) {
-                    ModuleChanged(this, new EventArgs());
-                }
+            set {
+                assignModule(value, true);
             }
         }
 
@@ -77,18 +71,12 @@ namespace Gimp.HalftoneLab
             ColumnSpacing = RowSpacing = 5;
             editButton = new Button("gtk-edit");
             nullCheckButton = new CheckButton("null");
-            Module = existingModule;
             AllowNull = false;
 
             ModuleRegistry moduleRegistry = ModuleRegistry.Instance;
 
-            nullCheckButton.Toggled += delegate
-            {
-                IsNull = nullCheckButton.Active;
-            };
-
             typeStore = new ListStore(typeof(string), typeof(Type));
-            string[] errorFilterSubtypes = moduleRegistry.getSubmodules(
+            errorFilterSubtypes = moduleRegistry.getSubmodules(
                 typeof(ModuleType).Name);
             foreach (string moduleTypeName in errorFilterSubtypes) {
                 Type type = moduleRegistry.getModuleType(moduleTypeName);
@@ -102,22 +90,27 @@ namespace Gimp.HalftoneLab
             CellRendererText renderer = new CellRendererText();
             typeComboBox.PackStart(renderer, true);
             typeComboBox.SetAttributes(renderer, "text", 0);
+
+            nullCheckButton.Toggled += delegate
+            {
+                IsNull = nullCheckButton.Active;
+            };
             
-            nullCheckButton.Active = Module == null;
-            // set existing module type as active
-            if (Module != null) {
-                string activeTypeName = Module.GetType().Name;
-                typeComboBox.Active = Array.FindIndex(
-                    errorFilterSubtypes, (string type) => activeTypeName == type);
-            }
+            assignModule(existingModule, false);
+
             typeComboBox.Changed += delegate
             {
-                ModuleType selectedModule = ConfigDialog.instantiateModule(
-                    ActiveModuleType) as ModuleType;
-                if (selectedModule != null) {
-                    Module = selectedModule;
+                Type activeModuleType = ActiveModuleType;
+                Type moduleType = (Module != null) ? Module.GetType() : null;
+                if ((activeModuleType != null) &&
+                    (activeModuleType != moduleType)) {
+                    ModuleType selectedModule = ModuleDialog.instantiateModule(
+                        activeModuleType) as ModuleType;
+                    if (selectedModule != null) {
+                        Module = selectedModule;
+                    }
+                    nullCheckButton.Active = Module == null;
                 }
-                nullCheckButton.Active = Module == null;
             };
 
             editButton.Clicked += delegate
@@ -129,7 +122,7 @@ namespace Gimp.HalftoneLab
                     ModuleType configuredModule = null;
                     if (activeType != null) {
                         configuredModule =
-                            ConfigDialog.configureModule(activeType.Name, mod)
+                            ModuleDialog.configureModule(activeType.Name, mod)
                                 as ModuleType;
                     }
                     if (configuredModule != null) {
@@ -146,6 +139,23 @@ namespace Gimp.HalftoneLab
             Attach(nullCheckButton, 2, 3, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             ShowAll();
+        }
+
+        public void assignModule(ModuleType module, bool fireSignal) {
+            this.module = module;
+            editButton.Sensitive = ((module != null) &&
+            (ModuleRegistry.Instance.getDialogType(
+                module.GetType().Name) != null));
+            // set existing module type as active
+            if (module != null) {
+                string activeTypeName = module.GetType().Name;
+                typeComboBox.Active = Array.FindIndex(
+                    errorFilterSubtypes, (string type) => activeTypeName == type);
+            }
+            nullCheckButton.Active = Module == null;
+            if (fireSignal && (ModuleChanged != null)) {
+                ModuleChanged(this, new EventArgs());
+            }
         }
 
         private Type ActiveModuleType {

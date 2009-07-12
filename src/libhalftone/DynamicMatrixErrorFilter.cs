@@ -81,8 +81,6 @@ namespace Halftone
             base.setError(error);
         }
 
-        int debugCount = 0;
-
         public override void init(Image.ImageRunInfo imageRunInfo) {
             //base.init(imageRunInfo);
             int maxMatrixHeight = 0;
