@@ -21,10 +21,10 @@ namespace testing
             window.DeleteEvent += new DeleteEventHandler(
                 delegate { Application.Quit(); });
 
-            HalftoneAlgorithm module;
-            SubmoduleSelector<HalftoneAlgorithm>
+            HalftoneMethod module;
+            SubmoduleSelector<HalftoneMethod>
                 halftoneAlgorithmSelector =
-                new SubmoduleSelector<HalftoneAlgorithm>();
+                new SubmoduleSelector<HalftoneMethod>();
             halftoneAlgorithmSelector.ModuleChanged += delegate
             {
                 module = halftoneAlgorithmSelector.Module;
@@ -150,7 +150,7 @@ namespace testing
 
             //config.saveModule(dynamicThresholdFilter, false);
 
-            ThresholdHalftoneAlgorithm thresholdHalftoneAlgorithm = new ThresholdHalftoneAlgorithm()
+            ThresholdHalftoneMethod thresholdHalftoneAlgorithm = new ThresholdHalftoneMethod()
             {
                 Name = "Threshold halftone algorithm"
             };
@@ -222,7 +222,7 @@ namespace testing
             thresholdHalftoneAlgorithm.Description = "Hilbert SFC order, next pixel vector error filter";
             config.saveModule(thresholdHalftoneAlgorithm, false);
 
-            SFCClusteringAlgorithm sfcAdaptiveClustering = new SFCClusteringAlgorithm()
+            SFCClusteringMethod sfcAdaptiveClustering = new SFCClusteringMethod()
             {
                 Name = "SFC Clustering",
                 ScanningOrder = hilbertScanOrder,
@@ -246,13 +246,13 @@ namespace testing
             thresholdHalftoneAlgorithm.ThresholdFilter =
                 new ImageThresholdFilter()
                 {
-                    ImageGenerator = new ImageThresholdFilter.Generator()
+                    ImageGenerator = new ImageGenerator()
                     {
                         SpotFunction = euclidDotSpotFunction,
                         Effects = {
-                            ImageThresholdFilter.Generator.pixelizeEffect,
-                            ImageThresholdFilter.Generator.rippleEffect
-                            //ImageThresholdFilter.Generator.canvasEffect
+                            ImageGenerator.Samples.pixelizeEffect,
+                            ImageGenerator.Samples.rippleEffect
+                            //ImageThresholdFilter.ImageGenerator.canvasEffect
                         }
                     }
                 };

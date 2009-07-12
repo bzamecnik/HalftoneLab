@@ -206,7 +206,7 @@ namespace Halftone
     /// A simple cyclic 1-D error buffer.
     /// </summary>
     /// <remarks>
-    /// It is intended to be used by CellHalftoneAlgorithm with
+    /// It is intended to be used by CellHalftoneMethod with
     /// SFCScanningOrder. The reason not to use MatrixErrorBuffer is
     /// different signature of constructor, resize() and setError()
     /// functions.

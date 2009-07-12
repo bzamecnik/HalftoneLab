@@ -205,6 +205,8 @@ namespace Halftone
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Source offset X: {0}", SourceOffsetX);
+            sb.AppendLine();
             if (DefinitionMatrix != null) {
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {

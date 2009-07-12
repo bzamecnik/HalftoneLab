@@ -4,9 +4,9 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class SFCClusteringAlgorithmDialog : ConfigDialog
+    public class SFCClusteringMethodDialog : ConfigDialog
     {
-        private SFCClusteringAlgorithm module;
+        private SFCClusteringMethod module;
         private Table table;
         private SubmoduleSelector<VectorErrorFilter> errorFilterSelector;
         private CheckButton useErrorFilterCheckButton;
@@ -17,17 +17,17 @@ namespace Gimp.HalftoneLab
         private CheckButton adaptiveClusteringCheckButton;
         
 
-        public SFCClusteringAlgorithmDialog()
-            : this(new SFCClusteringAlgorithm()) { }
+        public SFCClusteringMethodDialog()
+            : this(new SFCClusteringMethod()) { }
 
-        public SFCClusteringAlgorithmDialog(
-            SFCClusteringAlgorithm existingModule)
+        public SFCClusteringMethodDialog(
+            SFCClusteringMethod existingModule)
             : base(existingModule)
         {
-            module = modifiedModule as SFCClusteringAlgorithm;
+            module = modifiedModule as SFCClusteringMethod;
             if (module == null) {
-                modifiedModule = new SFCClusteringAlgorithm();
-                module = modifiedModule as SFCClusteringAlgorithm;
+                modifiedModule = new SFCClusteringMethod();
+                module = modifiedModule as SFCClusteringMethod;
             }
 
             errorFilterSelector = new SubmoduleSelector<VectorErrorFilter>(

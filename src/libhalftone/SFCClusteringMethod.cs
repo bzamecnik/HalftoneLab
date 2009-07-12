@@ -22,7 +22,7 @@ namespace Halftone
     /// </summary>
     [Module(TypeName="SFC clustering algorithm")]
     [Serializable]
-    public class SFCClusteringAlgorithm : CellHalftoneAlgorithm
+    public class SFCClusteringMethod : CellHalftoneMethod
     {
         // error filter (optional)
         public VectorErrorFilter ErrorFilter {
@@ -56,7 +56,7 @@ namespace Halftone
         // Adjust cluster sizes to amount of local detail?
         public bool UseAdaptiveClustering { get; set; }
 
-        public SFCClusteringAlgorithm() {
+        public SFCClusteringMethod() {
             ErrorFilter = new VectorErrorFilter();
             UseErrorFilter = true;
             ScanningOrder = new HilbertScanningOrder();
