@@ -58,8 +58,8 @@ namespace Gimp.HalftoneLab
         }
 
         public int SourceOffsetX {
-            get { return sourceOffsetXSpinButton.ValueAsInt; }
-            set { sourceOffsetXSpinButton.Value = value; }
+            get { return sourceOffsetXSpinButton.ValueAsInt - 1; }
+            set { sourceOffsetXSpinButton.Value = value + 1; }
         }
     }
 }

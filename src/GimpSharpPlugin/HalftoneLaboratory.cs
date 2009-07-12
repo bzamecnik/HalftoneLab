@@ -10,8 +10,8 @@ namespace Gimp.HalftoneLab
     /// </summary>
     class HalftoneLaboratory : Plugin
     {
-        private List<HalftoneAlgorithm> algorithms;
-        private HalftoneAlgorithm selectedAlgorithm;
+        private List<HalftoneMethod> algorithms;
+        private HalftoneMethod selectedAlgorithm;
         //[SaveAttribute("algorithm")]
         private string selectedAlgorithmName;
         private ConfigManager configManager;
@@ -49,7 +49,7 @@ namespace Gimp.HalftoneLab
 
             //loadAlgorithms();
             //ComboBox algorithmCombo = ComboBox.NewText();
-            //foreach (HalftoneAlgorithm alg in algorithms) {
+            //foreach (HalftoneMethod alg in algorithms) {
             //    algorithmCombo.AppendText(alg.Name);
             //}
             //algorithmCombo.Changed += delegate
@@ -64,21 +64,21 @@ namespace Gimp.HalftoneLab
 
             //vbox.PackStart(algorithmCombo, false, false, 0);
 
-            //Button editButton = new Button("Edit ThresholdHalftoneAlgorithm");
+            //Button editButton = new Button("Edit ThresholdHalftoneMethod");
             //editButton.Clicked += delegate
             //{
-            //    ThresholdHalftoneAlgorithmDialog algDialog =
-            //        new ThresholdHalftoneAlgorithmDialog();
-            //    ThresholdHalftoneAlgorithm module =
-            //        algDialog.runConfiguration() as ThresholdHalftoneAlgorithm;
+            //    ThresholdHalftoneMethodDialog algDialog =
+            //        new ThresholdHalftoneMethodDialog();
+            //    ThresholdHalftoneMethod module =
+            //        algDialog.runConfiguration() as ThresholdHalftoneMethod;
             //    Console.WriteLine(module);
             //};
             //editButton.Show();
             //dialog.VBox.PackStart(editButton);
 
-            SubmoduleSelector<HalftoneAlgorithm>
+            SubmoduleSelector<HalftoneMethod>
                 halftoneAlgorithmSelector =
-                new SubmoduleSelector<HalftoneAlgorithm>();
+                new SubmoduleSelector<HalftoneMethod>();
             halftoneAlgorithmSelector.ModuleChanged += delegate
             {
                 selectedAlgorithm = halftoneAlgorithmSelector.Module;
@@ -120,8 +120,8 @@ namespace Gimp.HalftoneLab
             configManager = new ConfigManager() { ConfigFileName = "halftonelab.cfg" };
             configManager.load();
             algorithms = configManager.findAllModules(
-                module => module is HalftoneAlgorithm
-                ).ConvertAll<HalftoneAlgorithm>(module => module as HalftoneAlgorithm);
+                module => module is HalftoneMethod
+                ).ConvertAll<HalftoneMethod>(module => module as HalftoneMethod);
         }
     }
 }

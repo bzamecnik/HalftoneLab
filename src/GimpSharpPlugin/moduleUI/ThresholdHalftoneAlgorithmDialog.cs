@@ -4,26 +4,26 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class ThresholdHalftoneAlgorithmDialog : ConfigDialog
+    public class ThresholdHalftoneMethodDialog : ConfigDialog
     {
-        private ThresholdHalftoneAlgorithm module;
+        private ThresholdHalftoneMethod module;
         private SubmoduleSelector<ThresholdFilter> thresholdFilterSelector;
         private SubmoduleSelector<ErrorFilter> errorFilterSelector;
         private CheckButton useErrorFilterCheckButton;
         private SubmoduleSelector<ScanningOrder> scanningOrderSelector;
         private Table table;
 
-        public ThresholdHalftoneAlgorithmDialog()
-            : this(new ThresholdHalftoneAlgorithm()) { }
+        public ThresholdHalftoneMethodDialog()
+            : this(new ThresholdHalftoneMethod()) { }
 
-        public ThresholdHalftoneAlgorithmDialog(
-            ThresholdHalftoneAlgorithm existingModule)
+        public ThresholdHalftoneMethodDialog(
+            ThresholdHalftoneMethod existingModule)
             : base(existingModule)
         {
-            module = modifiedModule as ThresholdHalftoneAlgorithm;
+            module = modifiedModule as ThresholdHalftoneMethod;
             if (module == null) {
-                modifiedModule = new ThresholdHalftoneAlgorithm();
-                module = modifiedModule as ThresholdHalftoneAlgorithm;
+                modifiedModule = new ThresholdHalftoneMethod();
+                module = modifiedModule as ThresholdHalftoneMethod;
             }
 
             thresholdFilterSelector = new SubmoduleSelector<ThresholdFilter>(

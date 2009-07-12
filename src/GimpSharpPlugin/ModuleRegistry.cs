@@ -84,18 +84,22 @@ namespace Gimp.HalftoneLab
                     "VectorErrorFilter"
                 });
             
-            addModule(typeof(ThresholdHalftoneAlgorithm),
-                typeof(ThresholdHalftoneAlgorithmDialog), null);
-            addModule(typeof(SFCClusteringAlgorithm),
-                typeof(SFCClusteringAlgorithmDialog), null);
-            addModule(typeof(HalftoneAlgorithm),
+            addModule(typeof(ThresholdHalftoneMethod),
+                typeof(ThresholdHalftoneMethodDialog), null);
+            addModule(typeof(SFCClusteringMethod),
+                typeof(SFCClusteringMethodDialog), null);
+            addModule(typeof(HalftoneMethod),
                 null, new string[] {
-                    "ThresholdHalftoneAlgorithm",
-                    "SFCClusteringAlgorithm"
+                    "ThresholdHalftoneMethod",
+                    "SFCClusteringMethod"
                 });
-            addModule(typeof(CellHalftoneAlgorithm),
+            addModule(typeof(CellHalftoneMethod),
                 null, new string[] {
-                    "SFCClusteringAlgorithm"
+                    "SFCClusteringMethod"
+                });
+            addModule(typeof(PointHalftoneMethod),
+                null, new string[] {
+                    "ThresholdHalftoneMethod"
                 });
 
             addModule(typeof(SpotFunction),

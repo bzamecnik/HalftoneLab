@@ -14,7 +14,7 @@ namespace Halftone
     /// </remarks>
     [Module(TypeName="Thresholding algorithm")]
     [Serializable]
-    public class ThresholdHalftoneAlgorithm : HalftoneAlgorithm
+    public class ThresholdHalftoneMethod : PointHalftoneMethod
     {
         /// <summary>
         /// Threshold filter module. Mandatory.
@@ -59,7 +59,7 @@ namespace Halftone
         /// <param name="thresholdFilter">Threshold filter</param>
         /// <param name="errorFilter">Error filter (optional)</param>
         /// <param name="scanningOrder">Scanning order</param>
-        public ThresholdHalftoneAlgorithm(
+        public ThresholdHalftoneMethod(
             ThresholdFilter thresholdFilter,
             ErrorFilter errorFilter,
             ScanningOrder scanningOrder
@@ -76,7 +76,7 @@ namespace Halftone
         /// and default scanning order (scanline).
         /// </summary>
         /// <param name="thresholdFilter"></param>
-        public ThresholdHalftoneAlgorithm(ThresholdFilter thresholdFilter)
+        public ThresholdHalftoneMethod(ThresholdFilter thresholdFilter)
             : this(thresholdFilter, null, new ScanlineScanningOrder()) {}
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Halftone
         /// filter (MatrixThresholdFilter), no error filter and default scanning
         /// order (scanline).
         /// </summary>
-        public ThresholdHalftoneAlgorithm()
+        public ThresholdHalftoneMethod()
             : this(new MatrixThresholdFilter(), null,
             new ScanlineScanningOrder()) {}
 
