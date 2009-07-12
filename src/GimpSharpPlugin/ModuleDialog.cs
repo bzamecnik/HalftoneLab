@@ -4,12 +4,12 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public abstract class ConfigDialog : Dialog
+    public abstract class ModuleDialog : Dialog
     {
         protected Module originalModule;
         protected Module modifiedModule;
 
-        protected ConfigDialog(Module module) {
+        protected ModuleDialog(Module module) {
             originalModule = module;
             modifiedModule = (Module)module.deepCopy();
             string moduleName = module.GetType().Name;
@@ -52,18 +52,18 @@ namespace Gimp.HalftoneLab
             if ((moduleType == null) || (dialogType == null)) {
                 return null;
             }
-            ConfigDialog dialog = null;
+            ModuleDialog dialog = null;
             System.Reflection.ConstructorInfo ci;
             if (existingModule != null) {
                 ci = dialogType.GetConstructor(new Type[] { moduleType });
                 if (ci != null) {
                     dialog = ci.Invoke(new object[] { existingModule })
-                        as ConfigDialog;
+                        as ModuleDialog;
                 }
             } else {
                 ci = dialogType.GetConstructor(new Type[0]);
                 if (ci != null) {
-                    dialog = ci.Invoke(null) as ConfigDialog;
+                    dialog = ci.Invoke(null) as ModuleDialog;
                 }
             }
             if (dialog != null) {

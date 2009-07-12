@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class ThresholdHalftoneMethodDialog : ConfigDialog
+    public class ThresholdHalftoneMethodDialog : ModuleDialog
     {
         private ThresholdHalftoneMethod module;
         private SubmoduleSelector<ThresholdFilter> thresholdFilterSelector;

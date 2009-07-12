@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class MatrixThresholdFilterDialog : ConfigDialog
+    public class MatrixThresholdFilterDialog : ModuleDialog
     {
         private MatrixThresholdFilter module;
         private Table table;

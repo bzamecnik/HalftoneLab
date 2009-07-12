@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class SpotFunctionDialog : ConfigDialog
+    public class SpotFunctionDialog : ModuleDialog
     {
         private SpotFunction module;
         private Table table;

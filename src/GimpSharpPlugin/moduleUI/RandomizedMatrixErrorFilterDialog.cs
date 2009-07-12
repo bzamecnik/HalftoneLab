@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class RandomizedMatrixErrorFilterDialog : ConfigDialog
+    public class RandomizedMatrixErrorFilterDialog : ModuleDialog
     {
         private RandomizedMatrixErrorFilter module;
         private Table table;

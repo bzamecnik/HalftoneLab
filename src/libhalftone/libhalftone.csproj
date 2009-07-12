@@ -49,6 +49,7 @@
     <Compile Include="CellHalftoneMethod.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="DynamicMatrixTable.cs" />
+    <Compile Include="HalftoneAlgorithm.cs" />
     <Compile Include="HalftoneMethod.cs" />
     <Compile Include="DynamicErrorFilter.cs" />
     <Compile Include="DynamicMatrixErrorFilter.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="ErrorFilter.cs" />
     <Compile Include="ErrorMatrix.cs" />
     <Compile Include="ErrorBuffer.cs" />
+    <Compile Include="IImageFilter.cs" />
     <Compile Include="imageAbstraction\gimpSharp\GSImage.cs" />
     <Compile Include="imageAbstraction\Image.cs" />
     <Compile Include="ImageGenerator.cs" />

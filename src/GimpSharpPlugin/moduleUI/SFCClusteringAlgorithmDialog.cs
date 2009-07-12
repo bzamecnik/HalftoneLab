@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class SFCClusteringMethodDialog : ConfigDialog
+    public class SFCClusteringMethodDialog : ModuleDialog
     {
         private SFCClusteringMethod module;
         private Table table;

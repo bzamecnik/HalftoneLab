@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -86,6 +87,21 @@ namespace Halftone
         }
 
         /// <summary>
+        /// Find all modules of given type matching a predicate.
+        /// </summary>
+        /// <param name="predicate">Predicate taking a module a returning true
+        /// if modules is accepted.</param>
+        /// <returns>List of modules matching a predicate</returns>
+        public List<ModuleType> findAllModules<ModuleType>(
+            Predicate<ModuleType> predicate) where ModuleType : class
+        {
+            return _savedModules.FindAll(
+                module => (module is ModuleType)
+                ).ConvertAll<ModuleType>(module => module as ModuleType)
+                .FindAll(predicate);
+        }
+
+        /// <summary>
         /// Find all modules matching a predicate.
         /// </summary>
         /// <param name="predicate">Predicate taking a module a returning true
@@ -93,6 +109,18 @@ namespace Halftone
         /// <returns>List of modules matching a predicate</returns>
         public List<Module> findAllModules(Predicate<Module> predicate) {
             return _savedModules.FindAll(predicate);
+        }
+
+        public ModuleType getModule<ModuleType>(string moduleName)
+            where ModuleType : Module
+        {
+            if (moduleName == null) {
+                return null;
+            }
+            List<ModuleType> modules = findAllModules<ModuleType>(
+                module => module.Name == moduleName);
+            return (modules.Count > 0) ?
+                (ModuleType)(modules.First().deepCopy()) : null;
         }
 
         /// <summary>
@@ -154,9 +182,9 @@ namespace Halftone
         /// </summary>
         /// <param name="type">Module type</param>
         /// <param name="name">Module configuration name</param>
-        public void deleteModule(Type type, string name) {
+        public void deleteModule<ModuleType>(string name) {
             _savedModules.RemoveAll(
-                (module) => (type == module.GetType()) && (name == module.Name)
+                (module) => (module is ModuleType) && (name == module.Name)
                 );
             save();
         }

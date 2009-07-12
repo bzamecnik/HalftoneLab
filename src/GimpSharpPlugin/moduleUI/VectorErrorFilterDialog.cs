@@ -4,7 +4,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class VectorErrorFilterDialog : ConfigDialog
+    public class VectorErrorFilterDialog : ModuleDialog
     {
         private VectorErrorFilter module;
         private Table table;

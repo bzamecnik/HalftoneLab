@@ -19,7 +19,7 @@ namespace Gimp.HalftoneLab
     //     - get selected, popup dialog, store
     //       - the same as add op., except for getting the original one
 
-    public class DynamicMatrixErrorFilterDialog : ConfigDialog
+    public class DynamicMatrixErrorFilterDialog : ModuleDialog
     {
         private DynamicMatrixErrorFilter module;
         private Table table;
@@ -268,6 +268,8 @@ namespace Gimp.HalftoneLab
                 table.ShowAll();
                 VBox.PackStart(table);
             }
+
+            // TODO: use OnResponse() instead
 
             void save() {
                 record.keyRangeStart = intensitySpinButton.ValueAsInt;
