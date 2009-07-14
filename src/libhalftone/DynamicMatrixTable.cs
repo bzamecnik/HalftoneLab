@@ -5,11 +5,11 @@ using System.Linq;
 namespace Halftone
 {
     [Serializable]
-    public class DynamicMatrixTable<T>
+    public class DynamicMatrixTable<T> : Module
         where T : DynamicMatrixTable<T>.Record, new()
     {
         [Serializable]
-        public abstract class Record : IComparable<Record>
+        public abstract class Record : Module, IComparable<Record>
         {
             /// <summary>
             /// Starting intensity of the range (0-255).
@@ -35,10 +35,15 @@ namespace Halftone
         /// instad of a list. On the other size using a sorted list is simpler.
         /// </para>
         /// </remarks>
-        private SortedList<int, T> _table;
+        private SortedList<int, T> _definitionTable;
+        private T[] _workingTable;
+
+        public T DefaultRecord { get; protected set; }
 
         public DynamicMatrixTable() {
-            _table = new SortedList<int, T>();
+            _definitionTable = new SortedList<int, T>();
+            _workingTable = new T[256]; // intensity range
+            DefaultRecord = new T();
         }
 
         /// <summary>
@@ -51,21 +56,21 @@ namespace Halftone
         /// <param name="intensityRangeStart">Start intensity of the range
         /// (0-255)</param>
         /// <param name="matrix">Error matrix for that range</param>
-        public bool addRecord(T record) {
+        public bool addDefinitionRecord(T record) {
             //if ((record.keyRangeStart < 0) || (record.keyRangeStart > 255)) { return; }
-            if (_table.ContainsKey(record.keyRangeStart)) {
+            if (_definitionTable.ContainsKey(record.keyRangeStart)) {
                 ////move it one step further (if there is a free place)
-                //if (!_table.ContainsKey(keyRangeStart + 1)) {
+                //if (!_definitionTable.ContainsKey(keyRangeStart + 1)) {
                 //    // copy existing record one step further
-                //    _table.Add(record.keyRangeStart + 1,
-                //        _table[record.keyRangeStart]);
+                //    _definitionTable.Add(record.keyRangeStart + 1,
+                //        _definitionTable[record.keyRangeStart]);
                 //}
                 // replace the record with new one
-                _table[record.keyRangeStart] = record;
+                _definitionTable[record.keyRangeStart] = record;
                 return false;
             } else {
                 // add a new record
-                _table.Add(record.keyRangeStart, record);
+                _definitionTable.Add(record.keyRangeStart, record);
             }
             return true;
         }
@@ -77,8 +82,8 @@ namespace Halftone
         /// <param name="intensity">Pixel intensity (0-255)</param>
         /// <returns>Proper intensity range record or a default one if the
         /// intensity range table is empty</returns>
-        public T getRecord(int key) {
-            return getRecord(key, true);
+        public T getDefinitionRecord(int key) {
+            return getDefinitionRecord(key, true);
         }
 
         /// <summary>
@@ -89,15 +94,19 @@ namespace Halftone
         /// <param name="getDefault">Replace null with a default record?</param>
         /// <returns>Proper intensity range record or a null if the
         /// intensity range table is empty</returns>
-        public T getRecord(int key, bool getDefault) {
+        public T getDefinitionRecord(int key, bool getDefault) {
             // this is an upper bound, lower bound idea from:
             // http://stackoverflow.com/questions/594518/is-there-a-lower-bound-function-in-c-on-a-sortedlist
-            T record = _table.LastOrDefault(
+            T record = _definitionTable.LastOrDefault(
                 x => x.Key <= key).Value;
             if ((record == null) && getDefault) {
-                record = new T();
+                record = DefaultRecord;
             }
             return record;
+        }
+
+        public T getWorkingRecord(int key) {
+            return _workingTable[key];
         }
 
         /// <summary>
@@ -108,19 +117,33 @@ namespace Halftone
         /// </remarks>
         /// <param name="intensityRangeStart">Start intensity of the range
         /// (0-255)</param>
-        public void deleteRecord(int key) {
-            _table.Remove(key);
+        public void deleteDefinitionRecord(int key) {
+            _definitionTable.Remove(key);
         }
 
-        public IEnumerable<T> listRecords() {
-            return _table.Values.AsEnumerable();
+        public IEnumerable<T> listDefinitionRecords() {
+            return _definitionTable.Values.AsEnumerable();
         }
 
         /// <summary>
         /// Clear all records.
         /// </summary>
-        public void clearRecords() {
-            _table.Clear();
+        public void clearDefinitionRecords() {
+            _definitionTable.Clear();
+        }
+        private void computeWorkingTable() {
+            for (int i = 0; i < 256; i++) {
+                _workingTable[i] = getDefinitionRecord(i, true);
+            }
+        }
+
+        public override void init(Image.ImageRunInfo imageRunInfo) {
+            base.init(imageRunInfo);
+            foreach (Record record in _definitionTable.Values) {
+                record.init(imageRunInfo);
+            }
+            DefaultRecord.init(imageRunInfo);
+            computeWorkingTable();
         }
     }
 }

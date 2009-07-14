@@ -15,8 +15,8 @@ namespace Halftone
     /// <remarks>
     /// <para>
     /// Each intensity or intensity range can have its own error matrix. This
-    /// is done before running the halftone algorithm using addRecord() or
-    /// deleteRecord() functions.
+    /// is done before running the halftone algorithm using addDefinitionRecord() or
+    /// deleteDefinitionRecord() functions.
     /// </para>
     /// <para>
     /// The whole range of intensities is divided into ranges. There is a
@@ -25,8 +25,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
-    public class DynamicMatrixErrorFilter
-        : MatrixErrorFilter, DynamicErrorFilter
+    public class DynamicMatrixErrorFilter : MatrixErrorFilter
     {
         public DynamicMatrixTable<ErrorRecord> MatrixTable { get; set; }
 
@@ -53,6 +52,11 @@ namespace Halftone
 
             public ErrorRecord()
                 : this(0, ErrorMatrix.Samples.Default) { }
+
+            public override void init(Image.ImageRunInfo imageRunInfo) {
+                base.init(imageRunInfo);
+                matrix.init(imageRunInfo);
+            }
         }
 
         /// <summary>
@@ -63,32 +67,26 @@ namespace Halftone
         }
 
         /// <summary>
-        /// Without intensity parameter we don't know which error matrix to
-        /// select, thus setError(double error) is made inaccessible.
-        /// </summary>
-        /// <param name="error"></param>
-        private new void setError(double error) { }
-
-        /// <summary>
         /// Set error according to a matrix dynamically selected depending
         /// upon pixel intensity.
         /// </summary>
         /// <param name="error">Quantization error value</param>
         /// <param name="intensity">Source pixel intensity</param>
-        public void setError(double error, int intensity) {
-            // TODO: intensity should be clipped here to 0-255 range!
-            setMatrix(MatrixTable.getRecord(intensity).matrix, false);
-            base.setError(error);
+        public override void setError(double error, int intensity) {
+            // intensity for dynamic table is clipped here to 0-255 range
+            setMatrix(MatrixTable.getWorkingRecord(
+                Math.Max(Math.Min(intensity, 255), 0)).matrix, false);
+            base.setError(error, intensity);
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             //base.init(imageRunInfo);
-            int maxMatrixHeight = 0;
-            foreach (ErrorRecord record in MatrixTable.listRecords()) {
-                record.matrix.init(imageRunInfo);
+            int maxMatrixHeight = MatrixTable.DefaultRecord.matrix.Height;
+            foreach (ErrorRecord record in MatrixTable.listDefinitionRecords()) {
                 maxMatrixHeight = Math.Max(maxMatrixHeight,
                     record.matrix.Height);
             }
+            MatrixTable.init(imageRunInfo);
             Buffer = ErrorBuffer.createFromScanningOrder(
                 imageRunInfo.ScanOrder, maxMatrixHeight,
                 imageRunInfo.Width) as MatrixErrorBuffer;

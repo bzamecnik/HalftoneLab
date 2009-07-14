@@ -41,8 +41,7 @@ namespace Gimp.HalftoneLab
             errorFilterSelector.ModuleChanged += delegate
             {
                 module.ErrorFilter = errorFilterSelector.Module;
-                useErrorFilterCheckButton.Active &=
-                    errorFilterSelector.Module != null;
+                useErrorFilterCheckButton.Active = module.UseErrorFilter;
                 useErrorFilterCheckButton.Sensitive =
                     errorFilterSelector.Module != null;
             };

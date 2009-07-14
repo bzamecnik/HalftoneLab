@@ -19,8 +19,8 @@ namespace Halftone
         /// intensity of the range and perturbation noise amplitude
         /// </summary>
         /// <remarks>
-        /// It is comparable to support sorting a table of these records
-        /// and searching there.
+        /// It implements IComparable to support sorting a table of these
+        /// records and searching there.
         /// </remarks>
         [Serializable]
         public class ThresholdRecord
@@ -52,6 +52,11 @@ namespace Halftone
             /// </summary>
             public ThresholdRecord()
                 : this(0, new ThresholdMatrix()) { }
+
+            public override void init(Image.ImageRunInfo imageRunInfo) {
+                base.init(imageRunInfo);
+                matrix.init(imageRunInfo);
+            }
         }
 
         /// <summary>
@@ -76,7 +81,7 @@ namespace Halftone
         /// </summary>
         public DynamicMatrixThresholdFilter() {
             MatrixTable = new DynamicMatrixTable<ThresholdRecord>();
-            NoiseEnabled = false;
+            NoiseEnabled = true;
         }
 
         /// <summary>
@@ -93,24 +98,23 @@ namespace Halftone
         /// <param name="y">Pixel Y coordinate (> 0)</param>
         /// <returns></returns>
         protected override int threshold(int intensity, int x, int y) {
-            // TODO: intensity should be clipped here to 0-255 range!
-            ThresholdRecord record = MatrixTable.getRecord(intensity);
+            // intensity for dynamic table is clipped here to 0-255 range
+            ThresholdRecord record = MatrixTable.getWorkingRecord(
+                Math.Max(Math.Min(intensity, 255), 0));
             ThresholdMatrix matrix = record.matrix;
             int threshold = matrix[x, y];
             if (NoiseEnabled) {
                 // add noise from interval [-amplitude;amplitude)
                 // TODO: find out maximum absolute noise amplitude
                 threshold += (int)((RandomGenerator.NextDouble() - 0.5) *
-                    record.noiseAmplitude * 127);
+                    record.noiseAmplitude * 255);
             }
             return threshold;
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
-            foreach (ThresholdRecord record in MatrixTable.listRecords()) {
-                record.matrix.init(imageRunInfo);
-            }
+            MatrixTable.init(imageRunInfo);
         }
     }
 }

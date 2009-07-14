@@ -23,6 +23,10 @@ namespace Halftone
     /// init().
     /// </para>
     /// <para>
+    /// Error setting behaviour can be optionally dependent on source pixel
+    /// intensity.
+    /// </para>
+    /// <para>
     /// Note: The internal buffer (if the is any) is initialized according
     /// to some image-dependent parameters using virutal
     /// init(Image.ImageRunInfo). Initialized property is set to true
@@ -61,7 +65,8 @@ namespace Halftone
         /// <summary>
         /// <para>
         /// Diffuse quantization error value from current pixel to
-        /// its neighbour pixels according to some specific rules.
+        /// its neighbour pixels according to some specific rules with
+        /// possible dependence on source pixel intensity.
         /// </para>
         /// <para>
         /// Pixel intensity is of intensity scale 0.0-255.0. However,
@@ -70,7 +75,9 @@ namespace Halftone
         /// </summary>
         /// <param name="error">Quantization error to be diffused from
         /// the current pixel</param>
-        public abstract void setError(double error);
+        /// <param name="intensity">Source pixel intensity (0-255) (only
+        /// meaningful for dynamic error filters.</param>
+        public abstract void setError(double error, int intensity);
 
         /// <summary>
         /// Move to next pixel position. Tell the buffer to move.

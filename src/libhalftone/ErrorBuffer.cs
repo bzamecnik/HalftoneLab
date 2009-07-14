@@ -37,7 +37,7 @@ namespace Halftone
                 return new MatrixErrorBuffer(height, width)
                 { SerpentineEnabled = true };
             } else if (scanningOrder is SFCScanningOrder) {
-                return new LineErrorBuffer(width);
+                return new VectorErrorBuffer(width);
             } else {
                 return null;
             }
@@ -211,7 +211,7 @@ namespace Halftone
     /// different signature of constructor, resize() and setError()
     /// functions.
     /// </remarks>
-    public class LineErrorBuffer : ErrorBuffer
+    public class VectorErrorBuffer : ErrorBuffer
     {
         /// <summary>
         /// The error buffer.
@@ -236,7 +236,7 @@ namespace Halftone
         /// Create a line error buffer.
         /// </summary>
         /// <param name="length">Buffer length</param>
-        public LineErrorBuffer(int length) {
+        public VectorErrorBuffer(int length) {
             _buffer = new double[length + 1];
             _currentOffset = 0;
         }

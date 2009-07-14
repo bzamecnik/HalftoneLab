@@ -42,7 +42,7 @@ namespace Halftone
         }
 
         // diffuse error value from given pixel to neighbor pixels
-        public override void setError(double error) {
+        public override void setError(double error, int intensity) {
             Matrix.apply((int y, int x, double coeff) =>
                 {
                     Buffer.setError(y, x, coeff * error);

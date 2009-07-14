@@ -206,7 +206,7 @@ namespace Halftone
                     totalCellIntensity = 0;
                     if (ErrorFilterEnabled) {
                         //Console.Out.WriteLine("set error: {0}", error);
-                        ErrorFilter.setError(error);
+                        ErrorFilter.setError(error, 0);
                     }
                     currentCellSize = MaxCellSize;
                 }
