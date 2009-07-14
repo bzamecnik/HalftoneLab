@@ -14,6 +14,7 @@ namespace Gimp.HalftoneLab
         private Button editRecordButton;
         private Button deleteRecordButton;
         private Button clearRecordsButton;
+        private CheckButton noiseEnabledCheckButton;
 
         public DynamicMatrixThresholdFilterDialog()
             : this(new DynamicMatrixThresholdFilter()) { }
@@ -28,6 +29,13 @@ namespace Gimp.HalftoneLab
             }
 
             initRecordTable(module);
+
+            noiseEnabledCheckButton = new CheckButton("Noise enabled?");
+            noiseEnabledCheckButton.Active = module.NoiseEnabled;
+            noiseEnabledCheckButton.Toggled += delegate
+            {
+                module.NoiseEnabled = noiseEnabledCheckButton.Active;
+            };
 
             addRecordButton = new Button("gtk-new");
             addRecordButton.Clicked += delegate
@@ -44,7 +52,7 @@ namespace Gimp.HalftoneLab
                 TreeIter selectedIter = getSelectedRowIter();
                 int selectedIntensity = getIntensityFromRow(selectedIter);
                 if (selectedIntensity >= 0) {
-                    DynamicMatrixThresholdFilter.ThresholdRecord record = module.MatrixTable.getRecord(
+                    DynamicMatrixThresholdFilter.ThresholdRecord record = module.MatrixTable.getDefinitionRecord(
                         selectedIntensity, false);
                     ThresholdTableRecordDialog dialog =
                         new ThresholdTableRecordDialog(record);
@@ -73,34 +81,39 @@ namespace Gimp.HalftoneLab
             clearRecordsButton = new Button("Clear all");
             clearRecordsButton.Clicked += delegate
             {
-                module.MatrixTable.clearRecords();
+                module.MatrixTable.clearDefinitionRecords();
                 recordStore.Clear();
             };
 
-            table = new Table(5, 2, false) { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+            table = new Table(6, 2, false)
+                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
 
-            table.Attach(new Label("Intensity range table:") { Xalign = 0.0f }, 0, 2, 0, 1, AttachOptions.Fill,
+            table.Attach(new Label("Intensity range table:") { Xalign = 0.0f },
+                0, 2, 0, 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+
+            table.Attach(noiseEnabledCheckButton, 0, 2, 1, 2,
+                AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
             ScrolledWindow recordTreeViewScroll = new ScrolledWindow();
             recordTreeViewScroll.AddWithViewport(recordTreeView);
-            table.Attach(recordTreeViewScroll, 1, 2, 1, 5,
+            table.Attach(recordTreeViewScroll, 1, 2, 2, 6,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Fill | AttachOptions.Expand, 0, 0);
 
-            table.Attach(addRecordButton, 0, 1, 1, 2,
+            table.Attach(addRecordButton, 0, 1, 2, 3,
                 AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(editRecordButton, 0, 1, 2, 3,
+            table.Attach(editRecordButton, 0, 1, 3, 4,
                 AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(deleteRecordButton, 0, 1, 3, 4,
+            table.Attach(deleteRecordButton, 0, 1, 4, 5,
                 AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
-            table.Attach(clearRecordsButton, 0, 1, 4, 5,
+            table.Attach(clearRecordsButton, 0, 1, 5, 6,
                 AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
@@ -124,7 +137,7 @@ namespace Gimp.HalftoneLab
                 );
             recordStore.SetSortColumnId(0, SortType.Ascending);
             foreach (DynamicMatrixThresholdFilter.ThresholdRecord record in
-                module.MatrixTable.listRecords()) {
+                module.MatrixTable.listDefinitionRecords()) {
                 recordStore.AppendValues(record);
             }
             recordTreeView = new TreeView(recordStore);
@@ -179,7 +192,7 @@ namespace Gimp.HalftoneLab
 
         void addRecord(DynamicMatrixThresholdFilter.ThresholdRecord record) {
             if (record != null) {
-                module.MatrixTable.addRecord(record);
+                module.MatrixTable.addDefinitionRecord(record);
                 // if there is another record with the same intensity
                 // delete it from the list store
                 TreeIter iter =
@@ -194,7 +207,7 @@ namespace Gimp.HalftoneLab
 
         void deleteRecord(ref TreeIter iter, int intensity) {
             recordStore.Remove(ref iter);
-            module.MatrixTable.deleteRecord(intensity);
+            module.MatrixTable.deleteDefinitionRecord(intensity);
         }
 
         public class ThresholdTableRecordDialog : Dialog
@@ -202,7 +215,7 @@ namespace Gimp.HalftoneLab
             private Table table;
             private SpinButton intensitySpinButton;
             ThresholdMatrixPanel matrixPanel;
-            private SpinButton noiseSpinButton;
+            private HScale noiseHScale;
             private DynamicMatrixThresholdFilter.ThresholdRecord record;
 
             public ThresholdTableRecordDialog()
@@ -228,8 +241,8 @@ namespace Gimp.HalftoneLab
                 matrixPanel.Matrix = record.matrix.DefinitionMatrix;
                 matrixPanel.Iterative = record.matrix.Iterative;
 
-                noiseSpinButton = new SpinButton(0, 1, 0.01);
-                noiseSpinButton.Value = record.noiseAmplitude;
+                noiseHScale = new HScale(0, 1, 0.01);
+                noiseHScale.Value = record.noiseAmplitude;
 
                 table = new Table(4, 2, false)
                     { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
@@ -249,7 +262,7 @@ namespace Gimp.HalftoneLab
 
                 table.Attach(new Label("Noise amplitude:") { Xalign = 0.0f },
                     0, 1, 3, 4, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-                table.Attach(noiseSpinButton, 1, 2, 3, 4,
+                table.Attach(noiseHScale, 1, 2, 3, 4,
                     AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
                 table.ShowAll();
@@ -260,7 +273,7 @@ namespace Gimp.HalftoneLab
                 record.keyRangeStart = intensitySpinButton.ValueAsInt;
                 record.matrix = new ThresholdMatrix(matrixPanel.Matrix,
                         matrixPanel.Iterative);
-                record.noiseAmplitude = noiseSpinButton.Value;
+                record.noiseAmplitude = noiseHScale.Value;
             }
 
             public DynamicMatrixThresholdFilter.ThresholdRecord runConfiguration() {

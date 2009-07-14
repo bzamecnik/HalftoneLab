@@ -26,16 +26,25 @@ namespace Halftone
         /// </summary>
         public ImageGenerator ImageGenerator { get; set; }
 
+        public ImageThresholdFilter() : this(new ImageGenerator()) { }
+
+        public ImageThresholdFilter(ImageGenerator imageGenerator) {
+            ImageGenerator = imageGenerator;
+        }
+
         protected override int threshold(int intensity, int x, int y) {
             return _thresholdImage.getPixel(x, y)[0];
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
-            ImageGenerator.init(imageRunInfo);
             _thresholdImage = Image.createDefatult(
-                imageRunInfo.Width, imageRunInfo.Height);
-            ImageGenerator.generateImage(_thresholdImage);
+                    imageRunInfo.Width, imageRunInfo.Height);
+            if (ImageGenerator != null) {
+                ImageGenerator.init(imageRunInfo);
+                ImageGenerator.generateImage(_thresholdImage);
+            }
+            // DEBUG: display the threshold image
             //if (_thresholdImage is GSImage) {
             //    new Gimp.Display((_thresholdImage as GSImage).Image);
             //}

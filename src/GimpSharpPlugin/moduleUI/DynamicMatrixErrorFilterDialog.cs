@@ -60,7 +60,7 @@ namespace Gimp.HalftoneLab
                 TreeIter selectedIter = getSelectedRowIter();
                 int selectedIntensity = getIntensityFromRow(selectedIter);
                 if (selectedIntensity >= 0) {
-                    DynamicMatrixErrorFilter.ErrorRecord record = module.MatrixTable.getRecord(
+                    DynamicMatrixErrorFilter.ErrorRecord record = module.MatrixTable.getDefinitionRecord(
                         selectedIntensity, false);
                     ErrorTableRecordDialog dialog =
                         new ErrorTableRecordDialog(record);
@@ -89,7 +89,7 @@ namespace Gimp.HalftoneLab
             clearRecordsButton = new Button("Clear all");
             clearRecordsButton.Clicked += delegate
             {
-                module.MatrixTable.clearRecords();
+                module.MatrixTable.clearDefinitionRecords();
                 recordStore.Clear();
             };
 
@@ -140,7 +140,7 @@ namespace Gimp.HalftoneLab
                 );
             recordStore.SetSortColumnId(0, SortType.Ascending);
             foreach (DynamicMatrixErrorFilter.ErrorRecord record in
-                module.MatrixTable.listRecords())
+                module.MatrixTable.listDefinitionRecords())
             {
                 recordStore.AppendValues(record);
             }
@@ -197,7 +197,7 @@ namespace Gimp.HalftoneLab
 
         void addRecord(DynamicMatrixErrorFilter.ErrorRecord record) {
             if (record != null) {
-                module.MatrixTable.addRecord(record);
+                module.MatrixTable.addDefinitionRecord(record);
                 // if there is another record with the same intensity
                 // delete it from the list store
                 TreeIter iter =
@@ -212,7 +212,7 @@ namespace Gimp.HalftoneLab
 
         void deleteRecord(ref TreeIter iter, int intensity) {
             recordStore.Remove(ref iter);
-            module.MatrixTable.deleteRecord(intensity);
+            module.MatrixTable.deleteDefinitionRecord(intensity);
         }
 
         public class ErrorTableRecordDialog : Dialog {

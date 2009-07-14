@@ -29,6 +29,7 @@ namespace Halftone
         public List<GSEffectDelegate> Effects { get; set; }
 
         public ImageGenerator() {
+            SpotFunction = new SpotFunction();
             Effects = new List<GSEffectDelegate>();
         }
 
@@ -42,12 +43,14 @@ namespace Halftone
         /// <param name="image"></param>
         public void generateImage(Image image) {
             image.initBuffer();
-            image.IterateSrcDestByRows((pixel) =>
-            {
-                pixel[0] = SpotFunction.SpotFunc(pixel.X, pixel.Y);
-                return pixel;
-            }, new ScanlineScanningOrder());
-            image.flushBuffer();
+            if (SpotFunction != null) {
+                image.IterateSrcDestByRows((pixel) =>
+                {
+                    pixel[0] = SpotFunction.SpotFunc(pixel.X, pixel.Y);
+                    return pixel;
+                }, new ScanlineScanningOrder());
+                image.flushBuffer();
+            }
             GSImage gsImage = image as GSImage;
             if ((gsImage != null) && (Effects != null)) {
                 foreach (GSEffectDelegate effect in Effects) {
@@ -63,7 +66,9 @@ namespace Halftone
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
-            SpotFunction.init(imageRunInfo);
+            if (SpotFunction != null) {
+                SpotFunction.init(imageRunInfo);
+            }
         }
 
         public static class Samples

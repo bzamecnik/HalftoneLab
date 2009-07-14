@@ -34,12 +34,12 @@ namespace Halftone
         }
 
         [NonSerialized]
-        private LineErrorBuffer _buffer;
+        private VectorErrorBuffer _buffer;
 
         /// <summary>
         /// One-dimensional error buffer.
         /// </summary>
-        private LineErrorBuffer Buffer {
+        private VectorErrorBuffer Buffer {
             get { return _buffer; }
             set { _buffer = value; }
         }
@@ -63,7 +63,7 @@ namespace Halftone
             return Buffer.getError();
         }
 
-        public override void setError(double error) {
+        public override void setError(double error, int intensity) {
             Matrix.apply((int y, int x, double coeff) =>
                 {
                     Buffer.setError(x, coeff * error);
@@ -80,8 +80,8 @@ namespace Halftone
             Matrix.init(imageRunInfo);
             Buffer = ErrorBuffer.createFromScanningOrder(
                 imageRunInfo.ScanOrder, Matrix.Height,
-                Matrix.Width) as LineErrorBuffer;
-            // null if the created result is not a LineErrorBuffer
+                Matrix.Width) as VectorErrorBuffer;
+            // null if the created result is not a VectorErrorBuffer
             Initialized = Buffer != null;
         }
     }

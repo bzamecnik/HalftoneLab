@@ -51,7 +51,6 @@
     <Compile Include="DynamicMatrixTable.cs" />
     <Compile Include="HalftoneAlgorithm.cs" />
     <Compile Include="HalftoneMethod.cs" />
-    <Compile Include="DynamicErrorFilter.cs" />
     <Compile Include="DynamicMatrixErrorFilter.cs" />
     <Compile Include="DynamicMatrixThresholdFilter.cs" />
     <Compile Include="ErrorFilter.cs" />

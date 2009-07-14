@@ -3,11 +3,6 @@ using Gimp;
 
 namespace Halftone
 {
-    // TODO:
-    // - make a definition matrix (which could be iterative) and scaled
-    //   working one
-    // - working matrix could be of double type
-
     /// <summary>
     /// Tileable matrix of threshold values.
     /// </summary>

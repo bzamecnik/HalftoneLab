@@ -14,10 +14,10 @@ namespace Halftone
     /// perturbation can be controlled via PerturbationAmplitude property.
     /// </para>
     /// <para>
-    /// Coefficients in the original matrix are sorted by their value and
-    /// grouped into pairs. A random perturbation of varying magnitude is
-    /// added to one coefficient and subtracted from the other.
-    /// The perturbation magnitude depends on minor of the two coeficents.
+    /// Coefficients in the original matrix are sorted according to their
+    /// value and grouped in pairs. A random perturbation of varying
+    /// magnitude is added to one coefficient and subtracted from the other.
+    /// Perturbation magnitude depends on the lesser of the two coeficients.
     /// If there is an odd number of coefficients the last perturbation is
     /// divided into a group of three coefficients.
     /// </para>
@@ -136,7 +136,7 @@ namespace Halftone
             return ChildFilter.getError();
         }
 
-        public override void setError(double error) {
+        public override void setError(double error, int intensity) {
             PerturbedMatrix.apply( (int y, int x, double coeff) =>
                 {
                     ChildFilter.Buffer.setError(y, x, coeff * error);
@@ -158,7 +158,7 @@ namespace Halftone
             } else {
                 _coeffGroups.Clear();
             }
-            OriginalMatrix = ChildFilter.Matrix;
+            OriginalMatrix = (ErrorMatrix)ChildFilter.Matrix.Clone();
             PerturbedMatrix = (ErrorMatrix)OriginalMatrix.Clone();
             computePerturbation();
         }

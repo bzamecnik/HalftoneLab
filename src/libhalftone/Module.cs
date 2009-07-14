@@ -9,8 +9,13 @@ namespace Halftone
     /// can form various halftoning algorithms.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Modules act as plugable components. Parameters and sumbodules
     /// can be set using properties.
+    /// </para>
+    /// <para>
+    /// TODO: - serializable, init()
+    /// </para>
     /// </remarks>
     [Serializable]
     public abstract class Module
