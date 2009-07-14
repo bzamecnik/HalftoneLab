@@ -4,7 +4,7 @@ namespace Halftone
 {
     /// <summary>
     /// Error diffusion filter module. This kind of filter diffuses quantization 
-    /// error to current pixel neighbourhood.
+    /// error to the neighbourhood of the current pixel.
     /// </summary>
     /// <remarks>
     /// <para>

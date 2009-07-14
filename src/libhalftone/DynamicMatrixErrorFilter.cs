@@ -21,7 +21,7 @@ namespace Halftone
     /// <para>
     /// The whole range of intensities is divided into ranges. There is a
     /// matrix for each of thoes ranges. Each range is given by its lower
-    /// intensity
+    /// intensity.
     /// </para>
     /// </remarks>
     [Serializable]
@@ -34,8 +34,8 @@ namespace Halftone
         /// intensity of the range.
         /// </summary>
         /// <remarks>
-        /// It is comparable to support sorting a table of these records
-        /// and searching there.
+        /// It implements IComparable to support sorting a table of these
+        /// records and searching there.
         /// </remarks>
         [Serializable]
         public class ErrorRecord : DynamicMatrixTable<ErrorRecord>.Record
