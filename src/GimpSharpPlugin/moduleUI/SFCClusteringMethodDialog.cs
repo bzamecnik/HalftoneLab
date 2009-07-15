@@ -34,69 +34,33 @@ namespace Gimp.HalftoneLab
                 module.ErrorFilter);
             errorFilterSelector.ModuleChanged += delegate
             {
-                module.ErrorFilter = errorFilterSelector.Module;
-                useErrorFilterCheckButton.Active &=
+                useErrorFilterCheckButton.Active =
                     errorFilterSelector.Module != null;
                 useErrorFilterCheckButton.Sensitive =
                     errorFilterSelector.Module != null;
             };
 
-            useErrorFilterCheckButton = new CheckButton(
-                "Use error filter?");
-            useErrorFilterCheckButton.Active =
-                module.UseErrorFilter;
-            useErrorFilterCheckButton.Toggled += delegate
-            {
-                module.UseErrorFilter =
-                    useErrorFilterCheckButton.Active;
-            };
+            useErrorFilterCheckButton = new CheckButton("Use error filter?");
+            useErrorFilterCheckButton.Active = module.UseErrorFilter;
 
             scanningOrderSelector = new SubmoduleSelector<SFCScanningOrder>(
                 module.ScanningOrder);
-            scanningOrderSelector.ModuleChanged += delegate
-            {
-                module.ScanningOrder = scanningOrderSelector.Module;
-            };
 
-            maxCellSizeSpinButton = new SpinButton(1, 100, 1)
-            {
-                Numeric = true
-            };
+            maxCellSizeSpinButton = new SpinButton(1, 100, 1);
             maxCellSizeSpinButton.Value = module.MaxCellSize;
-            maxCellSizeSpinButton.Changed += delegate
-            {
-                module.MaxCellSize = maxCellSizeSpinButton.ValueAsInt;
-            };
 
-            minCellSizeSpinButton = new SpinButton(1, 99, 1)
-            {
-                Numeric = true
-            };
+            minCellSizeSpinButton = new SpinButton(1, 99, 1);
             minCellSizeSpinButton.Value = module.MinCellSize;
-            minCellSizeSpinButton.Changed += delegate
-            {
-                module.MinCellSize = minCellSizeSpinButton.ValueAsInt;
-            };
 
             clusterPositioningCheckButton =
                 new CheckButton("Use cluster positioning?");
             clusterPositioningCheckButton.Active =
                 module.UseClusterPositioning;
-            clusterPositioningCheckButton.Toggled += delegate
-            {
-                module.UseClusterPositioning =
-                    clusterPositioningCheckButton.Active;
-            };
 
             adaptiveClusteringCheckButton =
                 new CheckButton("Use adaptive clustering?");
             adaptiveClusteringCheckButton.Active =
                 module.UseAdaptiveClustering;
-            adaptiveClusteringCheckButton.Toggled += delegate
-            {
-                module.UseAdaptiveClustering =
-                    adaptiveClusteringCheckButton.Active;
-            };
 
             table = new Table(7, 2, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
@@ -140,6 +104,19 @@ namespace Gimp.HalftoneLab
 
             table.ShowAll();
             VBox.PackStart(table);
+        }
+
+        protected override void save() {
+            module.ErrorFilter = errorFilterSelector.Module;
+            module.UseErrorFilter =
+                    useErrorFilterCheckButton.Active;
+            module.ScanningOrder = scanningOrderSelector.Module;
+            module.MaxCellSize = maxCellSizeSpinButton.ValueAsInt;
+            module.MinCellSize = minCellSizeSpinButton.ValueAsInt;
+            module.UseAdaptiveClustering =
+                    adaptiveClusteringCheckButton.Active;
+            module.UseClusterPositioning =
+                    clusterPositioningCheckButton.Active;
         }
     }
 }

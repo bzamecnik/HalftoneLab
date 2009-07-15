@@ -11,8 +11,6 @@ namespace Gimp.HalftoneLab
     class HalftoneLaboratory : Plugin
     {
         private HalftoneAlgorithm selectedAlgorithm;
-        //[SaveAttribute("algorithm")]
-        private string selectedAlgorithmName;
         private ConfigManager configManager;
 
         public static void Main(string[] args) {
@@ -22,8 +20,6 @@ namespace Gimp.HalftoneLab
         HalftoneLaboratory(string[] args)
             : base(args, "HalftoneLaboratory")
         {
-            selectedAlgorithmName = "";
-            Console.Out.WriteLine("HalftoneLaboratory()");
         }
 
         override protected IEnumerable<Procedure> ListProcedures() {
@@ -47,9 +43,6 @@ namespace Gimp.HalftoneLab
 
             initConfigManager();
 
-            Console.WriteLine("selected algorithm: {0}", selectedAlgorithm);
-            Console.WriteLine("config manager: {0}", configManager);
-
             ConfigPanel<HalftoneAlgorithm> configPanel =
                 new ConfigPanel<HalftoneAlgorithm>(configManager);
             HalftoneAlgorithmPanel algorithmPanel =
@@ -63,9 +56,6 @@ namespace Gimp.HalftoneLab
             {
                 selectedAlgorithm = algorithmPanel.Module;
                 configPanel.CurrentModule = selectedAlgorithm;
-                selectedAlgorithmName = (selectedAlgorithm != null) ?
-                    selectedAlgorithm.Name : "";
-                Console.WriteLine(selectedAlgorithm);
             };
 
             table.Attach(configPanel, 0, 1, 0, 1, AttachOptions.Fill,
@@ -74,6 +64,12 @@ namespace Gimp.HalftoneLab
                 AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
             dialog.VBox.PackStart(table);
+
+            dialog.Response += delegate {
+                // save the last used algorithm to the config manager
+                selectedAlgorithm.Name = "_LAST";
+                configManager.saveModule(selectedAlgorithm);
+            };
 
             return dialog;
         }
@@ -97,10 +93,10 @@ namespace Gimp.HalftoneLab
                 ConfigFileName = "halftonelab.cfg"
             };
             configManager.load();
-            if (selectedAlgorithmName != "") {
-                selectedAlgorithm = configManager.getModule<HalftoneAlgorithm>(
-                    selectedAlgorithmName);
-            }
+
+            // load last used algorithm
+            selectedAlgorithm = configManager.getModule<HalftoneAlgorithm>(
+                "_LAST");
             if (selectedAlgorithm == null) {
                 selectedAlgorithm = new HalftoneAlgorithm();
             }

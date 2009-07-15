@@ -42,15 +42,16 @@ namespace Gimp.HalftoneLab
         public HalftoneAlgorithmPanel(HalftoneAlgorithm existingModule)
             : base(3, 1, false)
         {
+            BorderWidth = 3;
             VBox preProcessingVBox = new VBox();
-            Frame preProcessingFrame = new Frame("Pre-processing") { BorderWidth = 5 };
-            Frame preResizeFrame = new Frame("Resize") { BorderWidth = 5 };
-            Frame preSharpenFrame = new Frame("Sharpen") { BorderWidth = 5 };
-            Frame halftoneMethodFrame = new Frame("Halftone method") { BorderWidth = 5 };
-            VBox postProcessingVBox = new VBox() { BorderWidth = 5 };
-            Frame postProcessingFrame = new Frame("Post-processing") { BorderWidth = 5 };
-            Frame postResizeFrame = new Frame("Resize") { BorderWidth = 5 };
-            Frame postSmoothenFrame = new Frame("Smoothen") { BorderWidth = 5 };
+            Frame preProcessingFrame = new Frame("Pre-processing") { BorderWidth = 3 };
+            Frame preResizeFrame = new Frame("Resize") { BorderWidth = 3 };
+            Frame preSharpenFrame = new Frame("Sharpen") { BorderWidth = 3 };
+            Frame halftoneMethodFrame = new Frame("Halftone method") { BorderWidth = 3 };
+            VBox postProcessingVBox = new VBox() { BorderWidth = 3 };
+            Frame postProcessingFrame = new Frame("Post-processing") { BorderWidth = 3 };
+            Frame postResizeFrame = new Frame("Resize") { BorderWidth = 3 };
+            Frame postSmoothenFrame = new Frame("Smoothen") { BorderWidth = 3 };
 
             preResizePanel = new ResizePanel();
             preResizePanel.ModuleChanged += delegate
@@ -86,7 +87,7 @@ namespace Gimp.HalftoneLab
                 }
             };
             Table preSharpenTable = new Table(2, 2, false)
-                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+                { ColumnSpacing = 3, RowSpacing = 3, BorderWidth = 5 };
             preSharpenTable.Attach(preSharpenEnabledCheckButton, 0, 2, 0, 1,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
@@ -150,7 +151,7 @@ namespace Gimp.HalftoneLab
                 }
             };
             Table postSmoothenTable = new Table(2, 2, false)
-                { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
+                { ColumnSpacing = 3, RowSpacing = 3, BorderWidth = 5 };
             postSmoothenTable.Attach(postSmoothenEnabledCheckButton, 0, 2, 0, 1,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
@@ -210,8 +211,7 @@ namespace Gimp.HalftoneLab
             public ResizePanel(HalftoneAlgorithm.Resize existingModule)
                 : base(3, 2, false)
             {
-                ColumnSpacing = 5;
-                RowSpacing = 5;
+                ColumnSpacing = RowSpacing = 3;
                 BorderWidth = 5;
 
                 enabledCheckButton = new CheckButton("Enabled");
