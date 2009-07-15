@@ -6,7 +6,8 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class ConfigPanel<ModuleType> : Table where ModuleType : Module
+    public class ConfigPanel<ModuleType> : Table
+        where ModuleType : Module, new()
     {
         private ConfigManager configManager;
         private ComboBox configNameComboBox;
@@ -18,7 +19,8 @@ namespace Gimp.HalftoneLab
 
         public event EventHandler ModuleChanged;
 
-        List<string> configNames;
+        private List<string> configNames;
+        private static string defaultModuleName = "_DEFAULT";
 
         public ConfigPanel(ConfigManager manager)
             : base(1, 3, false)
@@ -27,6 +29,9 @@ namespace Gimp.HalftoneLab
                 throw new ArgumentNullException();
             }
             configManager = manager;
+
+            ColumnSpacing = 3;
+            BorderWidth = 3;
 
             configNames = (from module in
                 configManager.findAllModules<ModuleType>((module) => true)
@@ -74,7 +79,8 @@ namespace Gimp.HalftoneLab
                 dialog.Response += new ResponseHandler(
                     (object obj, ResponseArgs respArgs) =>
                 {
-                    if (respArgs.ResponseId == ResponseType.Ok) {
+                    if ((respArgs.ResponseId == ResponseType.Ok) &&
+                        (dialog.NameText != defaultModuleName)) {
                         CurrentModule.Name = dialog.NameText;
                         CurrentModule.Description = dialog.DescriptionText;
                         // TODO: ask whether to replace a module if such a name
@@ -122,12 +128,16 @@ namespace Gimp.HalftoneLab
 
         private ModuleType getSelectedConfig() {
             string selectedName = configNameComboBox.ActiveText;
-            return configManager.getModule<ModuleType>(selectedName);
+            return (selectedName != defaultModuleName) ?
+                configManager.getModule<ModuleType>(selectedName) :
+                new ModuleType();
+
         }
 
         private void refreshConfigNameListStore() {
             configNames.Sort();
             configNameListStore.Clear();
+            configNameListStore.AppendValues(defaultModuleName);
             foreach (string name in configNames) {
                 configNameListStore.AppendValues(name);
             }

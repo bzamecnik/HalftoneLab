@@ -19,6 +19,9 @@ namespace Halftone
     /// <summary>
     /// Adaptive clustering algorithm on a Space-Filling Curve by
     /// Velho & Gomes.
+    /// <remarks>
+    /// The quantization error is distributed within whole cells.
+    /// </remarks>
     /// </summary>
     [Module(TypeName="SFC clustering algorithm")]
     [Serializable]
@@ -30,7 +33,7 @@ namespace Halftone
             set;
         }
 
-        public SFCScanningOrder ScanningOrder { // TODO: SFCScanningOrder
+        public SFCScanningOrder ScanningOrder {
             get;
             set;
         }
@@ -67,12 +70,13 @@ namespace Halftone
         }
 
         public override void run(Image image) {
-            UseAdaptiveClustering = true;
             //UseClusterPositioning = false;
             //ErrorFilter = null;
-            //Console.Out.WriteLine("cluster positioning: {0}", UseClusterPositioning);
-            //Console.Out.WriteLine("adative clustering: {0}", UseAdaptiveClustering);
-            //Console.Out.WriteLine("error filter: {0}", ErrorFilterEnabled);
+            Console.Out.WriteLine("MaxCellSize: {0}", MaxCellSize);
+            Console.Out.WriteLine("MinCellSize: {0}", MinCellSize);
+            Console.Out.WriteLine("cluster positioning: {0}", UseClusterPositioning);
+            Console.Out.WriteLine("adaptive clustering: {0}", UseAdaptiveClustering);
+            Console.Out.WriteLine("error filter enabled: {0}", ErrorFilterEnabled);
 
             Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
             {
@@ -82,14 +86,14 @@ namespace Halftone
             };
             init(imageRunInfo);
 
-            // size of the current cluster
+            // Size of the current cluster
             int currentCellSize = MaxCellSize;
-            // index of current pixel in the current cell
+            // Index of current pixel in the current cell
             int currentCellPixel = 1; // 1..currentCellSize
-            // cell with the least brightness in the current cluster,
-            // center of the filled part of cluster will be positioned on it
+            // Cell with the least brightness in the current cluster,
+            // center of the filled part of cluster will be positioned onto it
             int darkestCellPixel = 1; // 1..currentCellSize
-            // intensity of the darkestCellPixel
+            // Intensity of the darkestCellPixel
             double minCellIntensity = 255; // TODO: max pixel value
             double totalCellIntensity = 0;
 
@@ -158,19 +162,23 @@ namespace Halftone
 
                 cellPixels[currentCellPixel - 1] = coords;
 
-                // What about if the cluster is not completed?
+                // What about if the cell is not completed?
                 // - don't overwrite previously filled pixels remaining in the cellPixels array
 
                 if ((currentCellPixel < currentCellSize)) { // TODO: ... && order.isNext()
-                    // walk the cluster
+                    // walk the cell
                     currentCellPixel++;
                 } else {
-                    // cluster is walked, fill the proper ratio of cells
+                    // cell is walked, fill the proper ratio of cells
 
                     double whitePixelsRatio = totalCellIntensity / 255.0;
-                    int whitePixelsNumber = (int)whitePixelsRatio;
-                    error = whitePixelsRatio - whitePixelsNumber;
+                    int whitePixelsNumber = (int)Math.Truncate(whitePixelsRatio + 0.5);
+                    //int whitePixelsNumber = (int)whitePixelsRatio;
+                    error = (whitePixelsRatio - whitePixelsNumber) * 255.0;
                     clusterSize = currentCellSize - whitePixelsNumber;
+                    //Console.WriteLine("totalCellIntensity: {0}", totalCellIntensity);
+                    //Console.WriteLine("whitePixelsNumber: {0}", whitePixelsNumber);
+                    //Console.WriteLine("clusterSize: {0}", clusterSize);
 
                     if (UseClusterPositioning) {
                         // move the cluster - position its center to the darkestCellPixel
