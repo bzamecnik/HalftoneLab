@@ -239,7 +239,7 @@ namespace Gimp.HalftoneLab
                 matrixPanel = new ThresholdMatrixPanel((uint)record.matrix.Height,
                 (uint)record.matrix.Width);
                 matrixPanel.Matrix = record.matrix.DefinitionMatrix;
-                matrixPanel.Iterative = record.matrix.Iterative;
+                matrixPanel.Scaled = record.matrix.Iterative;
 
                 noiseHScale = new HScale(0, 1, 0.01);
                 noiseHScale.Value = record.noiseAmplitude;
@@ -272,7 +272,7 @@ namespace Gimp.HalftoneLab
             void save() {
                 record.keyRangeStart = intensitySpinButton.ValueAsInt;
                 record.matrix = new ThresholdMatrix(matrixPanel.Matrix,
-                        matrixPanel.Iterative);
+                        matrixPanel.Scaled);
                 record.noiseAmplitude = noiseHScale.Value;
             }
 
