@@ -6,14 +6,15 @@ namespace Halftone
 {
 
     // TODO:
-    // - solve problem of outputting the last cell
+    // *- solve problem of outputting the last cell
     //   - how to ask the scanning order whether it has more pixels?
-    // - compute max cell size adaptively
+    // *- compute max cell size adaptively
     //   - it would be better to separate the gradient computing or
     //     approximation to another module
     //   - candidate gradient computing algorithms:
-    //     - difference with last pixel
-    //     - Sobel matrix
+    //     *- difference with last pixel
+    //     - Sobel filter - internal or preferablby external (via
+    //       a GIMP plug-in)
     //     - external Laplace transformation of the whole image
 
     /// <summary>
@@ -63,21 +64,13 @@ namespace Halftone
             ErrorFilter = new VectorErrorFilter();
             UseErrorFilter = true;
             ScanningOrder = new HilbertScanningOrder();
-            MaxCellSize = 31;
-            MinCellSize = 3;
+            MaxCellSize = 7;
+            MinCellSize = 2;
             UseClusterPositioning = true;
-            UseAdaptiveClustering = false; // TODO: true
+            UseAdaptiveClustering = true;
         }
 
         public override void run(Image image) {
-            //UseClusterPositioning = false;
-            //ErrorFilter = null;
-            Console.Out.WriteLine("MaxCellSize: {0}", MaxCellSize);
-            Console.Out.WriteLine("MinCellSize: {0}", MinCellSize);
-            Console.Out.WriteLine("cluster positioning: {0}", UseClusterPositioning);
-            Console.Out.WriteLine("adaptive clustering: {0}", UseAdaptiveClustering);
-            Console.Out.WriteLine("error filter enabled: {0}", ErrorFilterEnabled);
-
             Image.ImageRunInfo imageRunInfo = new Image.ImageRunInfo()
             {
                 ScanOrder = ScanningOrder,
@@ -106,6 +99,9 @@ namespace Halftone
             int clusterSize = 0;
             int clusterStartPos = 0;
 
+            int visitedPixels = 0;
+            int totalPixels = image.Height * image.Width;
+
             //// adaptive clustering - computing amount of local detail
             //int[,] sobelMatrix = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
 
@@ -123,6 +119,7 @@ namespace Halftone
 
             while (scanOrderEnum.MoveNext()) {
                 Coordinate<int> coords = scanOrderEnum.Current;
+                visitedPixels++;
 
                 // collect intensities and coordinates of cell's pixels
                 Pixel pixel = image.getPixel(coords.X, coords.Y);
@@ -132,7 +129,6 @@ namespace Halftone
                 double intensityWithError = intensity;
                 if (ErrorFilterEnabled) {
                     intensityWithError += ErrorFilter.getError();
-                    //Console.Out.WriteLine("get error: {0}", ErrorFilter.getError());
                 }
                 totalCellIntensity += intensityWithError;
                 if (intensityWithError < minCellIntensity) {
@@ -151,13 +147,11 @@ namespace Halftone
 
                     // difference with the previous pixel
                     derivative = (intensity - previousIntensity) / 255.0;
-                    //Console.Out.WriteLine("derivative: {0}", derivative);
 
                     int maxAllowedClusterSize = Math.Max(Math.Min((int)(
                             Math.Pow(2, (1 - Math.Abs(derivative)) * maxCellSizeLog2)
                         ), MaxCellSize), MinCellSize);
                     currentCellSize = Math.Max(maxAllowedClusterSize, currentCellPixel);
-                    //Console.Out.WriteLine("currentCellSize: {0}", currentCellSize);
                 }
 
                 cellPixels[currentCellPixel - 1] = coords;
@@ -165,7 +159,9 @@ namespace Halftone
                 // What about if the cell is not completed?
                 // - don't overwrite previously filled pixels remaining in the cellPixels array
 
-                if ((currentCellPixel < currentCellSize)) { // TODO: ... && order.isNext()
+                if ((currentCellPixel < currentCellSize) &&
+                    (visitedPixels < totalPixels)) // TODO: ... && order.isNext()
+                {
                     // walk the cell
                     currentCellPixel++;
                 } else {
@@ -176,9 +172,6 @@ namespace Halftone
                     //int whitePixelsNumber = (int)whitePixelsRatio;
                     error = (whitePixelsRatio - whitePixelsNumber) * 255.0;
                     clusterSize = currentCellSize - whitePixelsNumber;
-                    //Console.WriteLine("totalCellIntensity: {0}", totalCellIntensity);
-                    //Console.WriteLine("whitePixelsNumber: {0}", whitePixelsNumber);
-                    //Console.WriteLine("clusterSize: {0}", clusterSize);
 
                     if (UseClusterPositioning) {
                         // move the cluster - position its center to the darkestCellPixel
@@ -213,7 +206,6 @@ namespace Halftone
                     minCellIntensity = 255;
                     totalCellIntensity = 0;
                     if (ErrorFilterEnabled) {
-                        //Console.Out.WriteLine("set error: {0}", error);
                         ErrorFilter.setError(error, 0);
                     }
                     currentCellSize = MaxCellSize;

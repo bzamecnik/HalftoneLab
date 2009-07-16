@@ -7,12 +7,13 @@ namespace Gimp.HalftoneLab
     class ThresholdMatrixPanel : Table
     {
         MatrixPanel matrixPanel;
-        CheckButton iterativeCheckButton;
+        CheckButton scaledCheckButton;
 
         public ThresholdMatrixPanel(uint rows, uint cols)
             : base(2, 1, false)
         {
-            iterativeCheckButton = new CheckButton("Iterative matrix?");
+            scaledCheckButton = new CheckButton(
+                "Coefficients already scaled?");
 
             matrixPanel = new MatrixPanel(rows, cols);
 
@@ -24,7 +25,7 @@ namespace Gimp.HalftoneLab
                     AttachOptions.Fill | AttachOptions.Expand,
                     AttachOptions.Fill | AttachOptions.Expand, 0, 0);
             
-            Attach(iterativeCheckButton, 0, 1, 1, 2,
+            Attach(scaledCheckButton, 0, 1, 1, 2,
                     AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
         }
 
@@ -37,9 +38,9 @@ namespace Gimp.HalftoneLab
             }
         }
 
-        public bool Iterative {
-            get { return iterativeCheckButton.Active; }
-            set { iterativeCheckButton.Active = value; }
+        public bool Scaled {
+            get { return scaledCheckButton.Active; }
+            set { scaledCheckButton.Active = value; }
         }
     }
 }

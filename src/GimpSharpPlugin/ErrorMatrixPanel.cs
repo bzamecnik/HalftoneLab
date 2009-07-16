@@ -12,7 +12,7 @@ namespace Gimp.HalftoneLab
         public ErrorMatrixPanel(uint rows, uint cols)
             : base(3, 2, false)
         {
-            divisorSpinButton = new SpinButton(1, 1000, 1);
+            divisorSpinButton = new SpinButton(1, 10000, 1);
             sourceOffsetXSpinButton = new SpinButton(1, cols, 1);
 
             matrixPanel = new MatrixPanel(rows, cols);
