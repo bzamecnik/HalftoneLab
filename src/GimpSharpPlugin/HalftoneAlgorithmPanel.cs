@@ -14,6 +14,8 @@ namespace Gimp.HalftoneLab
             set {
                 module = (value != null) ? value : new HalftoneAlgorithm();
                 preResizePanel.Module = module.PreResize;
+                preDotGainEnabledCheckButton.Active = module.PreDotGain != null;
+                preDotGainGammaSpinButton.Sensitive = module.PreDotGain != null;
                 preSharpenEnabledCheckButton.Active = module.PreSharpen != null;
                 preSharpenAmountSpinButton.Sensitive = module.PreSharpen != null;
                 halftoneMethodSelector.assignModule(module.Method, false);
@@ -29,6 +31,8 @@ namespace Gimp.HalftoneLab
         public event EventHandler ModuleChanged;
 
         private ResizePanel preResizePanel;
+        private CheckButton preDotGainEnabledCheckButton;
+        private SpinButton preDotGainGammaSpinButton;
         private CheckButton preSharpenEnabledCheckButton;
         private SpinButton preSharpenAmountSpinButton;
         private SubmoduleSelector<HalftoneMethod> halftoneMethodSelector;
@@ -46,12 +50,17 @@ namespace Gimp.HalftoneLab
             VBox preProcessingVBox = new VBox();
             Frame preProcessingFrame = new Frame("Pre-processing") { BorderWidth = 3 };
             Frame preResizeFrame = new Frame("Resize") { BorderWidth = 3 };
+            Frame preDotGainFrame = new Frame("Dot gain correction") { BorderWidth = 3 };
             Frame preSharpenFrame = new Frame("Sharpen") { BorderWidth = 3 };
             Frame halftoneMethodFrame = new Frame("Halftone method") { BorderWidth = 3 };
             VBox postProcessingVBox = new VBox() { BorderWidth = 3 };
             Frame postProcessingFrame = new Frame("Post-processing") { BorderWidth = 3 };
             Frame postResizeFrame = new Frame("Resize") { BorderWidth = 3 };
             Frame postSmoothenFrame = new Frame("Smoothen") { BorderWidth = 3 };
+
+            // -------- pre-processing --------
+
+            // ---- resize ----
 
             preResizePanel = new ResizePanel();
             preResizePanel.ModuleChanged += delegate
@@ -63,6 +72,48 @@ namespace Gimp.HalftoneLab
             };
             preResizeFrame.Add(preResizePanel);
             preProcessingVBox.PackStart(preResizeFrame);
+
+            // ---- dot gain ----
+
+            preDotGainEnabledCheckButton = new CheckButton("Enabled");
+            preDotGainEnabledCheckButton.Toggled += delegate
+            {
+                bool enabled = preDotGainEnabledCheckButton.Active;
+                Module.PreDotGain = (preDotGainEnabledCheckButton.Active) ?
+                    new HalftoneAlgorithm.GammaCorrection() : null;
+                if (Module.PreDotGain != null) {
+                    preDotGainGammaSpinButton.Value =
+                        ((HalftoneAlgorithm.GammaCorrection)
+                        Module.PreDotGain).Gamma;
+                }
+                preDotGainGammaSpinButton.Sensitive = enabled;
+                if (ModuleChanged != null) {
+                    ModuleChanged(this, new EventArgs());
+                }
+            };
+            preDotGainGammaSpinButton = new SpinButton(0.1, 10, 0.1);
+            preDotGainGammaSpinButton.Changed += delegate
+            {
+                ((HalftoneAlgorithm.GammaCorrection)Module.PreDotGain).Gamma =
+                    preDotGainGammaSpinButton.Value;
+                if (ModuleChanged != null) {
+                    ModuleChanged(this, new EventArgs());
+                }
+            };
+            Table preDotGainTable = new Table(2, 2, false) { ColumnSpacing = 3, RowSpacing = 3, BorderWidth = 5 };
+            preDotGainTable.Attach(preDotGainEnabledCheckButton, 0, 2, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+
+            preDotGainTable.Attach(new Label("Gamma:") { Xalign = 0.0f },
+                0, 1, 1, 2, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            preDotGainTable.Attach(preDotGainGammaSpinButton, 1, 2, 1, 2,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+
+            preDotGainFrame.Add(preDotGainTable);
+            preProcessingVBox.PackStart(preDotGainFrame);
+
+            // ---- sharpen ----
 
             preSharpenEnabledCheckButton = new CheckButton("Enabled");
             preSharpenEnabledCheckButton.Toggled += delegate
@@ -101,6 +152,7 @@ namespace Gimp.HalftoneLab
             preProcessingVBox.PackStart(preSharpenFrame);
             preProcessingFrame.Add(preProcessingVBox);
 
+            // -------- halftone method --------
 
             halftoneMethodSelector =
                 new SubmoduleSelector<HalftoneMethod>(HalftoneMethod.createDefault())
@@ -117,6 +169,10 @@ namespace Gimp.HalftoneLab
             halftoneMethodFrame.Add(halftoneMethodSelector);
 
 
+            // -------- post-processing --------
+
+            // ---- resize ----
+
             postResizePanel = new ResizePanel();
             postResizePanel.ModuleChanged += delegate
             {
@@ -127,6 +183,8 @@ namespace Gimp.HalftoneLab
             };
             postResizeFrame.Add(postResizePanel);
             postProcessingVBox.PackStart(postResizeFrame);
+
+            // ---- smoothen ----
 
             postSmoothenEnabledCheckButton = new CheckButton("Enabled");
             postSmoothenEnabledCheckButton.Toggled += delegate

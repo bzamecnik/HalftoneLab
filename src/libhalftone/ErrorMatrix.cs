@@ -107,6 +107,7 @@ namespace Halftone
             SourceOffsetX = sourcePixelOffsetX;
             // compute the divisor as a sum of all coefficients.
             int coeffSum = 0;
+            // TODO: omit coefficients before source pixel X (including it)!
             foreach (int coef in coeffs) {
                 coeffSum += coef;
             }

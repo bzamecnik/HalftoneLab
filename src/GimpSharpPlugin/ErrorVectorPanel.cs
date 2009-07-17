@@ -1,5 +1,6 @@
 ﻿using System;
 using Gtk;
+using Halftone;
 
 namespace Gimp.HalftoneLab
 {
@@ -11,13 +12,19 @@ namespace Gimp.HalftoneLab
         SpinButton[] spinButtonVector;
         SpinButton vectorLengthSpinButton;
         SpinButton divisorSpinButton;
+        CheckButton customDivisorCheckButton;
         SpinButton sourceOffsetXSpinButton;
 
         public ErrorVectorPanel(uint length)
-            : base(4, 3, false)
+            : base(5, 3, false)
         {
-            divisorSpinButton = new SpinButton(1, 1000, 1);
+            divisorSpinButton = new SpinButton(1, 10000, 1);
             sourceOffsetXSpinButton = new SpinButton(1, length, 1);
+            customDivisorCheckButton = new CheckButton("Use a custom divisor?");
+            customDivisorCheckButton.Toggled += delegate
+            {
+                divisorSpinButton.Sensitive = customDivisorCheckButton.Active;
+            };
 
             ColumnSpacing = 2;
             RowSpacing = 2;
@@ -32,7 +39,7 @@ namespace Gimp.HalftoneLab
             resizeButton.Clicked += delegate
             {
                 // Preserve values from the original matrix if possible.
-                int[] origVector = Vector;
+                int[] origVector = BareVector;
                 resize((uint)vectorLengthSpinButton.ValueAsInt);
                 if (origVector != null) {
                     setVector(origVector, false);
@@ -40,27 +47,31 @@ namespace Gimp.HalftoneLab
             };
 
             Attach(scroll, 0, 5, 0, 1,
-                    AttachOptions.Fill | AttachOptions.Expand,
-                    AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill | AttachOptions.Expand, 0, 0);
             
             Attach(new Label("Length:") { Xalign = 0.0f }, 0, 1, 1, 2,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             Attach(vectorLengthSpinButton, 1, 2, 1, 2,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             Attach(resizeButton, 2, 3, 1, 2,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
-            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 2, 3,
-                    AttachOptions.Fill | AttachOptions.Expand,
-                    AttachOptions.Shrink, 0, 0);
-            Attach(divisorSpinButton, 1, 2, 2, 3,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            Attach(new Label("Source offset X:") { Xalign = 0.0f },
+                0, 1, 2, 3, AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            Attach(sourceOffsetXSpinButton, 1, 2, 2, 3,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
-            Attach(new Label("Source offset X:") { Xalign = 0.0f}, 0, 1, 3, 4,
-                    AttachOptions.Fill | AttachOptions.Expand,
-                    AttachOptions.Shrink, 0, 0);
-            Attach(sourceOffsetXSpinButton, 1, 2, 3, 4,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            Attach(customDivisorCheckButton, 0, 3, 3, 4,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+
+            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 4, 5,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            Attach(divisorSpinButton, 1, 2, 4, 5,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
         }
 
         public void resize(uint length) {
@@ -108,7 +119,7 @@ namespace Gimp.HalftoneLab
             sourceOffsetXSpinButton.Adjustment.Upper = vectorTable.NColumns;
         }
 
-        public int[,] Matrix {
+        public int[,] BareMatrix {
             get {
                 if ((vectorTable == null) || (spinButtonVector == null)) {
                     return null;
@@ -136,7 +147,17 @@ namespace Gimp.HalftoneLab
             }
         }
 
-        public int[] Vector {
+        public ErrorMatrix Matrix {
+            get {
+                if (UseCustomDivisor) {
+                    return new ErrorMatrix(BareMatrix, SourceOffsetX, Divisor);
+                } else {
+                    return new ErrorMatrix(BareMatrix, SourceOffsetX);
+                }
+            }
+        }
+
+        public int[] BareVector {
             get {
                 if ((vectorTable == null) || (spinButtonVector == null)) {
                     return null;
@@ -159,14 +180,22 @@ namespace Gimp.HalftoneLab
             }
         }
 
+        public int SourceOffsetX {
+            get { return sourceOffsetXSpinButton.ValueAsInt - 1; }
+            set { sourceOffsetXSpinButton.Value = value + 1; }
+        }
+
         public int Divisor {
             get { return divisorSpinButton.ValueAsInt; }
             set { divisorSpinButton.Value = value; }
         }
 
-        public int SourceOffsetX {
-            get { return sourceOffsetXSpinButton.ValueAsInt - 1; }
-            set { sourceOffsetXSpinButton.Value = value + 1; }
+        public bool UseCustomDivisor {
+            get { return customDivisorCheckButton.Active; }
+            set {
+                customDivisorCheckButton.Active = value;
+                divisorSpinButton.Sensitive = value;
+            }
         }
     }
 }

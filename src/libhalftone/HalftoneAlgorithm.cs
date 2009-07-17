@@ -6,6 +6,7 @@ namespace Halftone
     public class HalftoneAlgorithm : Module, IImageFilter
     {
         public Resize PreResize { get; set; }
+        public DotGainCorrection PreDotGain { get; set; }
         public Sharpen PreSharpen { get; set; }
         public HalftoneMethod Method { get; set; }
         public Resize PostResize { get; set; }
@@ -18,6 +19,7 @@ namespace Halftone
         // processing order
         // - pre-processing (optional)
         //    - resize (up)
+        //    - dot gain correction
         //    - sharpen
         // - HalftoneMethod (mandatory)
         // - post-processing (optional)
@@ -27,6 +29,9 @@ namespace Halftone
             // TODO: merge undo history
             if (PreResize != null) {
                 PreResize.run(image);
+            }
+            if (PreDotGain != null) {
+                PreDotGain.run(image);
             }
             if (PreSharpen != null) {
                 PreSharpen.run(image);
@@ -86,6 +91,38 @@ namespace Halftone
                     gsimage.Drawable.TransformScale(0, 0, newWidth, newHeight,
                         Gimp.TransformDirection.Forward,
                         gimpInterpolationType, false, 1, true);
+                }
+            }
+        }
+
+        [Serializable]
+        public abstract class DotGainCorrection : Module, IImageFilter
+        {
+            public abstract void run(Image image);
+        }
+
+        [Serializable]
+        public class GammaCorrection : DotGainCorrection
+        {
+            private double _gamma;
+            public double Gamma {
+                get { return _gamma; }
+                set {
+                    if ((value >= 0.1) & (value <= 10)) {
+                        _gamma = value;
+                    }
+                }
+            }
+
+            public GammaCorrection() {
+                Gamma = 1.0;
+            }
+
+            public override void run(Image image) {
+                GSImage gsimage = image as GSImage;
+                if (gsimage != null) {
+                    gsimage.Drawable.Levels(Gimp.HistogramChannel.Value,
+                        0, 255, Gamma, 0, 255);
                 }
             }
         }

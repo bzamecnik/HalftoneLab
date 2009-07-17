@@ -3,6 +3,8 @@ using Gimp;
 
 namespace Halftone
 {
+    // TODO: incremental -> normalized (with opposite meaning)
+
     /// <summary>
     /// Tileable matrix of threshold values.
     /// </summary>
@@ -19,7 +21,7 @@ namespace Halftone
             set { _workingMatrix = value; }
         }
 
-        // true if definition matrix is iterative
+        // true if definition matrix is normalized
         // false if already scaled
         private bool _iterative;
         public bool Iterative {
@@ -51,24 +53,43 @@ namespace Halftone
 
         protected override void computeWorkingMatrix() {
             _workingMatrix = (_iterative) ?
-                scaleFromIterativeMatrix(DefinitionMatrix) :
+                normalizeFromIncrementalMatrix(DefinitionMatrix) :
                 DefinitionMatrix;
         }
 
         /// <summary>
         /// Scale coefficients from iterative matrix to 0-255 range.
         /// </summary>
-        /// <param name="iterativeMatrix">matrix with coefficients in
+        /// <param name="incrMatrix">matrix with coefficients in
         /// range 1-(h*w)</param>
         /// <returns>scaled matrix with coefficients in range 0-255</returns>
-        private static int[,] scaleFromIterativeMatrix(int[,] iterativeMatrix) {
-            int height = iterativeMatrix.GetLength(0);
-            int width = iterativeMatrix.GetLength(1);
-            double coeff = (double)255 / (height * width + 1);
+        private static int[,] normalizeFromIncrementalMatrix(int[,] incrMatrix) {
+            int height = incrMatrix.GetLength(0);
+            int width = incrMatrix.GetLength(1);
+            //return normalizeFromIncrementalMatrix(incrMatrix,
+            //    height * width + 1);
+            
+            // used (the maximum matrix coefficient + 1) as the divisor
+            int maxCoeff = 0;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    maxCoeff = Math.Max(maxCoeff, incrMatrix[y, x]);
+                }
+            }
+            return normalizeFromIncrementalMatrix(incrMatrix, maxCoeff + 1);
+
+        }
+
+        private static int[,] normalizeFromIncrementalMatrix(
+            int[,] incrMatrix, int divisor)
+        {
+            int height = incrMatrix.GetLength(0);
+            int width = incrMatrix.GetLength(1);
+            double coeff = 255.0 / (double)divisor;
             int[,] matrix = new int[height, width];
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    matrix[y, x] = (int)(iterativeMatrix[y, x] * coeff);
+                    matrix[y, x] = (int)(incrMatrix[y, x] * coeff);
                 }
             }
             return matrix;

@@ -127,7 +127,7 @@ namespace Gimp.HalftoneLab
         }
 
         public void initRecordTable(DynamicMatrixErrorFilter module) {
-            // TODO: possibly add a string column for ErrorMatrix name
+            // TODO: possibly add a string column for Matrix name
             recordStore = new ListStore(
                 typeof(DynamicMatrixErrorFilter.ErrorRecord));
             // make the list store records sorted
@@ -243,7 +243,7 @@ namespace Gimp.HalftoneLab
 
                 matrixPanel = new ErrorMatrixPanel((uint)record.matrix.Height,
                 (uint)record.matrix.Width);
-                matrixPanel.Matrix = record.matrix.DefinitionMatrix;
+                matrixPanel.BareMatrix = record.matrix.DefinitionMatrix;
                 matrixPanel.Divisor = record.matrix.Divisor;
                 matrixPanel.SourceOffsetX = record.matrix.SourceOffsetX;
 
@@ -273,8 +273,7 @@ namespace Gimp.HalftoneLab
 
             void save() {
                 record.keyRangeStart = intensitySpinButton.ValueAsInt;
-                record.matrix = new ErrorMatrix(matrixPanel.Matrix,
-                        matrixPanel.SourceOffsetX, matrixPanel.Divisor);
+                record.matrix = matrixPanel.Matrix;
             }
 
             public DynamicMatrixErrorFilter.ErrorRecord runConfiguration()
