@@ -27,7 +27,7 @@ namespace Gimp.HalftoneLab
                 (uint)module.Matrix.Height,
                 (uint)module.Matrix.Width);
             matrixPanel.Matrix = module.Matrix.DefinitionMatrix;
-            matrixPanel.Scaled = module.Matrix.Iterative;
+            matrixPanel.Scaled = !module.Matrix.Iterative;
 
             table = new Table(2, 1, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };
@@ -43,7 +43,7 @@ namespace Gimp.HalftoneLab
 
         protected override void save() {
             module.Matrix = new ThresholdMatrix(matrixPanel.Matrix,
-                matrixPanel.Scaled);
+                !matrixPanel.Scaled);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Gimp.HalftoneLab
 
             matrixPanel = new ErrorMatrixPanel((uint)module.Matrix.Height,
                 (uint)module.Matrix.Width);
-            matrixPanel.Matrix = module.Matrix.DefinitionMatrix;
+            matrixPanel.BareMatrix = module.Matrix.DefinitionMatrix;
             matrixPanel.Divisor = module.Matrix.Divisor;
             matrixPanel.SourceOffsetX = module.Matrix.SourceOffsetX;
 
@@ -58,8 +58,7 @@ namespace Gimp.HalftoneLab
         }
 
         protected override void save() {
-            module.Matrix = new ErrorMatrix(matrixPanel.Matrix,
-                    matrixPanel.SourceOffsetX, matrixPanel.Divisor);
+            module.Matrix = matrixPanel.Matrix;
         }
     }
 }
