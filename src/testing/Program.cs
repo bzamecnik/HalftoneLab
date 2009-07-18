@@ -42,6 +42,8 @@ namespace testing
 
             //window.Add(table);
 
+            // ---------- ok ----------------
+
             Table table = new Table(2, 1, false);
 
             HalftoneAlgorithm algorithm = null;
@@ -56,7 +58,7 @@ namespace testing
                 new ConfigPanel<HalftoneAlgorithm>(config);
             HalftoneAlgorithmPanel algorithmPanel =
                 new HalftoneAlgorithmPanel(algorithm);
-            
+
             configPanel.ModuleChanged += delegate
             {
                 algorithmPanel.Module = configPanel.CurrentModule;

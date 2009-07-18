@@ -74,19 +74,19 @@ namespace Gimp.HalftoneLab
                 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Shrink,
                 0, 0);
             table.Attach(scanningOrderSelector, 1, 2, 0, 1,
-                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
             table.Attach(new Label("Maximum cell size:") { Xalign = 0.0f },
                 0, 1, 1, 2, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(maxCellSizeSpinButton, 1, 2, 1, 2,
-                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
             table.Attach(new Label("Minimum cell size:") { Xalign = 0.0f },
                 0, 1, 2, 3, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(minCellSizeSpinButton, 1, 2, 2, 3,
-                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
             table.Attach(adaptiveClusteringCheckButton, 0, 2, 4, 5,
@@ -100,7 +100,7 @@ namespace Gimp.HalftoneLab
             table.Attach(new Label("Error filter:") { Xalign = 0.0f },
                 0, 1, 6, 7, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             table.Attach(errorFilterSelector, 1, 2, 6, 7,
-                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
             table.Attach(useErrorFilterCheckButton, 0, 2, 7, 8,

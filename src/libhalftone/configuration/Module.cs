@@ -31,6 +31,11 @@ namespace Halftone
         /// </summary>
         public string Description { get; set; }
 
+        protected Module() {
+            Name = "";
+            Description = "";
+        }
+
         /// <summary>
         /// Initialize this module and its submodules.
         /// It is intended to initialize temporary things lost during

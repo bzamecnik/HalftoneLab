@@ -93,8 +93,9 @@ namespace Gimp.HalftoneLab
                             refreshConfigNameListStore();
                         }
                         // select it
+                        // +2 is for _LAST and DEFAULT
                         configNameComboBox.Active =
-                                configNames.IndexOf(CurrentModule.Name);
+                                configNames.IndexOf(CurrentModule.Name) + 2;
                         if (ModuleChanged != null) {
                             ModuleChanged(this, new EventArgs());
                         }
