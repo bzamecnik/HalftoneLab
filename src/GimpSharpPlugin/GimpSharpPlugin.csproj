@@ -77,30 +77,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigPanel.cs" />
-    <Compile Include="ImageGeneratorPanel.cs" />
+    <Compile Include="widgets\ConfigPanel.cs" />
+    <Compile Include="widgets\ImageGeneratorPanel.cs" />
     <Compile Include="ModuleDialog.cs" />
-    <Compile Include="ErrorVectorPanel.cs" />
+    <Compile Include="widgets\ErrorVectorPanel.cs" />
     <Compile Include="HalftoneLaboratory.cs" />
     <Compile Include="ModuleRegistry.cs" />
     <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
     <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
-    <Compile Include="ErrorMatrixPanel.cs" />
-    <Compile Include="HalftoneAlgorithmPanel.cs" />
+    <Compile Include="widgets\ErrorMatrixPanel.cs" />
+    <Compile Include="widgets\HalftoneAlgorithmPanel.cs" />
     <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
-    <Compile Include="MatrixPanel.cs" />
+    <Compile Include="widgets\MatrixPanel.cs" />
     <Compile Include="moduleUI\MatrixThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\PerturbedErrorFilterDialog.cs" />
     <Compile Include="moduleUI\RandomizedMatrixErrorFilterDialog.cs" />
     <Compile Include="moduleUI\SFCClusteringMethodDialog.cs" />
-    <Compile Include="SpotFunctionPanel.cs" />
+    <Compile Include="widgets\SpotFunctionPanel.cs" />
     <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\ThresholdHalftoneMethodDialog.cs" />
-    <Compile Include="ThresholdMatrixPanel.cs" />
+    <Compile Include="widgets\ThresholdMatrixPanel.cs" />
     <Compile Include="moduleUI\VectorErrorFilterDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubmoduleSelector.cs" />
+    <Compile Include="widgets\SubmoduleSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libhalftone\libhalftone.csproj">
