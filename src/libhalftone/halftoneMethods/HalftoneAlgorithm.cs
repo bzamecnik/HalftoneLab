@@ -10,6 +10,8 @@ namespace Halftone
         public Sharpen PreSharpen { get; set; }
         public HalftoneMethod Method { get; set; }
         public Resize PostResize { get; set; }
+        // supersamling = post resize is inverse of pre resize
+        public bool SupersamplingEnabled { get; set; }
         public Smoothen PostSmoothen { get; set; }
 
         public HalftoneAlgorithm() {
@@ -26,8 +28,8 @@ namespace Halftone
         //    - resize (down)
         //    - smoothen
         public void run(Image image) {
-            // TODO: merge undo history
             if (PreResize != null) {
+                //PreResize.Forward = true;
                 PreResize.run(image);
             }
             if (PreDotGain != null) {
@@ -37,6 +39,14 @@ namespace Halftone
                 PreSharpen.run(image);
             }
             Method.run(image);
+            if (SupersamplingEnabled && (PreResize != null)) {
+                PreResize.Forward = true;
+                if (PostResize == null) {
+                    PostResize = new Resize();
+                }
+                PostResize.Factor = PreResize.Factor;
+                PostResize.Forward = false;
+            }
             if (PostResize != null) {
                 PostResize.run(image);
             }
@@ -54,6 +64,8 @@ namespace Halftone
 
             public double Factor { get; set; }
 
+            public bool Forward { get; set; }
+
             public InterpolationType Interpolation { get; set; }
 
             public enum InterpolationType {
@@ -65,30 +77,30 @@ namespace Halftone
 
             public Resize() {
                 Factor = 1.0;
+                Forward = true;
                 Interpolation = InterpolationType.Bicubic;
                 runGSFilter = (GSImage image) =>
                 {
-                    Gimp.InterpolationType gimpInterpolationType
+                    Gimp.InterpolationType interpolation
                         = Gimp.InterpolationType.None;
                     switch (Interpolation) {
                         case InterpolationType.NearestNeighbour:
-                            gimpInterpolationType = Gimp.InterpolationType.None;
+                            interpolation = Gimp.InterpolationType.None;
                             break;
                         case InterpolationType.Bilinear:
-                            gimpInterpolationType = Gimp.InterpolationType.Linear;
+                            interpolation = Gimp.InterpolationType.Linear;
                             break;
                         case InterpolationType.Bicubic:
-                            gimpInterpolationType = Gimp.InterpolationType.Cubic;
+                            interpolation = Gimp.InterpolationType.Cubic;
                             break;
                         case InterpolationType.Lanczos:
-                            gimpInterpolationType = Gimp.InterpolationType.Lanczos;
+                            interpolation = Gimp.InterpolationType.Lanczos;
                             break;
                     }
-                    double newHeight = image.Height * Factor;
-                    double newWidth = image.Width * Factor;
-                    image.Drawable.TransformScale(0, 0, newWidth, newHeight,
-                        Gimp.TransformDirection.Forward,
-                        gimpInterpolationType, false, 1, true);
+                    Gimp.TransformDirection direction =
+                        (Forward) ? Gimp.TransformDirection.Forward :
+                            Gimp.TransformDirection.Backward;
+                    image.scale(Factor, interpolation, direction);
                 };
             }
         }

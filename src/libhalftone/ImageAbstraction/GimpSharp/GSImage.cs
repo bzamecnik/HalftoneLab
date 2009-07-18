@@ -274,6 +274,27 @@ namespace Halftone
             _drawable.Flush();
             _drawable.MergeShadow(true);
             _drawable.Update(_rectangle);
+            _imageBuffer = null;
+        }
+
+        public void scale(double factor, InterpolationType interpolation,
+            TransformDirection direction) {
+            bool restoreBuffer = _imageBuffer != null;
+            if (restoreBuffer) {
+                flushBuffer();
+            }
+            double newHeight = Height * factor;
+            double newWidth = Width * factor;
+            Image.UndoGroupStart();
+            Drawable.TransformScale(0, 0, newWidth, newHeight,
+                direction, interpolation, false, 1, false);
+            Image.ResizeToLayers();
+            Image.UndoGroupEnd();
+            _drawable = Image.ActiveDrawable;
+            _rectangle = Drawable.MaskBounds;
+            if (restoreBuffer) {
+                initBuffer();
+            }
         }
     }
 }

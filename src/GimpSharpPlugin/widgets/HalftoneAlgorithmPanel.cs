@@ -20,6 +20,7 @@ namespace Gimp.HalftoneLab
                 preSharpenAmountSpinButton.Sensitive = module.PreSharpen != null;
                 halftoneMethodSelector.assignModule(module.Method, false);
                 postResizePanel.Module = module.PostResize;
+                supersamplingCheckButton.Active = module.SupersamplingEnabled;
                 postSmoothenEnabledCheckButton.Active = module.PostSmoothen != null;
                 postSmoothenRadiusSpinButton.Sensitive = module.PostSmoothen != null;
                 if (ModuleChanged != null) {
@@ -37,6 +38,7 @@ namespace Gimp.HalftoneLab
         private SpinButton preSharpenAmountSpinButton;
         private SubmoduleSelector<HalftoneMethod> halftoneMethodSelector;
         private ResizePanel postResizePanel;
+        private CheckButton supersamplingCheckButton;
         private CheckButton postSmoothenEnabledCheckButton;
         private SpinButton postSmoothenRadiusSpinButton;
 
@@ -181,7 +183,27 @@ namespace Gimp.HalftoneLab
                     ModuleChanged(this, new EventArgs());
                 }
             };
-            postResizeFrame.Add(postResizePanel);
+            supersamplingCheckButton = new CheckButton("Supersampling");
+            supersamplingCheckButton.Toggled += delegate
+            {
+                Module.SupersamplingEnabled =
+                    supersamplingCheckButton.Active;
+                postResizePanel.Sensitive =
+                    !supersamplingCheckButton.Active;
+                if (ModuleChanged != null) {
+                    ModuleChanged(this, new EventArgs());
+                }
+            };
+
+            Table postResizeTable = new Table(2, 1, false);
+            postResizeTable.Attach(supersamplingCheckButton, 0, 1, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            postResizeTable.Attach(postResizePanel, 0, 1, 1, 2,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+
+            postResizeFrame.Add(postResizeTable);
             postProcessingVBox.PackStart(postResizeFrame);
 
             // ---- smoothen ----
