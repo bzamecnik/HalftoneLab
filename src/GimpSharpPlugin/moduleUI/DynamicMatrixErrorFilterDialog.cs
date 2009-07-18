@@ -243,9 +243,8 @@ namespace Gimp.HalftoneLab
 
                 matrixPanel = new ErrorMatrixPanel((uint)record.matrix.Height,
                 (uint)record.matrix.Width);
-                matrixPanel.BareMatrix = record.matrix.DefinitionMatrix;
-                matrixPanel.Divisor = record.matrix.Divisor;
-                matrixPanel.SourceOffsetX = record.matrix.SourceOffsetX;
+                matrixPanel.Matrix = record.matrix;
+
 
                 table = new Table(3, 2, false)
                     { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };

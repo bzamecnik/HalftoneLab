@@ -112,7 +112,7 @@ namespace Halftone
                 coeffSum += coef;
             }
             Divisor = coeffSum;
-            DefinitionMatrix = (int[,])coeffs.Clone();
+            DefinitionMatrix = coeffs;
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Halftone
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX, int divisor) {
             SourceOffsetX = sourcePixelOffsetX;
             Divisor = divisor;
-            DefinitionMatrix = (int[,])coeffs.Clone();
+            DefinitionMatrix = coeffs;
         }
 
         /// <summary>
@@ -231,115 +231,164 @@ namespace Halftone
             // the simplest error-diffusion matrix
             public static ErrorMatrix nextPixel;
             public static ErrorMatrix nextTwoPixels;
-            public static ErrorMatrix simpleNeighborhood;
-
-            // Floyd-Steinberg
             public static ErrorMatrix floydSteinberg;
-            // Jarvis-Judice-Ninke 
             public static ErrorMatrix jarvisJudiceNinke;
-            // Stucki
             public static ErrorMatrix stucki;
-            // Burkes
             public static ErrorMatrix burkes;
-            // Fan
             public static ErrorMatrix fan;
-            // Shiau-Fan #1
             public static ErrorMatrix shiauFan1;
-            // Shiau-Fan #2
             public static ErrorMatrix shiauFan2;
-            // Sierra
             public static ErrorMatrix sierra;
-            // Two-row Sierra
             public static ErrorMatrix sierraTwoRow;
-            // Sierra's Filter Lite
             public static ErrorMatrix sierraFilterLite;
-            // Atkinson
             public static ErrorMatrix atkinson;
-            // Error matrix of Floyd-Steinberg size optimal for
-            // serpentine scanning.
-            // Source: Reinstating Floyd-Steinberg - Improved Metrics for
-            // Quality Assessment of Error Diffusion Algorithms
-            public static ErrorMatrix serpentineOptimal;
+            public static ErrorMatrix hocevarNiger;
+
+            private static List<ErrorMatrix> _list;
+            public static IEnumerable<ErrorMatrix> list() {
+                return _list;
+            }
 
             static Samples() {
+                _list = new List<ErrorMatrix>();
                 nextPixel = new ErrorMatrix(
                     new int[1, 2] {
                         { 0, 1 }
-                    }, 0, 1);
+                    }, 0, 1)
+                    {
+                        Name = "Next pixel",
+                        Description = "The simplest error-diffusion matrix"
+                    };
+                _list.Add(nextPixel);
                 Default = nextPixel;
                 nextTwoPixels = new ErrorMatrix(
                     new int[1, 3] {
                         { 0, 7, 3 }
-                    }, 0, 10);
-                simpleNeighborhood = new ErrorMatrix(
-                    new int[2, 2] {
-                        { 0, 2 },
-                        { 1, 1 }
-                    }, 0, 4);
+                    }, 0, 10)
+                    {
+                        Name = "Next two pixels"
+                    };
+                _list.Add(nextTwoPixels);
                 floydSteinberg = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 7 },
                         { 3, 5, 1 }
-                    }, 1, 16);
+                    }, 1, 16)
+                    {
+                        Name = "Floyd-Steinberg"
+                    };
+                _list.Add(floydSteinberg);
                 jarvisJudiceNinke = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 7, 5 },
                         { 3, 5, 7, 5, 3 },
                         { 1, 3, 5, 3, 1 }
-                    }, 2, 48);
+                    }, 2, 48)
+                    {
+                        Name = "Jarvis-Judice-Ninke"
+                    };
+                _list.Add(jarvisJudiceNinke);
                 stucki = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 8, 4 },
                         { 2, 4, 8, 4, 2 },
                         { 1, 2, 4, 2, 1 }
-                    }, 2, 42);
+                    }, 2, 42)
+                    {
+                        Name = "Stucki"
+                    };
+                _list.Add(stucki);
                 burkes = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 4, 2 },
                         { 1, 2, 4, 2, 1 }
-                    }, 2, 16);
+                    }, 2, 16)
+                    {
+                        Name = "Burkes"
+                    };
+                _list.Add(burkes);
                 fan = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 7 },
                         { 1, 3, 5 }
-                    }, 1, 16);
+                    }, 1, 16)
+                    {
+                        Name = "Fan"
+                    };
+                _list.Add(fan);
                 shiauFan1 = new ErrorMatrix(
                     new int[2, 4] {
                         { 0, 0, 0, 4 },
                         { 1, 1, 2, 0 }
-                    }, 2, 8);
+                    }, 2, 8)
+                    {
+                        Name = "Shiau-Fan 1"
+                    };
+                _list.Add(shiauFan1);
                 shiauFan2 = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 0, 8 },
                         { 1, 1, 2, 4, 0 }
-                    }, 3, 16);
+                    }, 3, 16)
+                    {
+                        Name = "Shiau-Fan 2"
+                    };
+                _list.Add(shiauFan2);
                 sierra = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 5, 3 },
                         { 2, 4, 5, 4, 2 },
                         { 0, 2, 3, 2, 0 }
-                    }, 2, 32);
+                    }, 2, 32)
+                    {
+                        Name = "Sierra"
+                    };
+                _list.Add(sierra);
                 sierraTwoRow = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 4, 3 },
                         { 1, 2, 3, 2, 1 }
-                    }, 2, 16);
+                    }, 2, 16)
+                    {
+                        Name = "Sierra two row"
+                    };
+                _list.Add(sierraTwoRow);
                 sierraFilterLite = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 2 },
                         { 1, 1, 0 }
-                    }, 1, 4);
+                    }, 1, 4)
+                    {
+                        Name = "Sierra filter lite"
+                    };
+                _list.Add(sierraFilterLite);
                 atkinson = new ErrorMatrix(
                     new int[3, 4] {
                         { 0, 0, 1, 1 },
                         { 1, 1, 1, 0 },
                         { 0, 1, 0, 0 }
-                    }, 1, 8);
-                serpentineOptimal = new ErrorMatrix(
+                    }, 1, 8)
+                    {
+                        Name = "Atkinson"
+                    };
+                _list.Add(atkinson);
+                hocevarNiger = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 7 },
                         { 4, 5, 0 }
-                    }, 1, 16);
+                    }, 1, 16)
+                {
+                    Name = "Hocevar-Niger",
+                    Description = 
+                    "Error matrix of Floyd-Steinberg size optimal for " +
+                    "serpentine scanning. " +
+                    "Source: Reinstating Floyd-Steinberg - Improved Metrics for " +
+                    "Quality Assessment of Error Diffusion Algorithms"
+                };
+                _list.Add(hocevarNiger);
+                //_list.Sort(new Comparison<ErrorMatrix>(
+                //    (m1, m2) => m1.Name.CompareTo(m2.Name)
+                //    ));
             }
         }
     }

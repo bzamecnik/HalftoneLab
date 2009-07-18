@@ -93,7 +93,7 @@
     <Compile Include="moduleUI\PerturbedErrorFilterDialog.cs" />
     <Compile Include="moduleUI\RandomizedMatrixErrorFilterDialog.cs" />
     <Compile Include="moduleUI\SFCClusteringMethodDialog.cs" />
-    <Compile Include="moduleUI\SpotFunctionDialog.cs" />
+    <Compile Include="moduleUI\SpotFunctionPanel.cs" />
     <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
     <Compile Include="moduleUI\ThresholdHalftoneMethodDialog.cs" />
     <Compile Include="ThresholdMatrixPanel.cs" />

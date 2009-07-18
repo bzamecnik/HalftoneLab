@@ -31,7 +31,7 @@ namespace Halftone
         public delegate SpotFuncDelegate SpotFuncPrototypeDelegate(double angle, double distance);
         public delegate int SpotFuncDelegate(int x, int y);
 
-        private double _angle = 0;
+        private double _angle = Math.PI * 0.25;
         
         /// <summary>
         /// Angle of rotation of the screen.
@@ -98,7 +98,11 @@ namespace Halftone
         /// Create a spot function with some default parameters.
         /// </summary>
         public SpotFunction()
-            : this(SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8) {}
+            : this(SpotFunction.Samples.euclidDot.SpotFuncPrototype) {}
+
+        public SpotFunction(SpotFuncPrototypeDelegate spotFuncPrototype) {
+            SpotFuncPrototype = spotFuncPrototype;
+        }
 
         /// <summary>
         /// Create a spot function given a prototype and some parameters.
@@ -161,17 +165,21 @@ namespace Halftone
         [Serializable]
         public class Samples
         {
-            // Euclid dot, growth: circle -> square (at 50% grey) -> circle
-            public static SpotFuncPrototypeDelegate euclidDot;
-            // Euclid dot with some noise
-            public static SpotFuncPrototypeDelegate perturbedEuclidDot;
-            public static SpotFuncPrototypeDelegate squareDot;
-            public static SpotFuncPrototypeDelegate line;
-            public static SpotFuncPrototypeDelegate triangle;
-            public static SpotFuncPrototypeDelegate circleDot;
+            public static SpotFunction euclidDot;
+            public static SpotFunction perturbedEuclidDot;
+            public static SpotFunction squareDot;
+            public static SpotFunction line;
+            public static SpotFunction triangle;
+            public static SpotFunction circleDot;
+
+            private static List<SpotFunction> _list;
+            public static IEnumerable<SpotFunction> list() {
+                return _list;
+            }
 
             static Samples() {
-                euclidDot = (double angle, double distance) =>
+                _list = new List<SpotFunction>();
+                euclidDot = new SpotFunction((double angle, double distance) =>
                 {
                     double pixelDivisor = 2.0 / distance;
                     return (int x, int y) =>
@@ -187,9 +195,15 @@ namespace Halftone
                             Math.Sin(Math.PI * (rotatedX + 0.5)) +
                             Math.Cos(Math.PI * rotatedY)))));
                     };
+                })
+                {
+                    Name = "Euclid dot",
+                    Description = "circular dot changing to square at 50% grey"
                 };
+                _list.Add(euclidDot);
 
-                perturbedEuclidDot = (double angle, double distance) =>
+                perturbedEuclidDot = new SpotFunction(
+                    (double angle, double distance) =>
                 {
                     Random random = new Random();
                     double noiseAmplitude = 0.01;
@@ -209,9 +223,14 @@ namespace Halftone
                             Math.Sin(Math.PI * (rotatedX + 0.5)) +
                             Math.Cos(Math.PI * rotatedY))))));
                     };
+                })
+                {
+                    Name = "Euclid dot, perturbed",
+                    Description = "Euclid dot with some noise"
                 };
+                _list.Add(perturbedEuclidDot);
 
-                squareDot = (double angle, double distance) =>
+                squareDot = new SpotFunction((double angle, double distance) =>
                 {
                     return (int x, int y) =>
                     {
@@ -223,9 +242,13 @@ namespace Halftone
                             Math.Abs(((Math.Abs(rotatedY) / (distance * 0.5)) % 2) - 1)
                             ))));
                     };
+                })
+                {
+                    Name = "Square dot"
                 };
+                _list.Add(squareDot);
 
-                line = (double angle, double distance) =>
+                line = new SpotFunction((double angle, double distance) =>
                 {
                     angle %= Math.PI * 0.5;
                     double invDistance = 1 / distance;
@@ -238,9 +261,13 @@ namespace Halftone
                         return (int)(255 * (Math.Abs(
                             Math.Sign(value) * value % Math.Sign(value))));
                     };
+                })
+                {
+                    Name = "Line"
                 };
+                _list.Add(line);
 
-                triangle = (double angle, double distance) =>
+                triangle = new SpotFunction((double angle, double distance) =>
                 {
                     double invDistance = 1 / distance;
 
@@ -251,9 +278,13 @@ namespace Halftone
                         ((invDistance * y) % 1)
                         ));
                     };
+                })
+                {
+                    Name = "Triangle"
                 };
+                _list.Add(triangle);
 
-                circleDot = (double angle, double distance) =>
+                circleDot = new SpotFunction((double angle, double distance) =>
                 {
                     double invDistance = 1 / distance;
 
@@ -270,7 +301,11 @@ namespace Halftone
                             //) * 0.5)));
                             ((1 - invDistance * Math.Sqrt(2*(xSq + ySq)))));
                     };
+                })
+                {
+                    Name = "Circle dot"
                 };
+                _list.Add(circleDot);
             }
         }
     }

@@ -264,8 +264,7 @@ namespace testing
             };
             config.saveModule(sfcAdaptiveClustering, false);
 
-            SpotFunction euclidDotSpotFunction = new SpotFunction(
-                        SpotFunction.Samples.euclidDot, Math.PI * 0.25, 8);
+            SpotFunction euclidDotSpotFunction = new SpotFunction();
 
             thresholdHalftoneAlgorithm.ThresholdFilter =
                 new SpotFunctionThresholdFilter(euclidDotSpotFunction);

@@ -93,8 +93,9 @@ namespace Halftone
             Pixel blackPixel = new Pixel(new byte[1] { 0 });
             Pixel whitePixel = new Pixel(new byte[1] { 255 });
 
-            // pixels in the current cell waiting being filled (or not)
-            Coordinate<int>[] cellPixels = new Coordinate<int>[MaxCellSize];
+            // Pixels in the current cell waiting being filled (or not).
+            // X: cellPixels[*, 0], Y: cellPixels[*, 1]
+            int[,] cellPixels = new int[MaxCellSize, 2];
 
             int clusterSize = 0;
             int clusterStartPos = 0;
@@ -118,11 +119,13 @@ namespace Halftone
             image.initBuffer();
 
             while (scanOrderEnum.MoveNext()) {
-                Coordinate<int> coords = scanOrderEnum.Current;
+                int x, y; // current coordinates
+                x = scanOrderEnum.Current.X;
+                y = scanOrderEnum.Current.Y;
                 visitedPixels++;
 
                 // collect intensities and coordinates of cell's pixels
-                Pixel pixel = image.getPixel(coords.X, coords.Y);
+                Pixel pixel = image.getPixel(x, y);
                 // for computing path direction vector
                 previousIntensity = intensity;
                 intensity = pixel[0];
@@ -154,7 +157,8 @@ namespace Halftone
                     currentCellSize = Math.Max(maxAllowedClusterSize, currentCellPixel);
                 }
 
-                cellPixels[currentCellPixel - 1] = coords;
+                cellPixels[currentCellPixel - 1, 0] = x;
+                cellPixels[currentCellPixel - 1, 1] = y;
 
                 // What about if the cell is not completed?
                 // - don't overwrite previously filled pixels remaining in the cellPixels array
@@ -185,19 +189,16 @@ namespace Halftone
                     }
 
                     for (int i = 0; i < clusterStartPos; i++) {
-                        Coordinate<int> c = cellPixels[i];
-                        image.setPixel(c.X, c.Y, whitePixel);
+                        image.setPixel(cellPixels[i, 0], cellPixels[i, 1], whitePixel);
                     }
 
                     for (int i = clusterStartPos; i < clusterSize + clusterStartPos; i++) {
                         // Fill a cluster proportional to cell's average intensity with black.
-                        Coordinate<int> c = cellPixels[i];
-                        image.setPixel(c.X, c.Y, blackPixel);
+                        image.setPixel(cellPixels[i, 0], cellPixels[i, 1], blackPixel);
                     }
 
                     for (int i = clusterSize + clusterStartPos; i < currentCellSize; i++) {
-                        Coordinate<int> c = cellPixels[i];
-                        image.setPixel(c.X, c.Y, whitePixel);
+                        image.setPixel(cellPixels[i, 0], cellPixels[i, 1], whitePixel);
                     }
 
                     // start a new cell
