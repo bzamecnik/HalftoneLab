@@ -23,8 +23,10 @@ namespace Halftone
         public DefinitionType[,] DefinitionMatrix {
             get { return _definitionMatrix; }
             set {
-                _definitionMatrix = value;
-                computeWorkingMatrix();
+                if (value != null) {
+                    _definitionMatrix = (DefinitionType[,])value.Clone();
+                    computeWorkingMatrix();
+                }
             }
         }
 

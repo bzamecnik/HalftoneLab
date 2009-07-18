@@ -26,9 +26,7 @@ namespace Gimp.HalftoneLab
 
             matrixPanel = new ErrorMatrixPanel((uint)module.Matrix.Height,
                 (uint)module.Matrix.Width);
-            matrixPanel.BareMatrix = module.Matrix.DefinitionMatrix;
-            matrixPanel.Divisor = module.Matrix.Divisor;
-            matrixPanel.SourceOffsetX = module.Matrix.SourceOffsetX;
+            matrixPanel.Matrix = module.Matrix;
 
             randCoeffCountCheckButton = new CheckButton();
             randCoeffCountCheckButton.Active =

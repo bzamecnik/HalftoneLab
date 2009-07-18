@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gtk;
 using Halftone;
 
@@ -6,10 +8,13 @@ namespace Gimp.HalftoneLab
 {
     class ErrorMatrixPanel : Table
     {
+        ErrorMatrix module;
         MatrixPanel matrixPanel;
         SpinButton divisorSpinButton;
         CheckButton customDivisorCheckButton;
         SpinButton sourceOffsetXSpinButton;
+        ComboBox presetComboBox;
+        List<ErrorMatrix> presets;
 
         public ErrorMatrixPanel(uint rows, uint cols)
             : base(4, 2, false)
@@ -29,42 +34,72 @@ namespace Gimp.HalftoneLab
                     matrixPanel.Columns;
             };
 
+            presets = new List<ErrorMatrix>(ErrorMatrix.Samples.list());
+            var presetsNames = from preset in presets select preset.Name;
+            presetComboBox = new ComboBox(presetsNames.ToArray());
+            presetComboBox.Changed += delegate
+            {
+                int active = presetComboBox.Active;
+                if (active >= 0) {
+                    Matrix = presets[active];
+                }
+
+            };
+
             ColumnSpacing = 2;
             RowSpacing = 2;
             BorderWidth = 2;
 
-            Attach(matrixPanel, 0, 2, 0, 1,
+            Attach(new Label("Preset:") { Xalign = 0.0f }, 0, 1, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            Attach(presetComboBox, 1, 2, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+
+            Attach(matrixPanel, 0, 2, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Fill | AttachOptions.Expand, 0, 0);
 
             Attach(new Label("Source offset X:") { Xalign = 0.0f },
-                0, 1, 1, 2, AttachOptions.Fill | AttachOptions.Expand,
+                0, 1, 2, 3, AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            Attach(sourceOffsetXSpinButton, 1, 2, 1, 2,
+            Attach(sourceOffsetXSpinButton, 1, 2, 2, 3,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
-            Attach(customDivisorCheckButton, 0, 2, 2, 3,
+            Attach(customDivisorCheckButton, 0, 2, 3, 4,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 3, 4,
+            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 4, 5,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            Attach(divisorSpinButton, 1, 2, 3, 4,
+            Attach(divisorSpinButton, 1, 2, 4, 5,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
         }
 
         public ErrorMatrix Matrix {
             get {
                 if (UseCustomDivisor) {
-                    return new ErrorMatrix(BareMatrix, SourceOffsetX, Divisor);
+                    module = new ErrorMatrix(BareMatrix, SourceOffsetX, Divisor);
                 } else {
-                    return new ErrorMatrix(BareMatrix, SourceOffsetX);
+                    module = new ErrorMatrix(BareMatrix, SourceOffsetX);
                 }
+                return module;
+            }
+            set {
+                module = value;
+                if (module == null) {
+                    module = new ErrorMatrix();
+                }
+                BareMatrix = module.DefinitionMatrix;
+                Divisor = module.Divisor;
+                UseCustomDivisor = false;
+                SourceOffsetX = module.SourceOffsetX;
             }
         }
 
-        public int[,] BareMatrix {
+        private int[,] BareMatrix {
             get {
                 return matrixPanel.Matrix;
             }
@@ -73,17 +108,17 @@ namespace Gimp.HalftoneLab
             }
         }
 
-        public int SourceOffsetX {
+        private int SourceOffsetX {
             get { return sourceOffsetXSpinButton.ValueAsInt - 1; }
             set { sourceOffsetXSpinButton.Value = value + 1; }
         }
 
-        public int Divisor {
+        private int Divisor {
             get { return divisorSpinButton.ValueAsInt; }
             set { divisorSpinButton.Value = value; }
         }
 
-        public bool UseCustomDivisor {
+        private bool UseCustomDivisor {
             get { return customDivisorCheckButton.Active; }
             set {
                 customDivisorCheckButton.Active = value;

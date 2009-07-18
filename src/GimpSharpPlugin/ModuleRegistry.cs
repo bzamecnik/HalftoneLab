@@ -102,8 +102,7 @@ namespace Gimp.HalftoneLab
                     "ThresholdHalftoneMethod"
                 });
 
-            addModule(typeof(SpotFunction),
-                typeof(SpotFunctionDialog), null);
+            addModule(typeof(SpotFunction), null, null);
 
             addModule(typeof(ScanlineScanningOrder), null, null);
             addModule(typeof(SerpentineScanningOrder), null, null);

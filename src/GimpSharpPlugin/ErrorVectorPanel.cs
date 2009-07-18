@@ -6,6 +6,7 @@ namespace Gimp.HalftoneLab
 {
     class ErrorVectorPanel : Table
     {
+        //ErrorMatrix module; // TODO
         Table vectorTable;
         ScrolledWindow scroll;
         // direct references to matrix cells
