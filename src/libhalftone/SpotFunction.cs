@@ -179,6 +179,7 @@ namespace Halftone
 
             static Samples() {
                 _list = new List<SpotFunction>();
+
                 euclidDot = new SpotFunction((double angle, double distance) =>
                 {
                     double pixelDivisor = 2.0 / distance;

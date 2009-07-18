@@ -29,7 +29,7 @@ namespace Gimp.HalftoneLab
             {
                 int active = presetComboBox.Active;
                 if (active >= 0) {
-                    module = presets[active];
+                    module = (SpotFunction)presets[active].deepCopy();
                 }
             };
 

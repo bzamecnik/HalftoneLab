@@ -46,7 +46,8 @@ namespace Halftone
         }
 
         [Serializable]
-        public class Resize : Module, IImageFilter {
+        public class Resize : GSImageFilter
+        {
             // TODO: maintain the same image size if resizing
             // back and forward with the same (inversely) factor.
             // Probably use transform direction and tune clipping.
@@ -65,11 +66,8 @@ namespace Halftone
             public Resize() {
                 Factor = 1.0;
                 Interpolation = InterpolationType.Bicubic;
-            }
-
-            public void run(Image image) {
-                GSImage gsimage = image as GSImage;
-                if (gsimage != null) {
+                runGSFilter = (GSImage image) =>
+                {
                     Gimp.InterpolationType gimpInterpolationType
                         = Gimp.InterpolationType.None;
                     switch (Interpolation) {
@@ -88,17 +86,16 @@ namespace Halftone
                     }
                     double newHeight = image.Height * Factor;
                     double newWidth = image.Width * Factor;
-                    gsimage.Drawable.TransformScale(0, 0, newWidth, newHeight,
+                    image.Drawable.TransformScale(0, 0, newWidth, newHeight,
                         Gimp.TransformDirection.Forward,
                         gimpInterpolationType, false, 1, true);
-                }
+                };
             }
         }
 
         [Serializable]
-        public abstract class DotGainCorrection : Module, IImageFilter
+        public abstract class DotGainCorrection : GSImageFilter
         {
-            public abstract void run(Image image);
         }
 
         [Serializable]
@@ -116,56 +113,47 @@ namespace Halftone
 
             public GammaCorrection() {
                 Gamma = 1.0;
-            }
-
-            public override void run(Image image) {
-                GSImage gsimage = image as GSImage;
-                if (gsimage != null) {
-                    gsimage.Drawable.Levels(Gimp.HistogramChannel.Value,
+                runGSFilter = (GSImage image) =>
+                {
+                    image.Drawable.Levels(Gimp.HistogramChannel.Value,
                         0, 255, Gamma, 0, 255);
-                }
+                };
             }
         }
 
         [Serializable]
-        public class Sharpen : Module, IImageFilter
+        public class Sharpen : GSImageFilter
         {
             public double Amount { get; set; }
 
             public Sharpen() {
                 Amount = 0.1;
-            }
-
-            public void run(Image image) {
-                GSImage gsimage = image as GSImage;
-                if (gsimage != null) {
+                runGSFilter = (GSImage image) =>
+                {
                     Gimp.Procedure procedure =
                         new Gimp.Procedure("plug_in_sharpen");
-                    procedure.Run(gsimage.Image, gsimage.Drawable,
-                        (int) (Amount * 100));
-                }
+                    procedure.Run(image.Image, image.Drawable,
+                        (int)(Amount * 100));
+                };
             }
         }
 
         [Serializable]
-        public class Smoothen : Module, IImageFilter
+        public class Smoothen : GSImageFilter
         {
             public double Radius { get; set; }
 
             public Smoothen() {
                 Radius = 5;
-            }
-
-            public void run(Image image) {
-                GSImage gsimage = image as GSImage;
-                if (gsimage != null) {
+                runGSFilter = (GSImage image) =>
+                {
                     Gimp.Procedure procedure =
                         new Gimp.Procedure("plug_in_gauss");
-                    procedure.Run(gsimage.Image, gsimage.Drawable,
+                    procedure.Run(image.Image, image.Drawable,
                         Radius, Radius, 0);
-                    gsimage.Drawable.Levels(Gimp.HistogramChannel.Value,
+                    image.Drawable.Levels(Gimp.HistogramChannel.Value,
                         110, 145, 1.0, 0, 255);
-                }
+                };
             }
         }
     }
