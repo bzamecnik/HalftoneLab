@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GimpSharpPlugin")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("HalftoneLabGSPlugin")]
+[assembly: AssemblyDescription("HalftoneLab GimpSharp plug-in")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GimpSharpPlugin")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCompany("Bohumir Zamecnik")]
+[assembly: AssemblyProduct("Halftone Laboratory")]
+[assembly: AssemblyCopyright("Copyright © Bohumir Zamecnik, 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
