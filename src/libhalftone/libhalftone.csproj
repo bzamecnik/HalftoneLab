@@ -64,7 +64,6 @@
     <Compile Include="Matrix.cs" />
     <Compile Include="MatrixErrorFilter.cs" />
     <Compile Include="MatrixThresholdFilter.cs" />
-    <Compile Include="imageAbstraction\Pixel.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleAttribute.cs" />
     <Compile Include="PerturbedErrorFilter.cs" />

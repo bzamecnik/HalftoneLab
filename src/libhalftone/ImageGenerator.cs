@@ -13,12 +13,6 @@ namespace Halftone
     public class ImageGenerator : Module
     {
         /// <summary>
-        /// Delegate to a function applying an effect on the image.
-        /// </summary>
-        /// <param name="image">GimpSharp image - input & output</param>
-        public delegate void GSEffectDelegate(GSImage image);
-
-        /// <summary>
         /// Spot function to generate the basic image.
         /// </summary>
         public SpotFunction SpotFunction { get; set; }
@@ -26,20 +20,17 @@ namespace Halftone
         /// <summary>
         /// Multiple effects sequentially applied on the image.
         /// </summary>
-        public List<GSEffectDelegate> Effects { get; set; }
+        public List<IImageFilter> Effects { get; set; }
 
         public ImageGenerator() {
             SpotFunction = new SpotFunction();
-            Effects = new List<GSEffectDelegate>();
+            Effects = new List<IImageFilter>();
         }
 
         /// <summary>
         /// Fill the image with spot function and then sequentially
         /// apply effects on it.
         /// </summary>
-        /// <remarks>
-        /// Effects will be applied only a GimpSharp image (GSImage).
-        /// </remarks>
         /// <param name="image"></param>
         public void generateImage(Image image) {
             image.initBuffer();
@@ -51,15 +42,12 @@ namespace Halftone
                 }, new ScanlineScanningOrder());
                 image.flushBuffer();
             }
-            GSImage gsImage = image as GSImage;
-            if ((gsImage != null) && (Effects != null)) {
-                foreach (GSEffectDelegate effect in Effects) {
+            if ((image != null) && (Effects != null)) {
+                foreach (IImageFilter effect in Effects) {
                     if (effect != null) {
-                        effect(gsImage);
+                        effect.run(image);
                     }
                 }
-                gsImage.Drawable.Flush();
-                gsImage.Drawable.Update();
             }
             image.initBuffer();
         }
@@ -73,44 +61,106 @@ namespace Halftone
 
         public static class Samples
         {
-            public static GSEffectDelegate rippleEffect;
-            public static GSEffectDelegate noiseEffect;
-            public static GSEffectDelegate pixelizeEffect;
-            public static GSEffectDelegate canvasEffect;
+            public static IImageFilter rippleEffect;
+            public static IImageFilter noiseEffect;
+            public static IImageFilter pixelizeEffect;
+            public static IImageFilter canvasEffect;
+
+            public static ImageGenerator euclidRippleGenerator;
+            public static ImageGenerator euclidNoiseGenerator;
+            public static ImageGenerator euclidPixelizeGenerator;
+            public static ImageGenerator euclidCanvasGenerator;
+
+            private static List<ImageGenerator> _list;
+            public static IEnumerable<ImageGenerator> list() {
+                return _list;
+            }
 
             static Samples() {
-                rippleEffect = (GSImage image) =>
+                _list = new List<ImageGenerator>();
+
+                rippleEffect = new GSImageFilter()
                 {
-                    Console.Out.WriteLine("Ripple effect");
-                    Gimp.Procedure procedure =
+                    Name = "Ripple 2x",
+                    Description = "period: 20, amplitude: 5, vert. + horiz.",
+                    runGSFilter = (GSImage image) =>
+                    {
+                        Gimp.Procedure procedure =
                            new Gimp.Procedure("plug_in_ripple");
-                    procedure.Run(image.Image, image.Drawable,
-                        20, 5, 0, 1, 1, 1, 0);
-                    procedure.Run(image.Image, image.Drawable,
-                        20, 5, 1, 1, 1, 1, 0);
+                        procedure.Run(image.Image, image.Drawable,
+                            20, 5, 0, 1, 1, 1, 0);
+                        procedure.Run(image.Image, image.Drawable,
+                            20, 5, 1, 1, 1, 1, 0);
+                    }
                 };
-                noiseEffect = (GSImage image) =>
+                _list.Add(new ImageGenerator() {
+                    Name = "Euclid + ripple",
+                    SpotFunction = SpotFunction.Samples.euclidDot,
+                    Effects = { rippleEffect }
+                });
+
+
+                noiseEffect = new GSImageFilter()
                 {
-                    Console.Out.WriteLine("Noise effect");
-                    Gimp.Procedure procedure =
+                    Name = "Noise",
+                    Description = "RGB noise, independent, corelated, amount: 0.2",
+                    runGSFilter = (GSImage image) =>
+                    {
+                        Gimp.Procedure procedure =
                            new Gimp.Procedure("plug_in_rgb_noise");
-                    procedure.Run(image.Image, image.Drawable,
-                        1, 1, 0.2);
+                        procedure.Run(image.Image, image.Drawable,
+                            1, 1, 0.2);
+                    }
                 };
-                pixelizeEffect = (GSImage image) =>
+                _list.Add(new ImageGenerator()
                 {
-                    Console.Out.WriteLine("Pixelize effect");
-                    Gimp.Procedure procedure =
-                           new Gimp.Procedure("plug_in_pixelize");
-                    procedure.Run(image.Drawable.Image, image.Drawable, 4);
+                    Name = "Euclid + noise",
+                    SpotFunction = SpotFunction.Samples.euclidDot,
+                    Effects = { noiseEffect }
+                });
+
+                pixelizeEffect = new GSImageFilter()
+                {
+                    Name = "Pixelize",
+                    Description = "block: 4px",
+                    runGSFilter = (GSImage image) =>
+                    {
+                        Gimp.Procedure procedure =
+                            new Gimp.Procedure("plug_in_pixelize");
+                        procedure.Run(image.Image, image.Drawable, 4);
+                    }
                 };
-                canvasEffect = (GSImage image) =>
+                _list.Add(new ImageGenerator()
                 {
-                    Console.Out.WriteLine("Canvas effect");
-                    Gimp.Procedure procedure =
+                    Name = "Euclid + pixelize",
+                    SpotFunction = SpotFunction.Samples.euclidDot,
+                    Effects = { pixelizeEffect }
+                });
+
+                canvasEffect = new GSImageFilter()
+                {
+                    Name = "Canvas",
+                    Description = "direction: 0, depth: 4",
+                    runGSFilter = (GSImage image) =>
+                    {
+                        Gimp.Procedure procedure =
                            new Gimp.Procedure("plug_in_apply_canvas");
-                    procedure.Run(image.Drawable.Image, image.Drawable, 0, 4);
+                        procedure.Run(image.Image, image.Drawable, 0, 4);
+                    }
                 };
+                _list.Add(new ImageGenerator()
+                {
+                    Name = "Euclid + canvas",
+                    SpotFunction = SpotFunction.Samples.euclidDot,
+                    Effects = { canvasEffect }
+                });
+
+                _list.Add(new ImageGenerator()
+                {
+                    Name = "Euclid + pixelize + ripple",
+                    SpotFunction = SpotFunction.Samples.euclidDot,
+                    Effects = { pixelizeEffect, rippleEffect }
+                });
             }
         }
     }

@@ -18,7 +18,7 @@ namespace Gimp.HalftoneLab
         {
             module = modifiedModule as SpotFunctionThresholdFilter;
             if (module == null) {
-                modifiedModule = new SFCClusteringMethod();
+                modifiedModule = new SpotFunctionThresholdFilter();
                 module = modifiedModule as SpotFunctionThresholdFilter;
             }
 
