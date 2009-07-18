@@ -46,7 +46,7 @@ namespace Gimp.HalftoneLab
                 AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
             Attach(presetComboBox, 1, 2, 0, 1,
-                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
 
             Attach(spotFunctionFrame, 0, 2, 1, 2,

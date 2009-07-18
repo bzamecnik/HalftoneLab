@@ -6,7 +6,7 @@ using Halftone;
 
 namespace Gimp.HalftoneLab
 {
-    public class HalftoneAlgorithmPanel : Table
+    public class HalftoneAlgorithmPanel : Notebook
     {
         private HalftoneAlgorithm module;
         public HalftoneAlgorithm Module {
@@ -17,7 +17,7 @@ namespace Gimp.HalftoneLab
                 preDotGainEnabledCheckButton.Active = module.PreDotGain != null;
                 preDotGainGammaSpinButton.Sensitive = module.PreDotGain != null;
                 preSharpenEnabledCheckButton.Active = module.PreSharpen != null;
-                preSharpenAmountSpinButton.Sensitive = module.PreSharpen != null;
+                preSharpenAmountHScale.Sensitive = module.PreSharpen != null;
                 halftoneMethodSelector.assignModule(module.Method, false);
                 postResizePanel.Module = module.PostResize;
                 supersamplingCheckButton.Active = module.SupersamplingEnabled;
@@ -35,7 +35,7 @@ namespace Gimp.HalftoneLab
         private CheckButton preDotGainEnabledCheckButton;
         private SpinButton preDotGainGammaSpinButton;
         private CheckButton preSharpenEnabledCheckButton;
-        private SpinButton preSharpenAmountSpinButton;
+        private HScale preSharpenAmountHScale;
         private SubmoduleSelector<HalftoneMethod> halftoneMethodSelector;
         private ResizePanel postResizePanel;
         private CheckButton supersamplingCheckButton;
@@ -46,17 +46,15 @@ namespace Gimp.HalftoneLab
             : this(new HalftoneAlgorithm()) { }
 
         public HalftoneAlgorithmPanel(HalftoneAlgorithm existingModule)
-            : base(3, 1, false)
         {
             BorderWidth = 3;
+
             VBox preProcessingVBox = new VBox();
-            Frame preProcessingFrame = new Frame("Pre-processing") { BorderWidth = 3 };
             Frame preResizeFrame = new Frame("Resize") { BorderWidth = 3 };
             Frame preDotGainFrame = new Frame("Dot gain correction") { BorderWidth = 3 };
             Frame preSharpenFrame = new Frame("Sharpen") { BorderWidth = 3 };
             Frame halftoneMethodFrame = new Frame("Halftone method") { BorderWidth = 3 };
-            VBox postProcessingVBox = new VBox() { BorderWidth = 3 };
-            Frame postProcessingFrame = new Frame("Post-processing") { BorderWidth = 3 };
+            VBox postProcessingVBox = new VBox();
             Frame postResizeFrame = new Frame("Resize") { BorderWidth = 3 };
             Frame postSmoothenFrame = new Frame("Smoothen") { BorderWidth = 3 };
 
@@ -81,8 +79,12 @@ namespace Gimp.HalftoneLab
             preDotGainEnabledCheckButton.Toggled += delegate
             {
                 bool enabled = preDotGainEnabledCheckButton.Active;
-                Module.PreDotGain = (preDotGainEnabledCheckButton.Active) ?
-                    new HalftoneAlgorithm.GammaCorrection() : null;
+                if (!enabled) {
+                    Module.PreDotGain = null;
+                } else if (Module.PreDotGain == null) {
+                    Module.PreDotGain =
+                        new HalftoneAlgorithm.GammaCorrection();
+                }
                 if (Module.PreDotGain != null) {
                     preDotGainGammaSpinButton.Value =
                         ((HalftoneAlgorithm.GammaCorrection)
@@ -121,20 +123,24 @@ namespace Gimp.HalftoneLab
             preSharpenEnabledCheckButton.Toggled += delegate
             {
                 bool enabled = preSharpenEnabledCheckButton.Active;
-                Module.PreSharpen = (preSharpenEnabledCheckButton.Active) ?
-                    new HalftoneAlgorithm.Sharpen() : null;
-                if (Module.PreSharpen != null) {
-                    preSharpenAmountSpinButton.Value = Module.PreSharpen.Amount;
+                if (!enabled) {
+                    Module.PreSharpen = null;
+                } else if (Module.PreSharpen == null) {
+                    Module.PreSharpen =
+                        new HalftoneAlgorithm.Sharpen();
                 }
-                preSharpenAmountSpinButton.Sensitive = enabled;
+                if (Module.PreSharpen != null) {
+                    preSharpenAmountHScale.Value = Module.PreSharpen.Amount;
+                }
+                preSharpenAmountHScale.Sensitive = enabled;
                 if (ModuleChanged != null) {
                     ModuleChanged(this, new EventArgs());
                 }
             };
-            preSharpenAmountSpinButton = new SpinButton(0, 1, 0.01);
-            preSharpenAmountSpinButton.Changed += delegate
+            preSharpenAmountHScale = new HScale(0, 1, 0.01);
+            preSharpenAmountHScale.ChangeValue += delegate
             {
-                Module.PreSharpen.Amount = preSharpenAmountSpinButton.Value;
+                Module.PreSharpen.Amount = preSharpenAmountHScale.Value;
                 if (ModuleChanged != null) {
                     ModuleChanged(this, new EventArgs());
                 }
@@ -147,12 +153,13 @@ namespace Gimp.HalftoneLab
 
             preSharpenTable.Attach(new Label("Amount:") { Xalign = 0.0f },
                 0, 1, 1, 2, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            preSharpenTable.Attach(preSharpenAmountSpinButton, 1, 2, 1, 2,
+            preSharpenTable.Attach(preSharpenAmountHScale, 1, 2, 1, 2,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
             preSharpenFrame.Add(preSharpenTable);
             preProcessingVBox.PackStart(preSharpenFrame);
-            preProcessingFrame.Add(preProcessingVBox);
+            
+            AppendPage(preProcessingVBox, new Label("Pre-processing"));
 
             // -------- halftone method --------
 
@@ -169,6 +176,7 @@ namespace Gimp.HalftoneLab
                 }
             };
             halftoneMethodFrame.Add(halftoneMethodSelector);
+            AppendPage(halftoneMethodFrame, new Label("Halftone method"));
 
 
             // -------- post-processing --------
@@ -212,8 +220,12 @@ namespace Gimp.HalftoneLab
             postSmoothenEnabledCheckButton.Toggled += delegate
             {
                 bool enabled = postSmoothenEnabledCheckButton.Active;
-                Module.PostSmoothen = enabled ?
-                    new HalftoneAlgorithm.Smoothen() : null;
+                if (!enabled) {
+                    Module.PostSmoothen = null;
+                } else if (Module.PostSmoothen == null) {
+                    Module.PostSmoothen =
+                        new HalftoneAlgorithm.Smoothen();
+                }
                 if (Module.PostSmoothen != null) {
                     postSmoothenRadiusSpinButton.Value = Module.PostSmoothen.Radius;
                 }
@@ -243,20 +255,14 @@ namespace Gimp.HalftoneLab
             postSmoothenFrame.Add(postSmoothenTable);
 
             postProcessingVBox.PackStart(postSmoothenFrame);
-            postProcessingFrame.Add(postProcessingVBox);
+
+            AppendPage(postProcessingVBox, new Label("Post-processing"));
 
             Module = existingModule;
 
-            Attach(preProcessingFrame, 0, 1, 0, 1,
-                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-
-            Attach(halftoneMethodFrame, 0, 1, 1, 2,
-                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-
-            Attach(postProcessingFrame, 0, 1, 2, 3,
-                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            
             ShowAll();
+
+            Page = 1;
         }
 
         public class ResizePanel : Table {
@@ -348,20 +354,23 @@ namespace Gimp.HalftoneLab
 
                 Module = existingModule;
 
-                Attach(enabledCheckButton, 0, 2, 0, 1, AttachOptions.Fill,
+                Attach(enabledCheckButton, 0, 2, 0, 1,
+                    AttachOptions.Fill | AttachOptions.Expand,
                     AttachOptions.Shrink, 0, 0);
 
                 Attach(new Label("Resize factor:") { Xalign = 0.0f },
                     0, 1, 1, 2, AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
-                Attach(resizeFactorSpinButton, 1, 2, 1, 2, AttachOptions.Fill,
+                Attach(resizeFactorSpinButton, 1, 2, 1, 2,
+                    AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
 
                 Attach(new Label("Interpolation type:") { Xalign = 0.0f },
                     0, 1, 2, 3, AttachOptions.Fill,
                     AttachOptions.Shrink, 0, 0);
                 Attach(interpolationTypeComboBox, 1, 2, 2, 3,
-                    AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+                    AttachOptions.Fill,
+                    AttachOptions.Shrink, 0, 0);
                 
                 ShowAll();
             }
