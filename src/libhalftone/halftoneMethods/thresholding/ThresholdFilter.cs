@@ -23,6 +23,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Threshold filter")]
     public abstract class ThresholdFilter : Module
     {
         /// <summary>

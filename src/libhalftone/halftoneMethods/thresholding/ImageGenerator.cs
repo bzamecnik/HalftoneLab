@@ -10,6 +10,7 @@ namespace Halftone
     /// then it can optionally apply some effects on that.
     /// </summary>
     [Serializable]
+    [Module(TypeName = "Threshold image generator")]
     public class ImageGenerator : Module
     {
         /// <summary>

@@ -17,6 +17,7 @@ namespace Halftone
     /// <see cref="ErrorMatrix"/>
     /// <see cref="MatrixErrorFilter"/>
     [Serializable]
+    [Module(TypeName = "Randomized matrix error filter")]
     public class RandomizedMatrixErrorFilter : MatrixErrorFilter
     {
         /// <summary>

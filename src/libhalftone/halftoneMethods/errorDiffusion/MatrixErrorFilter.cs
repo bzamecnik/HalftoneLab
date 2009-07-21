@@ -8,6 +8,7 @@ namespace Halftone
     /// </summary>
     /// <see cref="ErrorMatrix"/>
     [Serializable]
+    [Module(TypeName = "Matrix error filter")]
     public class MatrixErrorFilter : ErrorFilter
     {
         // matrix of error filter weights

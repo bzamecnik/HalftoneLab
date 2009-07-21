@@ -10,6 +10,7 @@ namespace Halftone
     /// </summary>
     /// <see cref="DynamicMatrixErrorFilter"/>
     [Serializable]
+    [Module(TypeName = "Dynamic matrix threshold filter")]
     public class DynamicMatrixThresholdFilter : ThresholdFilter
     {
         public DynamicMatrixTable<ThresholdRecord> MatrixTable { get; set; }

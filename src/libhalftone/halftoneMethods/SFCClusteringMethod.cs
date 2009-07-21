@@ -24,7 +24,7 @@ namespace Halftone
     /// The quantization error is distributed within whole cells.
     /// </remarks>
     /// </summary>
-    [Module(TypeName="SFC clustering algorithm")]
+    [Module(TypeName="SFC clustering method")]
     [Serializable]
     public class SFCClusteringMethod : CellHalftoneMethod
     {

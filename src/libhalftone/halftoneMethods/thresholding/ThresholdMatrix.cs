@@ -1,5 +1,4 @@
 using System;
-using Gimp;
 
 namespace Halftone
 {
@@ -12,6 +11,7 @@ namespace Halftone
     /// Coefficients are scaled to 0-255 range.
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Threshold matrix")]
     public class ThresholdMatrix : Matrix<int, int>
     {
         [NonSerialized]
