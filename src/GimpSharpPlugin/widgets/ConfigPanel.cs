@@ -23,7 +23,7 @@ namespace Gimp.HalftoneLab
         private static string defaultModuleName = "_DEFAULT";
 
         public ConfigPanel(ConfigManager manager)
-            : base(1, 3, false)
+            : base(1, 4, false)
         {
             if (manager == null) {
                 throw new ArgumentNullException();
@@ -60,9 +60,11 @@ namespace Gimp.HalftoneLab
                 deleteSelectedConfig();
             };
 
-            Attach(configNameComboBox, 0, 1, 0, 1, AttachOptions.Fill |
+            Attach(new Label("Config:") { Xalign = 0.0f }, 0, 1, 0, 1,
+                AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+            Attach(configNameComboBox, 1, 2, 0, 1, AttachOptions.Fill |
                 AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
-            Attach(saveCurrentConfigButton, 1, 2, 0, 1, AttachOptions.Fill,
+            Attach(saveCurrentConfigButton, 2, 3, 0, 1, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
             Attach(deleteSelectedConfigButton, 3, 4, 0, 1, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);

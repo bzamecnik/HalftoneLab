@@ -8,6 +8,7 @@ namespace Halftone
     /// </summary>
     /// <see cref="SpotFunction"/>
     [Serializable]
+    [Module(TypeName = "Spot function threshold filter")]
     public class SpotFunctionThresholdFilter : ThresholdFilter
     {
         /// <summary>

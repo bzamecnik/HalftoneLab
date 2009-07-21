@@ -12,6 +12,7 @@ namespace Halftone
     /// plugable submodules to do
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Halftone method")]
     public abstract class HalftoneMethod : Module, IImageFilter
     {
         /// <summary>

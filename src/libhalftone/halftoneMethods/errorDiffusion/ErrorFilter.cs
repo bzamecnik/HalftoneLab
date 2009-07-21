@@ -34,6 +34,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Error-diffusion filter")]
     public abstract class ErrorFilter : Module
     {
         /// <summary>

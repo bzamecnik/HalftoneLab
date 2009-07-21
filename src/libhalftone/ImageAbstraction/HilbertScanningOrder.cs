@@ -22,6 +22,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Hilbert scanning order")]
     public class HilbertScanningOrder : SFCScanningOrder
     {
 

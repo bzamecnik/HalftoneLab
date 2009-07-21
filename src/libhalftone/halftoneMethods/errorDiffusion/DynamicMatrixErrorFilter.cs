@@ -25,6 +25,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Dynamic matrix error filter")]
     public class DynamicMatrixErrorFilter : MatrixErrorFilter
     {
         public DynamicMatrixTable<ErrorRecord> MatrixTable { get; set; }

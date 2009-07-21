@@ -6,6 +6,7 @@ using System.Text;
 namespace Halftone
 {
     [Serializable]
+    [Module(TypeName = "Point halftone method")]
     public abstract class PointHalftoneMethod : HalftoneMethod
     {
     }

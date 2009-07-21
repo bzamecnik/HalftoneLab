@@ -16,6 +16,7 @@ namespace Halftone
     /// <see cref="ImageGenerator"/>
     /// <see cref="SpotFunction"/>
     [Serializable]
+    [Module(TypeName = "Image threshold filter")]
     public class ImageThresholdFilter : ThresholdFilter
     {
         [NonSerialized]

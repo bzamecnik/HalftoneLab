@@ -12,6 +12,7 @@ namespace Halftone
     /// algorithms where the computation on pixels is performed separately.
     /// </remarks>
     [Serializable]
+    [Module(TypeName="Cell halftone method")]
     public abstract class CellHalftoneMethod : HalftoneMethod
     {
     }

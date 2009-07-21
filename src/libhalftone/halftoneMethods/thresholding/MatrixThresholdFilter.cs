@@ -1,5 +1,4 @@
 using System;
-using Gimp;
 
 namespace Halftone
 {
@@ -11,6 +10,7 @@ namespace Halftone
     /// (ie. the image). ThresholdMatrix module is used for that.
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Matrix threshold filter")]
     public class MatrixThresholdFilter : ThresholdFilter
     {
         private ThresholdMatrix _matrix;

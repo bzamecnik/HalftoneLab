@@ -28,6 +28,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Error matrix")]
     public class ErrorMatrix : Matrix<int, double>
     {
         private int _divisor;

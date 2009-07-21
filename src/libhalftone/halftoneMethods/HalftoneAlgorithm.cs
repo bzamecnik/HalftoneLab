@@ -3,6 +3,7 @@
 namespace Halftone
 {
     [Serializable]
+    [Module(TypeName = "Halftone algorithm")]
     public class HalftoneAlgorithm : Module, IImageFilter
     {
         public Resize PreResize { get; set; }

@@ -26,6 +26,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Spot function")]
     public class SpotFunction : Module
     {
         public delegate SpotFuncDelegate SpotFuncPrototypeDelegate(double angle, double distance);

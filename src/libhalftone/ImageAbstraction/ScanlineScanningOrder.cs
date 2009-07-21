@@ -13,6 +13,7 @@ namespace Halftone
     /// (0 -> width -1) direction ordeded in Y direction (0 -> height - 1).
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Scanline scanning order")]
     public class ScanlineScanningOrder : ScanningOrder
     {
         public override IEnumerable<Coordinate<int>> getCoordsEnumerable() {

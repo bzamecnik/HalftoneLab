@@ -59,6 +59,7 @@ namespace Halftone
     /// </code>
     /// </example>
     [Serializable]
+    [Module(TypeName = "Image scanning order")]
     public abstract class ScanningOrder : Module
     {
         /// <summary>

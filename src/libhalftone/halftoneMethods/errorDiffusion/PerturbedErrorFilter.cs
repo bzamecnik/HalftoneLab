@@ -23,6 +23,7 @@ namespace Halftone
     /// </para>
     /// </remarks>
     [Serializable]
+    [Module(TypeName = "Perturbed error filter")]
     public class PerturbedErrorFilter : ErrorFilter
     {
         private MatrixErrorFilter _childFilter;

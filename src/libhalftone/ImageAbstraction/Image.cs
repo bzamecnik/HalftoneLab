@@ -77,6 +77,8 @@ namespace Halftone
         // TODO:
         // - differentiate getPixel()/setPixel() with direct access
         //   and buffered access!
+        //   - when there is any buffer use it, otherwise
+        //     access the underlying image directly
 
         /// <summary>
         /// Get pixel from given coordinates.
