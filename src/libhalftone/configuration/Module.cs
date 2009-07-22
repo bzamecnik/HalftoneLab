@@ -38,12 +38,12 @@ namespace Halftone
 
         /// <summary>
         /// Initialize this module and its submodules.
-        /// It is intended to initialize temporary things lost during
+        /// It is intended to initialize all temporary things lost during
         /// serialization/deserialization and give run-time information
-        /// about the image upon which the whole algorithm is ran.
+        /// about the image on which the whole algorithm is ran.
         /// </summary>
         /// <param name="imageRunInfo">Runtime information about the image
-        /// upon the algorithm run.</param>
+        /// on the algorithm runs.</param>
         public virtual void init(Image.ImageRunInfo imageRunInfo) {}
 
         /// <summary>

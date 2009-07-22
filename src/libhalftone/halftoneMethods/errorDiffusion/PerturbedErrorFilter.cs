@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gimp;
 
 namespace Halftone
@@ -181,13 +182,12 @@ namespace Halftone
                 }
             );
             // sort the coeffs by their value
-            coeffs.Sort(
-                (CoeffGroup g1, CoeffGroup g2) =>
-                {
-                    return g1.MaxNoiseAmplitude.CompareTo(
-                        g2.MaxNoiseAmplitude);
-                }
-                );
+            coeffs.Sort((CoeffGroup g1, CoeffGroup g2) =>
+                    { return g1.MaxNoiseAmplitude.CompareTo(
+                        g2.MaxNoiseAmplitude); } );
+            //// or this way (which is only a little bit slower)
+            //coeffs.OrderBy((group) => group.MaxNoiseAmplitude);
+
             // Group the coefficients to pairs, make a group of three if
             // there's an odd coefficient.
             // Each group will carry its minimum value.

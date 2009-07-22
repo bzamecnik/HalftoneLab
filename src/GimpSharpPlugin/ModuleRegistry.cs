@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Halftone;
+using System.Linq;
 
 namespace Gimp.HalftoneLab
 {
@@ -14,6 +15,9 @@ namespace Gimp.HalftoneLab
             public Type dialogType;
             public string[] submodules;
             public ModuleAttribute moduleAttribute;
+
+            public ModuleInfo(Type moduleType, string[] submodules)
+                : this(moduleType, null, submodules) {}
 
             public ModuleInfo(Type moduleType, Type dialogType,
                 string[] submodules)
@@ -43,80 +47,60 @@ namespace Gimp.HalftoneLab
         }
 
         private void initialize() {
-            addModule(typeof(MatrixThresholdFilter),
-                typeof(MatrixThresholdFilterDialog), null);
-            addModule(typeof(DynamicMatrixThresholdFilter),
-                typeof(DynamicMatrixThresholdFilterDialog), null);
-            addModule(typeof(ImageThresholdFilter),
-                typeof(ImageThresholdFilterDialog), null);
-            addModule(typeof(SpotFunctionThresholdFilter),
-                typeof(SpotFunctionThresholdFilterDialog), null);
-            addModule(typeof(ThresholdFilter),
-                null, new string[] {
-                    "MatrixThresholdFilter",
-                    "DynamicMatrixThresholdFilter",
-                    "ImageThresholdFilter",
-                    "SpotFunctionThresholdFilter"
-                });
+            // Find modules and their submodules using reflection.
+            // A module is regarded as a submodule of a module if it
+            // is its descendant and is not abstract.
 
-            addModule(typeof(DynamicMatrixErrorFilter),
-                typeof(DynamicMatrixErrorFilterDialog),null);
-            addModule(typeof(RandomizedMatrixErrorFilter),
-                typeof(RandomizedMatrixErrorFilterDialog), null);
-            addModule(typeof(PerturbedErrorFilter),
-                typeof(PerturbedErrorFilterDialog), null);
-            addModule(typeof(VectorErrorFilter),
-                typeof(VectorErrorFilterDialog),
-                new string[] { "VectorErrorFilter" }
-                );
-            addModule(typeof(MatrixErrorFilter),
-                typeof(MatrixErrorFilterDialog), new string[] {
-                    "MatrixErrorFilter",
-                    "RandomizedMatrixErrorFilter",
-                    "DynamicMatrixErrorFilter"
-                });
-            addModule(typeof(ErrorFilter),
-                null, new string[] {
-                    "MatrixErrorFilter",
-                    "DynamicMatrixErrorFilter",
-                    "RandomizedMatrixErrorFilter",
-                    "PerturbedErrorFilter",
-                    "VectorErrorFilter"
-                });
+            System.Reflection.Assembly assembly =
+                System.Reflection.Assembly.GetAssembly(
+                typeof(Halftone.Module));
+            List<Type> moduleTypes = assembly.GetTypes().Where(
+                    (type) => typeof(Halftone.Module).IsAssignableFrom(type)
+                ).ToList();
+            moduleTypes.OrderBy(type => type.Name);
+            //moduleTypes.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));
+            foreach (Type module in moduleTypes) {
+                List<string> submoduleNames = new List<string>();
+                // TODO: this should be optimized!
+                foreach (Type otherType in moduleTypes) {
+                    if (module.IsAssignableFrom(otherType) &&
+                        !otherType.IsAbstract) {
+                        submoduleNames.Add(otherType.Name);
+                    }
+                }
+                addModule(module, null, submoduleNames.ToArray());
+            }
+
+            // assign dialogs to modules
+
+            // TODO: This could be done in static constructors
+            // or particular dialogs, but still their instances need
+            // to be referenced somewhere.
+
+            assignDialog("MatrixThresholdFilter",
+                typeof(MatrixThresholdFilterDialog));
+            assignDialog("DynamicMatrixThresholdFilter",
+                typeof(DynamicMatrixThresholdFilterDialog));
+            assignDialog("ImageThresholdFilter",
+                typeof(ImageThresholdFilterDialog));
+            assignDialog("SpotFunctionThresholdFilter",
+                typeof(SpotFunctionThresholdFilterDialog));
+
+            assignDialog("DynamicMatrixErrorFilter",
+                typeof(DynamicMatrixErrorFilterDialog));
+            assignDialog("RandomizedMatrixErrorFilter",
+                typeof(RandomizedMatrixErrorFilterDialog));
+            assignDialog("PerturbedErrorFilter",
+                typeof(PerturbedErrorFilterDialog));
+            assignDialog("VectorErrorFilter",
+                typeof(VectorErrorFilterDialog));
+            assignDialog("MatrixErrorFilter",
+                typeof(MatrixErrorFilterDialog));
             
-            addModule(typeof(ThresholdHalftoneMethod),
-                typeof(ThresholdHalftoneMethodDialog), null);
-            addModule(typeof(SFCClusteringMethod),
-                typeof(SFCClusteringMethodDialog), null);
-            addModule(typeof(HalftoneMethod),
-                null, new string[] {
-                    "ThresholdHalftoneMethod",
-                    "SFCClusteringMethod"
-                });
-            addModule(typeof(CellHalftoneMethod),
-                null, new string[] {
-                    "SFCClusteringMethod"
-                });
-            addModule(typeof(PointHalftoneMethod),
-                null, new string[] {
-                    "ThresholdHalftoneMethod"
-                });
-
-            addModule(typeof(SpotFunction), null, null);
-
-            addModule(typeof(ScanlineScanningOrder), null, null);
-            addModule(typeof(SerpentineScanningOrder), null, null);
-            addModule(typeof(HilbertScanningOrder), null, null);
-            addModule(typeof(ScanningOrder),
-                null, new string[] {
-                    "ScanlineScanningOrder",
-                    "SerpentineScanningOrder",
-                    "HilbertScanningOrder"
-                });
-            addModule(typeof(SFCScanningOrder),
-                null, new string[] {
-                    "HilbertScanningOrder"
-                });
+            assignDialog("ThresholdHalftoneMethod",
+                typeof(ThresholdHalftoneMethodDialog));
+            assignDialog("SFCClusteringMethod",
+                typeof(SFCClusteringMethodDialog));
         }
 
         public Type getModuleType(string moduleTypeName) {
@@ -149,6 +133,14 @@ namespace Gimp.HalftoneLab
         {
             registry.Add(moduleType.Name, new ModuleInfo(moduleType,
                 dialogType, submodules));
+        }
+
+        public void assignDialog(string moduleTypeName, Type dialogType) {
+            ModuleInfo record = null;
+            registry.TryGetValue(moduleTypeName, out record);
+            if (record != null) {
+                record.dialogType = dialogType;
+            }
         }
 
         public static ModuleAttribute getModuleAttribute(Type moduleType) {
