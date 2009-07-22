@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gimp;
+using System.Linq;
 
 namespace Halftone
 {
@@ -37,6 +38,11 @@ namespace Halftone
             }
         }
 
+        [NonSerialized]
+        private Coordinate<int>[] templateCoords;
+        [NonSerialized]
+        private Coordinate<int>[] allCoords;
+
         /// <summary>
         /// Create a randomized matrix error filter using an existing
         /// matrix as a template.
@@ -65,37 +71,57 @@ namespace Halftone
         /// </remarks>
         private void generateCoefficients() {
             int newCoeffCount;
+            double[] newCoeffs;
+            Coordinate<int>[] coords;
             if (RandomizeCoeffCount) {
                 // generate new coefficient count from interval [1; CoefficientCapacity]
                 newCoeffCount = RandomGenerator.Next(Matrix.CoefficientCapacity) + 1;
+                newCoeffs = new double[Matrix.CoefficientCapacity];
+                coords = allCoords;
             } else {
                 // use present coefficient count
                 newCoeffCount = Matrix.CoefficientCount;
+                newCoeffs = new double[newCoeffCount];
+                coords = templateCoords;
             }
-            // TODO:
-            // - the average value of weights is decreasing!
-            // - the weight are distributed continuously not randomly
-            //   (eg. there are no gaps when there are less weights than is capacity for them)
+            
+            // generate new weights
             double remaining = 1.0;
-            IEnumerator<Coordinate<int>> iter = Matrix.getCoeffOffsets().GetEnumerator();
-            for (int i = 0; i < newCoeffCount; i++) {
-                if (!iter.MoveNext()) {
-                    break;
-                }
+            for (int i = 0; i < newCoeffCount - 1; i++) {
                 double newWeight = RandomGenerator.NextDouble() * remaining;
-                Coordinate<int> coords = iter.Current;
-                Matrix[coords.Y, coords.X] = newWeight;
+                newCoeffs[i] = newWeight;
                 remaining -= newWeight;
             }
             // set the last weight to the remainder to have the sum of all weights equal to 1.0
-            if (iter.MoveNext()) {
-                Coordinate<int> coords = iter.Current;
-                Matrix[coords.Y, coords.X] = remaining;
+            newCoeffs[newCoeffCount - 1] = remaining;
+
+            // shuffle the weights to prevent the average value
+            // of weights to decrease - swap pairs of weights
+            for (int i = 0; i < newCoeffs.Length; i++) {
+                int srcIndex = RandomGenerator.Next(newCoeffs.Length);
+                int dstIndex = RandomGenerator.Next(newCoeffs.Length);
+                double tmp = newCoeffs[dstIndex];
+                newCoeffs[dstIndex] = newCoeffs[srcIndex];
+                newCoeffs[srcIndex] = tmp;
+            }
+
+            // set new weights
+            for (int i= 0; i< coords.Length; i++) {
+                Coordinate<int> coord = coords[i];
+                Matrix[coord.Y, coord.X] = newCoeffs[i];
             }
         }
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
+            List<Coordinate<int>> templateCoordsList =
+                Matrix.getCoeffOffsets().ToList();
+            allCoords = templateCoordsList.ToArray();
+            // remove all coordinates with zero coefficients
+            templateCoordsList.RemoveAll(coord =>
+                Matrix.DefinitionMatrix[coord.Y, coord.X] == 0);
+            templateCoords = templateCoordsList.ToArray();
+            generateCoefficients();
         }
     }
 }

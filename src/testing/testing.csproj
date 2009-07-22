@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubmoduleVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GimpSharpPlugin\GimpSharpPlugin.csproj">

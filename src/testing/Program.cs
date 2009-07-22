@@ -8,8 +8,10 @@ namespace testing
     class Program
     {
         static void Main(string[] args) {
-           //ConfigManagerTest.run();
-           ConfigGUI.run();
+            //ConfigManagerTest.run();
+            //ConfigGUI.run();
+            //SubmoduleVisitor.printModules(SubmoduleVisitor.listModules());
+            ModuleRegistry regitry = ModuleRegistry.Instance;
         }
     }
 

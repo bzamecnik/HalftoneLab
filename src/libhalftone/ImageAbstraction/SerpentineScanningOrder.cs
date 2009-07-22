@@ -13,7 +13,7 @@ namespace Halftone
     /// direction, even line in the opposite one (width - 1 -> 0).
     /// </remarks>
     [Serializable]
-    [Module(TypeName = "Serpentin scanning order")]
+    [Module(TypeName = "Serpentine scanning order")]
     public class SerpentineScanningOrder : ScanningOrder
     {
         [NonSerialized]

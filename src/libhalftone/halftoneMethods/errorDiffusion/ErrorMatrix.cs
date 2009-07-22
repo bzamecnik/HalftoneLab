@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+//using System.Linq;
 using System.Text;
 using Gimp;
 
@@ -156,6 +157,11 @@ namespace Halftone
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
         }
+
+        //public void setDefinitionMatrix(int[,] definitionMatrix, int divisor) {
+        //    Divisor = divisor;
+        //    DefinitionMatrix = definitionMatrix;
+        //}
 
         /// <summary>
         /// Apply a function on each of matrix coefficients and their offsets.
@@ -387,9 +393,7 @@ namespace Halftone
                     "Quality Assessment of Error Diffusion Algorithms"
                 };
                 _list.Add(hocevarNiger);
-                //_list.Sort(new Comparison<ErrorMatrix>(
-                //    (m1, m2) => m1.Name.CompareTo(m2.Name)
-                //    ));
+                //_list.OrderBy((matrix) => matrix.Name);
             }
         }
     }
