@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// A base class for configurable modules which connected together

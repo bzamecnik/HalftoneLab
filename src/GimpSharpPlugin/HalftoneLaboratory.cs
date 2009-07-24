@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Gtk;
-using Halftone;
+using HalftoneLab;
+using HalftoneLab.GUI.Gtk;
 
-namespace Gimp.HalftoneLab
+namespace Gimp.HalftoneLaboratory
 {
     /// <summary>
     /// Halftone Laboratory user interface as a GIMP plugin.
@@ -66,6 +67,8 @@ namespace Gimp.HalftoneLab
             dialog.VBox.PackStart(table);
 
             dialog.Response += delegate {
+                Console.Out.WriteLine("Algorithm name: {0}", selectedAlgorithm.Name);
+                Console.Out.WriteLine("Description: {0}", selectedAlgorithm.Description);
                 // save the last used algorithm to the config manager
                 selectedAlgorithm.Name = "_LAST";
                 configManager.saveModule(selectedAlgorithm);
@@ -75,13 +78,11 @@ namespace Gimp.HalftoneLab
         }
 
         override protected void Render(Drawable drawable) {
-            Halftone.Image image = new GSImage(drawable);
+            HalftoneLab.Image image = new GSImage(drawable);
             if (configManager == null) {
                 initConfigManager();
             }
             if (selectedAlgorithm != null) {
-                Console.Out.WriteLine("Algorithm name: {0}", selectedAlgorithm.Name);
-                Console.Out.WriteLine("Description: {0}", selectedAlgorithm.Description);
                 selectedAlgorithm.run(image);
             }
         }
@@ -90,7 +91,10 @@ namespace Gimp.HalftoneLab
             configManager = new ConfigManager()
             {
                 // TODO: find user home directory
-                ConfigFileName = "halftonelab.cfg"
+                ConfigFileName =
+                System.IO.Path.Combine(Environment.GetFolderPath(
+                    Environment.SpecialFolder.ApplicationData),
+                    "halftonelab.cfg")
             };
             configManager.load();
 

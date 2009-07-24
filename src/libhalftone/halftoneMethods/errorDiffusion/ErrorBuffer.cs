@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Buffer for error-diffusion filters.

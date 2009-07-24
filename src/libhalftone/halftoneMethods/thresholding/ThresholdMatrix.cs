@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     // TODO: incremental -> normalized (with opposite meaning)
 
@@ -95,7 +95,7 @@ namespace Halftone
             return matrix;
         }
 
-        public override void init(Halftone.Image.ImageRunInfo imageRunInfo) {
+        public override void init(HalftoneLab.Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
         }
 

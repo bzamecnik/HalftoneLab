@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Image generator uses a spot function to generate an image,
@@ -66,11 +66,7 @@ namespace Halftone
             public static IImageFilter noiseEffect;
             public static IImageFilter pixelizeEffect;
             public static IImageFilter canvasEffect;
-
-            public static ImageGenerator euclidRippleGenerator;
-            public static ImageGenerator euclidNoiseGenerator;
-            public static ImageGenerator euclidPixelizeGenerator;
-            public static ImageGenerator euclidCanvasGenerator;
+            public static IImageFilter patternEffect;
 
             private static List<ImageGenerator> _list;
             public static IEnumerable<ImageGenerator> list() {
@@ -161,6 +157,23 @@ namespace Halftone
                     Name = "Euclid + pixelize + ripple",
                     SpotFunction = SpotFunction.Samples.euclidDot,
                     Effects = { pixelizeEffect, rippleEffect }
+                });
+
+                patternEffect = new GSImageFilter()
+                {
+                    Name = "Pattern",
+                    Description = "Veryovka-Buchanan: current pattern + histogram equalization",
+                    runGSFilter = (GSImage image) =>
+                    {
+                        image.Drawable.Fill(Gimp.FillType.Pattern);
+                        image.Drawable.Equalize(false);
+                    }
+                };
+                _list.Add(new ImageGenerator()
+                {
+                    Name = "Veryovka-Buchanan",
+                    SpotFunction = SpotFunction.Samples.nullSpot,
+                    Effects = { patternEffect }
                 });
             }
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Image represents an abstract 2-D grid of pixels which can be

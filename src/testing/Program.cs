@@ -1,7 +1,7 @@
 ﻿using System;
-using Halftone;
+using HalftoneLab;
 using Gtk;
-using Gimp.HalftoneLab;
+using HalftoneLab.GUI.Gtk;
 
 namespace testing
 {

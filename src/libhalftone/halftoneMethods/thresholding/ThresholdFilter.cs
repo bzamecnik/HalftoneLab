@@ -1,7 +1,7 @@
 using System;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// TODO: correct this!!!

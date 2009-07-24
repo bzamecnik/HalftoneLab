@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GimpSharpPlugin", "GimpShar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testing", "testing\testing.csproj", "{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeSampleConfig", "makeSampleConfig\makeSampleConfig.csproj", "{F015D464-85A6-4E54-937E-8C2D102682F9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F015D464-85A6-4E54-937E-8C2D102682F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F015D464-85A6-4E54-937E-8C2D102682F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F015D464-85A6-4E54-937E-8C2D102682F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F015D464-85A6-4E54-937E-8C2D102682F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

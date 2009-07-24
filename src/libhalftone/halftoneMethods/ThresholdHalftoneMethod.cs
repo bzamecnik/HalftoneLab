@@ -1,7 +1,7 @@
 using System;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Threshold halftone algorithm acts as a base class for halftone algorithms

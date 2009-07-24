@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Threshold filter where threshold values are precomputed into an image

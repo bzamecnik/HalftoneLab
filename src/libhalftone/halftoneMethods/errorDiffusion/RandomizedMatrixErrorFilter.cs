@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Gimp;
 using System.Linq;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Randomized matrix error-diffusion filter is able to generate

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Halftone
+namespace HalftoneLab
 {
     // TODO:
     // - the table should be a fixed size array of records (not a list)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Serpentine scanning order. Scan in zig-zag lines.

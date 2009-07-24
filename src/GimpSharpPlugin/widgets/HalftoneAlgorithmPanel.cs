@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gtk;
-using Halftone;
+using HalftoneLab;
 
-namespace Gimp.HalftoneLab
+namespace HalftoneLab.GUI.Gtk
 {
     public class HalftoneAlgorithmPanel : Notebook
     {

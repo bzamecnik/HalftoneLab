@@ -4,7 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Configuration manager holds module configurations and takes care
@@ -59,6 +59,10 @@ namespace Halftone
                 // else: report an error
             } catch (FileNotFoundException ex) {
                 Console.Out.WriteLine(ex.Message);
+                Console.Out.WriteLine(
+                    "A default configuration file was created: {0}",
+                    ConfigFileName);
+                HalftoneLab.SampleConfig.SampleConfig.makeSampleConfig(this);
             } finally {
                 if (null != streamRead) {
                     streamRead.Close();

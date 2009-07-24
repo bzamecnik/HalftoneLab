@@ -7,7 +7,7 @@
     <ProjectGuid>{6060254D-77E9-4FE9-84C6-F9AB84A1A39C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Halftone</RootNamespace>
+    <RootNamespace>HalftoneLab</RootNamespace>
     <AssemblyName>halftone</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="configuration\SampleConfig.cs" />
     <Compile Include="halftoneMethods\CellHalftoneMethod.cs" />
     <Compile Include="configuration\ConfigManager.cs" />
     <Compile Include="util\DynamicMatrixTable.cs" />

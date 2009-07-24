@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Threshold filter where threshold values are computed directly using
@@ -37,7 +37,7 @@ namespace Halftone
             return SpotFunc.SpotFunc(x, y);
         }
 
-        public override void init(Halftone.Image.ImageRunInfo imageRunInfo) {
+        public override void init(HalftoneLab.Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
             SpotFunc.init(imageRunInfo);
         }

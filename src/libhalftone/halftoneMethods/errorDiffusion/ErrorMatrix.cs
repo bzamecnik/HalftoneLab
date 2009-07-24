@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Matrix of error-diffusion coefficients. 

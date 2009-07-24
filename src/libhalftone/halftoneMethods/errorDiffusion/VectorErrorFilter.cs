@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Error-diffusion filter with a one-dimensional error matrix and buffer. This can

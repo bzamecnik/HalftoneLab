@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     public class ModuleAttribute : Attribute
     {
