@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Halftone
+namespace HalftoneLab
 {
     [Serializable]
     public class DynamicMatrixTable<T> : Module

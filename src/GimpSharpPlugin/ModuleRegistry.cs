@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Halftone;
+using HalftoneLab;
 using System.Linq;
 
-namespace Gimp.HalftoneLab
+namespace HalftoneLab.GUI.Gtk
 {
     public class ModuleRegistry
     {
@@ -53,9 +53,9 @@ namespace Gimp.HalftoneLab
 
             System.Reflection.Assembly assembly =
                 System.Reflection.Assembly.GetAssembly(
-                typeof(Halftone.Module));
+                typeof(HalftoneLab.Module));
             List<Type> moduleTypes = assembly.GetTypes().Where(
-                    (type) => typeof(Halftone.Module).IsAssignableFrom(type)
+                    (type) => typeof(HalftoneLab.Module).IsAssignableFrom(type)
                 ).ToList();
             moduleTypes.OrderBy(type => type.Name);
             //moduleTypes.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));

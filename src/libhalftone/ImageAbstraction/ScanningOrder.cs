@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Scanning order iterates over image pixels giving their coordinates.

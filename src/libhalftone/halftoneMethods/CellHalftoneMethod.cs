@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// A halftone algorithm which processes the pixels in continuous groups

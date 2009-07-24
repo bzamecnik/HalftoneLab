@@ -1,8 +1,8 @@
 ﻿using System;
 using Gtk;
-using Halftone;
+using HalftoneLab;
 
-namespace Gimp.HalftoneLab
+namespace HalftoneLab.GUI.Gtk
 {
     public class DynamicMatrixThresholdFilterDialog : ModuleDialog
     {

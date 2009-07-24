@@ -1,7 +1,7 @@
 ﻿using System;
 using Gtk;
 
-namespace Gimp.HalftoneLab
+namespace HalftoneLab.GUI.Gtk
 {
     class MatrixPanel : VBox
     {

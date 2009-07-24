@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Spot functions define screening dot growth depending on intensity.
@@ -166,6 +166,7 @@ namespace Halftone
         [Serializable]
         public class Samples
         {
+            public static SpotFunction nullSpot;
             public static SpotFunction euclidDot;
             public static SpotFunction perturbedEuclidDot;
             public static SpotFunction squareDot;
@@ -180,6 +181,15 @@ namespace Halftone
 
             static Samples() {
                 _list = new List<SpotFunction>();
+
+                nullSpot = new SpotFunction((double angle, double distance) =>
+                {
+                    return (int x, int y) => 128;
+                })
+                {
+                    Name = "Null spot function"
+                }
+                ;
 
                 euclidDot = new SpotFunction((double angle, double distance) =>
                 {

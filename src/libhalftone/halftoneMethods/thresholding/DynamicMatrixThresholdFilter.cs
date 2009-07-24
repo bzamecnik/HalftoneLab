@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Matrix threshold filter with multiple matrices for different

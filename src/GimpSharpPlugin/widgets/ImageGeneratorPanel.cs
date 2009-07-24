@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gtk;
-using Halftone;
+using HalftoneLab;
 
-namespace Gimp.HalftoneLab
+namespace HalftoneLab.GUI.Gtk
 {
     public class ImageGeneratorPanel : Table
     {

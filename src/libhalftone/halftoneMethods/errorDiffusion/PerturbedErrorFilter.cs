@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Perturbed error filter acts as a wrapper over a MatrixErrorFilter

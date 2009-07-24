@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gimp;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Image implementation using GimpSharp facilities.

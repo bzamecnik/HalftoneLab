@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Threshold filter with a tileable matrix.

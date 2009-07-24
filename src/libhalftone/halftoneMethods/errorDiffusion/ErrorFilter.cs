@@ -1,6 +1,6 @@
 using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Error diffusion filter module. This kind of filter diffuses quantization 

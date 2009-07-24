@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Halftone
+namespace HalftoneLab
 {
     /// <summary>
     /// Generic tileable matrix.

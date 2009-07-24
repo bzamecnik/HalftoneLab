@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Halftone
+namespace HalftoneLab
 {
     [Serializable]
     [Module(TypeName = "Halftone algorithm")]
