@@ -11,7 +11,31 @@ namespace testing
             //ConfigManagerTest.run();
             //ConfigGUI.run();
             //SubmoduleVisitor.printModules(SubmoduleVisitor.listModules());
-            ModuleRegistry regitry = ModuleRegistry.Instance;
+            //ModuleRegistry regitry = ModuleRegistry.Instance;
+            //MatrixErrorBuffer buffer = new MatrixErrorBuffer(3, 5);
+            //for (int i = 0; i < 31; i++) {
+            //    buffer.moveNext();
+            //}
+            DynamicMatrixErrorFilter filter = new DynamicMatrixErrorFilter();
+            filter.MatrixTable.addDefinitionRecord(
+                new DynamicMatrixErrorFilter.ErrorRecord(0,
+                    ErrorMatrix.Samples.floydSteinberg));
+            filter.MatrixTable.addDefinitionRecord(
+                new DynamicMatrixErrorFilter.ErrorRecord(100,
+                    new ErrorMatrix(new int[,] {{0, 0}}, 0)));
+            filter.MatrixTable.addDefinitionRecord(
+                new DynamicMatrixErrorFilter.ErrorRecord(150,
+                    ErrorMatrix.Samples.stucki));
+            filter.init(new HalftoneLab.Image.ImageRunInfo()
+                {
+                    Height = 20,
+                    Width = 30,
+                    ScanOrder = new ScanlineScanningOrder()
+                }
+            );
+            filter.setError(10, 50);
+            filter.setError(20, 120);
+            filter.setError(20, 160);
         }
     }
 

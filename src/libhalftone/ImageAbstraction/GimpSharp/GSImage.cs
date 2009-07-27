@@ -268,12 +268,14 @@ namespace HalftoneLab
         }
 
         public override void flushBuffer() {
-            PixelRgn destPR = new PixelRgn(_drawable, true, true);
-            destPR.SetRect(_imageBuffer, _rectangle.X1, _rectangle.Y1,
-                _rectangle.Width, _rectangle.Height);
-            _drawable.Flush();
-            _drawable.MergeShadow(true);
-            _drawable.Update(_rectangle);
+            if (_imageBuffer != null) {
+                PixelRgn destPR = new PixelRgn(_drawable, true, true);
+                destPR.SetRect(_imageBuffer, _rectangle.X1, _rectangle.Y1,
+                    _rectangle.Width, _rectangle.Height);
+                _drawable.Flush();
+                _drawable.MergeShadow(true);
+                _drawable.Update(_rectangle);
+            }
             _imageBuffer = null;
         }
 

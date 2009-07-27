@@ -37,12 +37,16 @@ namespace HalftoneLab
                 if (_childFilter == null) {
                     _childFilter = new MatrixErrorFilter();
                 }
-
                 return _childFilter;
             }
             set {
                 _childFilter = value;
-                //prepare();
+                //_childFilter.MatrixChanged += delegate
+                //{
+                //    prepare();
+                //};
+
+                ////prepare();
             }
         }
 
@@ -249,6 +253,10 @@ namespace HalftoneLab
         public override void init(Image.ImageRunInfo imageRunInfo) {
             base.init(imageRunInfo);
             ChildFilter.init(imageRunInfo);
+            //_childFilter.MatrixChanged += delegate
+            //{
+            //    prepare();
+            //};
             prepare();
             Initialized = ChildFilter.Initialized;
         }

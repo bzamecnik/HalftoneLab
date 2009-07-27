@@ -58,6 +58,10 @@ namespace HalftoneLab
                 base.init(imageRunInfo);
                 matrix.init(imageRunInfo);
             }
+
+            public override string ToString() {
+                return matrix.ToString();
+            }
         }
 
         /// <summary>
@@ -82,12 +86,12 @@ namespace HalftoneLab
 
         public override void init(Image.ImageRunInfo imageRunInfo) {
             //base.init(imageRunInfo);
+            MatrixTable.init(imageRunInfo);
             int maxMatrixHeight = MatrixTable.DefaultRecord.matrix.Height;
             foreach (ErrorRecord record in MatrixTable.listDefinitionRecords()) {
                 maxMatrixHeight = Math.Max(maxMatrixHeight,
                     record.matrix.Height);
             }
-            MatrixTable.init(imageRunInfo);
             Buffer = ErrorBuffer.createFromScanningOrder(
                 imageRunInfo.ScanOrder, maxMatrixHeight,
                 imageRunInfo.Width) as MatrixErrorBuffer;

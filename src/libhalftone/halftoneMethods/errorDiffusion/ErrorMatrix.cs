@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 //using System.Linq;
 using System.Text;
@@ -143,8 +143,11 @@ namespace HalftoneLab
         /// </summary>
         protected override void computeWorkingMatrix() {
             WorkingMatrix = new double[Height, Width];
-            if ((Divisor != 0) || (Divisor != 1)) {
-                double divisorInverse = 1.0 / (double)Divisor;
+            if (Divisor != 0) {
+                double divisorInverse = 1.0;
+                if (Divisor != 1) {
+                    divisorInverse = 1.0 / (double)Divisor;
+                }
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
                         WorkingMatrix[y, x] =
@@ -174,6 +177,7 @@ namespace HalftoneLab
                     WorkingMatrix[offset.Y, offset.X]);
             }
 
+            // TODO: check if this variant is faster
             //// old code:
             //for (int x = SourceOffsetX; x < Width; x++) {
             //    func(0, x - SourceOffsetX, this[0, x]);
@@ -215,10 +219,12 @@ namespace HalftoneLab
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Source offset X: {0}", SourceOffsetX);
             sb.AppendLine();
+            sb.AppendLine(base.ToString());
+            sb.AppendLine();
             if (DefinitionMatrix != null) {
                 for (int y = 0; y < Height; y++) {
                     for (int x = 0; x < Width; x++) {
-                        sb.AppendFormat("{0} ", this[y, x]);
+                        sb.AppendFormat("{0} ", DefinitionMatrix[y, x]);
                     }
                     sb.AppendLine();
                 }
@@ -315,10 +321,10 @@ namespace HalftoneLab
                     };
                 _list.Add(burkes);
                 fan = new ErrorMatrix(
-                    new int[2, 3] {
-                        { 0, 0, 7 },
-                        { 1, 3, 5 }
-                    }, 1, 16)
+                    new int[2, 4] {
+                        { 0, 0, 0, 7 },
+                        { 1, 3, 5, 0 }
+                    }, 2, 16)
                     {
                         Name = "Fan"
                     };

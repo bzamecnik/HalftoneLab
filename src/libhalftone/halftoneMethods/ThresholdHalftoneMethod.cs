@@ -118,7 +118,7 @@ namespace HalftoneLab
                     Pixel quantized = ThresholdFilter.quantize(original,
                         pixel.X, pixel.Y);
                     ErrorFilter.setError(original - (double)quantized[0],
-                        (int)original);
+                        pixel[0]);
                     ErrorFilter.moveNext();
                     return quantized;
                 });
