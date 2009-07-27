@@ -29,6 +29,8 @@ namespace HalftoneLab
             get { return _buffer; }
             protected set { _buffer = value; }
         }
+
+        public event EventHandler MatrixChanged;
         
         public MatrixErrorFilter(ErrorMatrix matrix) {
             Matrix = matrix;
@@ -64,6 +66,9 @@ namespace HalftoneLab
                     Buffer.resize(_matrix.Height, Buffer.Width);
                 }
                 _matrix = matrix;
+                if (MatrixChanged != null) {
+                    MatrixChanged(this, new EventArgs());
+                }
             }
         }
 

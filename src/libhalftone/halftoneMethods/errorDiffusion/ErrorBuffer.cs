@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace HalftoneLab
 {
@@ -199,6 +200,22 @@ namespace HalftoneLab
                 // change the row scanning direction
                 _backMovement = !_backMovement;
             }
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("buffer [");
+            sb.AppendFormat("@ {0}x{1}", _currentOffsetY, _currentOffsetX);
+            sb.AppendLine();
+            for (int i = 0; i < _buffer.GetLength(0); i++) {
+                for (int j = 0; j < _buffer.GetLength(1); j++) {
+                    sb.AppendFormat("{0}, ", _buffer[i, j]);
+                }
+                sb.AppendLine();
+            }
+            sb.Append("]");
+            sb.AppendLine();
+            return sb.ToString();
         }
     }
 
