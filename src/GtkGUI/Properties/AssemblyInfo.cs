@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HalftoneLab.SampleConfig")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("HalftoneLabGtkGUI")]
+[assembly: AssemblyDescription("HalftoneLab GTK GUI")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HalftoneLab.SampleConfig")]
+[assembly: AssemblyCompany("Bohumir Zamecnik")]
+[assembly: AssemblyProduct("Halftone Laboratory")]
 [assembly: AssemblyCopyright("Copyright ©  2009")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Copyright © Bohumir Zamecnik, 2009")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("14c9f8bb-5fc1-431d-8e65-d7d8772a8b84")]
+[assembly: Guid("b5e33ddd-d231-4db3-94db-4a92f13ced38")]
 
 // Version information for an assembly consists of the following four values:
 //

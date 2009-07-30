@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D24799F7-3E3B-4BD5-9E20-F675A8E55DC0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{8DA0D652-7610-454A-A2C7-569A13F17487}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>testing</RootNamespace>
-    <AssemblyName>testing</AssemblyName>
+    <RootNamespace>HalftoneLab.GUI.Gtk</RootNamespace>
+    <AssemblyName>halftonegui</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -51,10 +51,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\GimpSharp\gtk-sharp.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\GimpSharp\Mono.Posix.dll</HintPath>
-    </Reference>
     <Reference Include="pango-sharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\GimpSharp\pango-sharp.dll</HintPath>
@@ -66,19 +62,38 @@
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ModuleDialog.cs" />
+    <Compile Include="ModuleRegistry.cs" />
+    <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\MatrixThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\PerturbedErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\RandomizedMatrixErrorFilterDialog.cs" />
+    <Compile Include="moduleUI\SFCClusteringMethodDialog.cs" />
+    <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
+    <Compile Include="moduleUI\ThresholdHalftoneMethodDialog.cs" />
+    <Compile Include="moduleUI\VectorErrorFilterDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubmoduleVisitor.cs" />
+    <Compile Include="widgets\ConfigPanel.cs" />
+    <Compile Include="widgets\ErrorMatrixPanel.cs" />
+    <Compile Include="widgets\ErrorVectorPanel.cs" />
+    <Compile Include="widgets\HalftoneAlgorithmPanel.cs" />
+    <Compile Include="widgets\ImageGeneratorPanel.cs" />
+    <Compile Include="widgets\MatrixPanel.cs" />
+    <Compile Include="widgets\SpotFunctionPanel.cs" />
+    <Compile Include="widgets\SubmoduleSelector.cs" />
+    <Compile Include="widgets\ThresholdMatrixPanel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GimpSharpPlugin\GimpSharpPlugin.csproj">
-      <Project>{174CC1EF-725F-47FF-BC03-F8B64D476A27}</Project>
-      <Name>GimpSharpPlugin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\libhalftone\libhalftone.csproj">
       <Project>{6060254D-77E9-4FE9-84C6-F9AB84A1A39C}</Project>
       <Name>libhalftone</Name>

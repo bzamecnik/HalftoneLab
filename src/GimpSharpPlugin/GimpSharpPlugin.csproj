@@ -77,32 +77,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="widgets\ConfigPanel.cs" />
-    <Compile Include="widgets\ImageGeneratorPanel.cs" />
-    <Compile Include="ModuleDialog.cs" />
-    <Compile Include="widgets\ErrorVectorPanel.cs" />
     <Compile Include="HalftoneLaboratory.cs" />
-    <Compile Include="ModuleRegistry.cs" />
-    <Compile Include="moduleUI\DynamicMatrixErrorFilterDialog.cs" />
-    <Compile Include="moduleUI\DynamicMatrixThresholdFilterDialog.cs" />
-    <Compile Include="widgets\ErrorMatrixPanel.cs" />
-    <Compile Include="widgets\HalftoneAlgorithmPanel.cs" />
-    <Compile Include="moduleUI\ImageThresholdFilterDialog.cs" />
-    <Compile Include="moduleUI\MatrixErrorFilterDialog.cs" />
-    <Compile Include="widgets\MatrixPanel.cs" />
-    <Compile Include="moduleUI\MatrixThresholdFilterDialog.cs" />
-    <Compile Include="moduleUI\PerturbedErrorFilterDialog.cs" />
-    <Compile Include="moduleUI\RandomizedMatrixErrorFilterDialog.cs" />
-    <Compile Include="moduleUI\SFCClusteringMethodDialog.cs" />
-    <Compile Include="widgets\SpotFunctionPanel.cs" />
-    <Compile Include="moduleUI\SpotFunctionThresholdFilterDialog.cs" />
-    <Compile Include="moduleUI\ThresholdHalftoneMethodDialog.cs" />
-    <Compile Include="widgets\ThresholdMatrixPanel.cs" />
-    <Compile Include="moduleUI\VectorErrorFilterDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="widgets\SubmoduleSelector.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GtkGUI\GtkGUI.csproj">
+      <Project>{8DA0D652-7610-454A-A2C7-569A13F17487}</Project>
+      <Name>GtkGUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\libhalftone\libhalftone.csproj">
       <Project>{6060254D-77E9-4FE9-84C6-F9AB84A1A39C}</Project>
       <Name>libhalftone</Name>
