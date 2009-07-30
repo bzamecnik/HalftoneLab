@@ -7,7 +7,7 @@ namespace HalftoneLab
 {
     /// <summary>
     /// Randomized matrix error-diffusion filter is able to generate
-    /// matrix coefficients randomly.
+    /// matrix coefficients randomly for each pixel.
     /// </summary>
     /// <remarks>
     /// It can use an existing matrix as a template for coefficient positions
@@ -29,6 +29,13 @@ namespace HalftoneLab
 
         [NonSerialized]
         private Random _randomGenerator = null;
+
+        /// <summary>
+        /// Random generator for noise perturbation.
+        /// </summary>
+        /// <remarks>
+        /// Instantiated on demand.
+        /// </remarks>
         private Random RandomGenerator {
             get {
                 if (_randomGenerator == null) {
@@ -38,8 +45,17 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// Coordinates of existing non-zero coefficients in the template
+        /// matrix.
+        /// </summary>
         [NonSerialized]
         private Coordinate<int>[] templateCoords;
+
+        /// <summary>
+        /// Coordinates of all coefficients up to the capacity of the template
+        /// matrix.
+        /// </summary>
         [NonSerialized]
         private Coordinate<int>[] allCoords;
 

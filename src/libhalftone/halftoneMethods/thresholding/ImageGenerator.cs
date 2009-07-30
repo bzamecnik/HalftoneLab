@@ -7,7 +7,7 @@ namespace HalftoneLab
 {
     /// <summary>
     /// Image generator uses a spot function to generate an image,
-    /// then it can optionally apply some effects on that.
+    /// then it can optionally apply some effects on top of it.
     /// </summary>
     [Serializable]
     [Module(TypeName = "Threshold image generator")]
@@ -23,6 +23,10 @@ namespace HalftoneLab
         /// </summary>
         public List<IImageFilter> Effects { get; set; }
 
+        /// <summary>
+        /// Create a new image generator with a default spot functions
+        /// and no effects.
+        /// </summary>
         public ImageGenerator() {
             SpotFunction = new SpotFunction();
             Effects = new List<IImageFilter>();
@@ -32,7 +36,7 @@ namespace HalftoneLab
         /// Fill the image with spot function and then sequentially
         /// apply effects on it.
         /// </summary>
-        /// <param name="image"></param>
+        /// <param name="image">Image to be filled</param>
         public void generateImage(Image image) {
             image.initBuffer();
             if (SpotFunction != null) {
@@ -60,6 +64,9 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// A collection of sample image generators.
+        /// </summary>
         public static class Samples
         {
             public static IImageFilter rippleEffect;
@@ -69,6 +76,10 @@ namespace HalftoneLab
             public static IImageFilter patternEffect;
 
             private static List<ImageGenerator> _list;
+            /// <summary>
+            /// Iterate over the list of the samples.
+            /// </summary>
+            /// <returns>Enumerable of sample image generators.</returns>
             public static IEnumerable<ImageGenerator> list() {
                 return _list;
             }

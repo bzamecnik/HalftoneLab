@@ -4,30 +4,29 @@ using System.Linq;
 
 namespace HalftoneLab
 {
-    // TODO:
-    // - the table should be a fixed size array of records (not a list)
-    //   - it is presumed that the each intensity in the table should have one record
-
     /// <summary>
     /// Error-diffusion filter with matrices dynamically selected depending
-    /// upon source pixel intensity.
+    /// on source pixel intensity.
     /// </summary>
     /// <remarks>
     /// <para>
     /// Each intensity or intensity range can have its own error matrix. This
-    /// is done before running the halftone algorithm using addDefinitionRecord() or
-    /// deleteDefinitionRecord() functions.
+    /// can be defined before running the halftone algorithm using MatrixTable.
     /// </para>
     /// <para>
     /// The whole range of intensities is divided into ranges. There is a
-    /// matrix for each of thoes ranges. Each range is given by its lower
-    /// intensity.
+    /// matrix for each of thoes ranges. Each range is defined by its starting
+    /// (lowest) intensity.
     /// </para>
     /// </remarks>
+    /// <see cref="DynamicMatrixTable"/>
     [Serializable]
     [Module(TypeName = "Dynamic matrix error filter")]
     public class DynamicMatrixErrorFilter : MatrixErrorFilter
     {
+        /// <summary>
+        /// A table of intensity range records.
+        /// </summary>
         public DynamicMatrixTable<ErrorRecord> MatrixTable { get; set; }
 
         /// <summary>
@@ -43,14 +42,28 @@ namespace HalftoneLab
         {
             // TODO: use properties
 
+            /// <summary>
+            /// Error matrix which will be used for intensity range covered
+            /// by the record.
+            /// </summary>
             public ErrorMatrix matrix;
 
+            /// <summary>
+            /// Create a new record.
+            /// </summary>
+            /// <param name="intensityRangeStart">Starting intenstity (0-255)
+            /// </param>
+            /// <param name="matrix">Error matrix</param>
             public ErrorRecord(int intensityRangeStart,
                 ErrorMatrix matrix) {
                 this.keyRangeStart = intensityRangeStart;
                 this.matrix = matrix;
             }
 
+            /// <summary>
+            /// Create a default record starting at 0 intensity and using
+            /// a default error matrix.
+            /// </summary>
             public ErrorRecord()
                 : this(0, ErrorMatrix.Samples.Default) { }
 

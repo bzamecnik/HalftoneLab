@@ -239,7 +239,7 @@ namespace HalftoneLab.GUI.Gtk
                 matrixPanel = new ThresholdMatrixPanel((uint)record.matrix.Height,
                 (uint)record.matrix.Width);
                 matrixPanel.Matrix = record.matrix.DefinitionMatrix;
-                matrixPanel.Scaled = !record.matrix.Iterative;
+                matrixPanel.Scaled = !record.matrix.Incremental;
 
                 noiseHScale = new HScale(0, 1, 0.01);
                 noiseHScale.Value = record.noiseAmplitude;

@@ -5,7 +5,7 @@ using Gimp;
 namespace HalftoneLab
 {
     /// <summary>
-    /// Image implementation using GimpSharp facilities.
+    /// Image implementation using %Gimp# facilities.
     /// </summary>
     /// <remarks>
     /// GSImage can use image resources allocated by Gimp.
@@ -14,19 +14,19 @@ namespace HalftoneLab
     public class GSImage : Image
     {
         private Drawable _drawable;
-        private Rectangle _rectangle;
+        private Rectangle _rectangle; // mask bounds
         private Gimp.Image _image;
         private byte[] _imageBuffer;
 
         /// <summary>
-        /// Underlying Gimp# Drawable. It correspond to one layer.
+        /// Underlying %Gimp# Drawable. It corresponds to one layer.
         /// </summary>
         public Drawable Drawable {
             get { return _drawable; }
         }
 
         /// <summary>
-        /// Underlying Gimp# Image. It can consist of several layers.
+        /// Underlying %Gimp# Image. It can consists of several layers.
         /// </summary>
         public Gimp.Image Image {
             get { return _image; }
@@ -34,7 +34,7 @@ namespace HalftoneLab
 
         /// <summary>
         /// Progress indicator to show how much of the image has been
-        /// processed already.
+        /// already processed.
         /// </summary>
         public Progress Progress { get;  set; }
 
@@ -54,7 +54,7 @@ namespace HalftoneLab
         }
 
         /// <summary>
-        /// Create a GSImage backed with a new Gimp# Image.
+        /// Create a GSImage backed with a new %Gimp# Image.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -279,6 +279,17 @@ namespace HalftoneLab
             _imageBuffer = null;
         }
 
+        /// <summary>
+        /// Scale the image with a given factor and interpolation.
+        /// </summary>
+        /// <remarks>
+        /// If there is an buffer, it gets flushed before scaling.
+        /// </remarks>
+        /// <param name="factor">Resize factor (< 1.0 = downscale, >1.0 =
+        /// upscale)</param>
+        /// <param name="interpolation">Interpolation type</param>
+        /// <param name="direction">Scale direction (forward = scale by factor,
+        /// backward = scale by 1/factor)</param>
         public void scale(double factor, InterpolationType interpolation,
             TransformDirection direction) {
             bool restoreBuffer = _imageBuffer != null;

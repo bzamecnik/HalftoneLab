@@ -15,12 +15,12 @@ namespace HalftoneLab
     /// (distance).
     /// </para>
     /// <para>
-    /// Technically spot functions are defined as prototypes using lambda
+    /// Technically, spot functions are defined as prototypes using lambda
     /// functions. When parameters are known, they are 'instantiated' to
-    /// other lambda functions as normal real value 2-D functions.
+    /// other lambda functions as normal real valued 2-D functions.
     /// </para>
     /// <para>
-    /// To use a spot function you have to set SpotFuncPrototype property
+    /// To use a spot function you have to set the SpotFuncPrototype property
     /// and optionally set Angle and Distance properties. Then the spot
     /// function is available in SpotFunc property.
     /// </para>
@@ -29,7 +29,20 @@ namespace HalftoneLab
     [Module(TypeName = "Spot function")]
     public class SpotFunction : Module
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
         public delegate SpotFuncDelegate SpotFuncPrototypeDelegate(double angle, double distance);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public delegate int SpotFuncDelegate(int x, int y);
 
         private double _angle = Math.PI * 0.25;
@@ -51,8 +64,10 @@ namespace HalftoneLab
 
         /// <summary>
         /// Distance between screen elements (inverse of frequency)
-        /// = PPI (pixels per inch) / LPI (lines per inch).
         /// </summary>
+        /// <remarks>
+        /// Distance = PPI (pixels per inch) / LPI (lines per inch).
+        /// </remarks>
         /// <value>
         /// In 2-D plane units corresponding to pixels.
         /// </value>
@@ -96,17 +111,22 @@ namespace HalftoneLab
         }
 
         /// <summary>
-        /// Create a spot function with some default parameters.
+        /// Create a new spot function with default prototype and parameters.
         /// </summary>
         public SpotFunction()
             : this(SpotFunction.Samples.euclidDot.SpotFuncPrototype) {}
 
+        /// <summary>
+        /// Create a new spot function using a prototype and default
+        /// parameters.
+        /// </summary>
+        /// <param name="spotFuncPrototype">Spot function prototype</param>
         public SpotFunction(SpotFuncPrototypeDelegate spotFuncPrototype) {
             SpotFuncPrototype = spotFuncPrototype;
         }
 
         /// <summary>
-        /// Create a spot function given a prototype and some parameters.
+        /// Create a spot function with given prototype and parameters.
         /// </summary>
         /// <param name="spotFuncPrototype">Spot function prototype</param>
         /// <param name="angle">Screen angle in radians (usually 0-2*PI but
@@ -175,6 +195,10 @@ namespace HalftoneLab
             public static SpotFunction circleDot;
 
             private static List<SpotFunction> _list;
+            /// <summary>
+            /// Iterate over the list of the samples.
+            /// </summary>
+            /// <returns>Enumerable of sample spot functions.</returns>
             public static IEnumerable<SpotFunction> list() {
                 return _list;
             }

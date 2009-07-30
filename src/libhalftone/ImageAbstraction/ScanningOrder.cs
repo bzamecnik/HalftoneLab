@@ -120,15 +120,12 @@ namespace HalftoneLab
         /// <summary>
         /// Coordinates iterator.
         /// </summary>
-        /// <remarks>
-        
-        /// </remarks>
-        /// <returns></returns>
+        /// <returns>Enumerable of coordinates.</returns>
         public abstract IEnumerable<Coordinate<int>> getCoordsEnumerable();
     }
 
     /// <summary>
-    /// Scanning order traversing a space-filling curve.
+    /// Scanning order traversing along a space-filling curve.
     /// </summary>
     [Serializable]
     public abstract class SFCScanningOrder : ScanningOrder
