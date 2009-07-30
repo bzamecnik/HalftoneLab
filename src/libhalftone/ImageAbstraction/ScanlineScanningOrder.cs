@@ -36,7 +36,7 @@ namespace HalftoneLab
         }
 
         public override bool hasNext() {
-            // TODO: buggy
+            // TODO: fix this
             return ((CurrentX + 1) < _width) && ((CurrentY + 1) < _height);
         }
     }

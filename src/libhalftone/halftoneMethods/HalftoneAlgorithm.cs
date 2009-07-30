@@ -2,35 +2,76 @@
 
 namespace HalftoneLab
 {
+    /// <summary>
+    /// A wrapper over HalftoneMethod enabling some pre- and post-processing.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Processing order:
+    /// - pre-processing (optional)
+    ///    - PreResize - resize (usually upscaling)
+    ///    - PreDotGain - dot gain correction
+    ///    - PreSharpen -sharpening
+    /// - HalftoneMethod (mandatory)
+    /// - post-processing (optional)
+    ///    - PostResize - resize (usually downscaling)
+    ///    - PostSmoothen - smoothening
+    /// </para>
+    /// <para>
+    /// The filters are currently implemented using %Gimp#.
+    /// </para>
+    /// </remarks>
+    /// <see cref="HalftoneMethod"/>
     [Serializable]
     [Module(TypeName = "Halftone algorithm")]
     public class HalftoneAlgorithm : Module, IImageFilter
     {
+        /// <summary>
+        /// Pre-processing resize filter.
+        /// </summary>
         public Resize PreResize { get; set; }
+        /// <summary>
+        /// Pre-processing dot-gain correction filter.
+        /// </summary>
         public DotGainCorrection PreDotGain { get; set; }
+        /// <summary>
+        /// Pre-processing sharpening filter.
+        /// </summary>
         public Sharpen PreSharpen { get; set; }
+        /// <summary>
+        /// Halftoning method.
+        /// </summary>
         public HalftoneMethod Method { get; set; }
+        /// <summary>
+        /// Post-processing resize filter.
+        /// </summary>
         public Resize PostResize { get; set; }
-        // supersamling = post resize is inverse of pre resize
+        /// <summary>
+        /// Use supersampling? Supersampling means that the post resize factor
+        /// is the inverse of the pre resize factor.
+        /// </summary>
         public bool SupersamplingEnabled { get; set; }
+        /// <summary>
+        /// Pre-processing smoothening filter.
+        /// </summary>
         public Smoothen PostSmoothen { get; set; }
 
+        /// <summary>
+        /// Create a new HalftoneAlgorithm with a default halftone method
+        /// and no pre- and post-processing.
+        /// </summary>
         public HalftoneAlgorithm() {
             Method = HalftoneMethod.createDefault();
         }
 
-        // processing order
-        // - pre-processing (optional)
-        //    - resize (up)
-        //    - dot gain correction
-        //    - sharpen
-        // - HalftoneMethod (mandatory)
-        // - post-processing (optional)
-        //    - resize (down)
-        //    - smoothen
         public void run(Image image) {
+            // merge undo history
+            GSImage gsImage = image as GSImage;
+            if (gsImage != null) {
+                gsImage.Image.UndoGroupStart();
+            }
+
             if (PreResize != null) {
-                //PreResize.Forward = true;
                 PreResize.run(image);
             }
             if (PreDotGain != null) {
@@ -54,19 +95,37 @@ namespace HalftoneLab
             if (PostSmoothen != null) {
                 PostSmoothen.run(image);
             }
+
+            if (gsImage != null) {
+                gsImage.Image.UndoGroupEnd();
+            }
         }
 
+        /// <summary>
+        /// Resize the image by given factor and interpolation.
+        /// </summary>
         [Serializable]
         public class Resize : GSImageFilter
         {
-            // TODO: maintain the same image size if resizing
+            // TODO: Maintain the same image size if resizing
             // back and forward with the same (inversely) factor.
-            // Probably use transform direction and tune clipping.
+            // Due to round errors the original and supersampled
+            // image dimensions differ. Remember the original ones.
 
+            /// <summary>
+            /// Factor by which the image is scaled.
+            /// </summary>
             public double Factor { get; set; }
 
+            /// <summary>
+            /// The direction of scaling. True - scale by the factor,
+            /// false - scale by the factor inverse.
+            /// </summary>
             public bool Forward { get; set; }
 
+            /// <summary>
+            /// The type of interpolation.
+            /// </summary>
             public InterpolationType Interpolation { get; set; }
 
             public enum InterpolationType {
@@ -76,6 +135,9 @@ namespace HalftoneLab
                 Lanczos
             }
 
+            /// <summary>
+            /// Create a new resize filter.
+            /// </summary>
             public Resize() {
                 Factor = 1.0;
                 Forward = true;
@@ -106,15 +168,25 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// Dot gain correction filter. There can be different implementations,
+        /// so this is an abstarct class.
+        /// </summary>
         [Serializable]
         public abstract class DotGainCorrection : GSImageFilter
         {
         }
 
+        /// <summary>
+        /// Dot gain correction approximated by the gamma curve.
+        /// </summary>
         [Serializable]
         public class GammaCorrection : DotGainCorrection
         {
             private double _gamma;
+            /// <summary>
+            /// The parameter of gamma curve (0.1-10).
+            /// </summary>
             public double Gamma {
                 get { return _gamma; }
                 set {
@@ -124,6 +196,9 @@ namespace HalftoneLab
                 }
             }
 
+            /// <summary>
+            /// Create a new gamma dot gain correction filter.
+            /// </summary>
             public GammaCorrection() {
                 Gamma = 1.0;
                 runGSFilter = (GSImage image) =>
@@ -134,11 +209,20 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// Sharpening filter.
+        /// </summary>
         [Serializable]
         public class Sharpen : GSImageFilter
         {
+            /// <summary>
+            /// The ammount of sharpening (0.0-1.0).
+            /// </summary>
             public double Amount { get; set; }
 
+            /// <summary>
+            /// Create a sharpening fitler.
+            /// </summary>
             public Sharpen() {
                 Amount = 0.1;
                 runGSFilter = (GSImage image) =>
@@ -151,11 +235,21 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// Smoothening filter. Currently implemented as Gaussian blur
+        /// + Levels.
+        /// </summary>
         [Serializable]
         public class Smoothen : GSImageFilter
         {
+            /// <summary>
+            /// Radius of bluring (>0).
+            /// </summary>
             public double Radius { get; set; }
 
+            /// <summary>
+            /// Create a new smootening filter.
+            /// </summary>
             public Smoothen() {
                 Radius = 5;
                 runGSFilter = (GSImage image) =>

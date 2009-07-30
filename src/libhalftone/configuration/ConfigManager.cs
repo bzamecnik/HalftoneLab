@@ -184,7 +184,6 @@ namespace HalftoneLab
         /// Delete a module matching a type and name.
         /// Changes are persisted automatically.
         /// </summary>
-        /// <param name="type">Module type</param>
         /// <param name="name">Module configuration name</param>
         public void deleteModule<ModuleType>(string name) {
             _savedModules.RemoveAll(

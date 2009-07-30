@@ -6,7 +6,7 @@ namespace HalftoneLab
 {
 
     /// <summary>
-    /// Scanning order traversing Hilbert space-filling curve.
+    /// Scanning order traversing along Hilbert space-filling curve.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -25,8 +25,6 @@ namespace HalftoneLab
     [Module(TypeName = "Hilbert scanning order")]
     public class HilbertScanningOrder : SFCScanningOrder
     {
-
-
         [NonSerialized]
         private int _size; // _size of a square side (2^N)
         [NonSerialized]
@@ -80,9 +78,15 @@ namespace HalftoneLab
             return (_imageEnumerator != null);
         }
 
-        // x, y - bottom-left corner of the block
-        // _size - must be power of two (2^N)
-        // i1, i2 (0-1) - orientation of the shape
+        /// <summary>
+        /// Compute the Hilbert curve approximation recursively.
+        /// </summary>
+        /// <param name="x">bottom-left corner of the block</param>
+        /// <param name="y">bottom-left corner of the block</param>
+        /// <param name="size">must be power of two (2^N)</param>
+        /// <param name="i1">orientation of the shape (0-1)</param>
+        /// <param name="i2">orientation of the shape (0-1)</param>
+        /// <returns></returns>
         static IEnumerable<Coordinate<int>> hilbert(int x, int y, int size, int i1, int i2) {
             size /= 2; // could be: _size >>= 1;
 

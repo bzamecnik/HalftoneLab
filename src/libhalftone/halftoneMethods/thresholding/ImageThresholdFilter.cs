@@ -9,8 +9,9 @@ namespace HalftoneLab
     /// artistic effects.
     /// </summary>
     /// <remarks>
-    /// The image acts as a matix, but it can be a native GIMP image.
-    /// So it is possible to manipulate it efficiently with GIMP filters.
+    /// The image acts as a matix, but it can be imlemented as a native GIMP
+    /// image. So it is possible to manipulate it efficiently with GIMP
+    /// filters.
     /// </remarks>
     /// <see cref="Image"/>
     /// <see cref="ImageGenerator"/>
@@ -27,8 +28,15 @@ namespace HalftoneLab
         /// </summary>
         public ImageGenerator ImageGenerator { get; set; }
 
+        /// <summary>
+        /// Create a new image threshold filter with a default image generator.
+        /// </summary>
         public ImageThresholdFilter() : this(new ImageGenerator()) { }
 
+        /// <summary>
+        /// Create a new image threshold filter.
+        /// </summary>
+        /// <param name="imageGenerator">Initial image generator</param>
         public ImageThresholdFilter(ImageGenerator imageGenerator) {
             ImageGenerator = imageGenerator;
         }

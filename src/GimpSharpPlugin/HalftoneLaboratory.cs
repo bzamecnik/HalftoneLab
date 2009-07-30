@@ -90,7 +90,6 @@ namespace Gimp.HalftoneLaboratory
         private void initConfigManager() {
             configManager = new ConfigManager()
             {
-                // TODO: find user home directory
                 ConfigFileName =
                 System.IO.Path.Combine(Environment.GetFolderPath(
                     Environment.SpecialFolder.ApplicationData),

@@ -4,10 +4,8 @@ using Gimp;
 
 namespace HalftoneLab
 {
-
     // TODO:
-    // *- solve problem of outputting the last cell
-    //   - how to ask the scanning order whether it has more pixels?
+    // - separate the cell processing to CellHalftoneAlgorithm
     // *- compute max cell size adaptively
     //   - it would be better to separate the gradient computing or
     //     approximation to another module
@@ -18,27 +16,51 @@ namespace HalftoneLab
     //     - external Laplace transformation of the whole image
 
     /// <summary>
-    /// Adaptive clustering algorithm on a Space-Filling Curve by
+    /// Adaptive clustering algorithm along a space-filling curve by
     /// Velho & Gomes.
     /// <remarks>
-    /// The quantization error is distributed within whole cells.
+    /// <para>
+    /// The image is processed along a SFC not by separate pixels, but rather
+    /// by block of consecutive pixels, so called "cells". An average
+    /// intensity in each cell is computed and a proportional number of pixels
+    /// inside the cell is turned black (the others are white). The
+    /// quantization error is distributed within whole cells using an optional
+    /// ErrorFilter. The cell size is controlled via MaxCellSize parameter.
+    /// </para>
+    /// <para>
+    /// Two enhancements of the algorithm can be optionally employed -
+    /// separately of together. Cluster positioning moves the cluster center
+    /// to the darkest pixel withing the cell. Adaptive clustering varies the
+    /// cell size between MinCellSize and MaxCellSize according to the amount
+    /// of local detail. This is currently approximated by the different
+    /// between previous and current pixel intensity.
+    /// </para>
     /// </remarks>
     /// </summary>
     [Module(TypeName="SFC clustering method")]
     [Serializable]
     public class SFCClusteringMethod : CellHalftoneMethod
     {
-        // error filter (optional)
+        /// <summary>
+        /// Vector error filter (optional). If set to null, it will not be
+        /// used.
+        /// </summary>
         public VectorErrorFilter ErrorFilter {
             get;
             set;
         }
 
+        /// <summary>
+        /// The type of image scanning limited to space-filling curves.
+        /// </summary>
         public SFCScanningOrder ScanningOrder {
             get;
             set;
         }
 
+        /// <summary>
+        /// Error filter is set and enabled.
+        /// </summary>
         bool ErrorFilterEnabled {
             get {
                 return UseErrorFilter && (ErrorFilter != null) &&
@@ -46,20 +68,37 @@ namespace HalftoneLab
             }
         }
 
+        /// <summary>
+        /// Enable or disable error filter without deleting it.
+        /// </summary>
         public bool UseErrorFilter { get; set; }
 
-        // Maximum cell size
+        /// <summary>
+        /// Maximum cell size.
+        /// </summary>
         public int MaxCellSize { get; set; }
 
-        // Maximum cell size
+        /// <summary>
+        /// Maximum cell size. It is taken into consideration only if
+        /// adaptive clustering is enabled. It must be lower or equal than
+        /// MaxCellSize.
+        /// </summary>
         public int MinCellSize { get; set; }
 
-        // Position the cluster to the darkest pixel within the cell?
+        /// <summary>
+        /// Position the cluster to the darkest pixel within the cell?
+        /// </summary>
         public bool UseClusterPositioning { get; set; }
 
-        // Adjust cluster sizes to amount of local detail?
+        /// <summary>
+        /// Adjust cell sizes to the amount of local detail?
+        /// </summary>
         public bool UseAdaptiveClustering { get; set; }
 
+        /// <summary>
+        /// Create a new SFC clustering method instance using some
+        /// default parameters.
+        /// </summary>
         public SFCClusteringMethod() {
             ErrorFilter = new VectorErrorFilter();
             UseErrorFilter = true;
@@ -139,18 +178,16 @@ namespace HalftoneLab
                     darkestCellPixel = currentCellPixel;
                 }
 
-                // adaptive clustering:
-                // * compute maximum allowed cell size for this pixel
-                //   * compute (approximated) gradient for current pixel
-                // * adjust currentCellSize according to computed value
+                // adaptive clustering
                 if (UseAdaptiveClustering) {
+                    // Compute (approximated) gradient for current pixel.
                     double derivative = 0.0;
-                    // TODO: compute the derivative
-                    // ...
 
                     // difference with the previous pixel
                     derivative = (intensity - previousIntensity) / 255.0;
 
+                    // Compute maximum allowed cell size for this pixel.
+                    // Adjust currentCellSize according to computed value.
                     int maxAllowedClusterSize = Math.Max(Math.Min((int)(
                             Math.Pow(2, (1 - Math.Abs(derivative)) * maxCellSizeLog2)
                         ), MaxCellSize), MinCellSize);

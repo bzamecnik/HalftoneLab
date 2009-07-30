@@ -16,7 +16,7 @@ namespace HalftoneLab
     public abstract class HalftoneMethod : Module, IImageFilter
     {
         /// <summary>
-        /// Run the algoritm with current configuration.
+        /// Run the algoritm with the current configuration.
         /// Image contents are overwritten with its halftoned version.
         /// </summary>
         /// <remarks>
@@ -26,6 +26,12 @@ namespace HalftoneLab
         /// <param name="image">Both input and output image.</param>
         public abstract void run(Image image);
 
+        /// <summary>
+        /// Create a default HalftoneMethod (currently it is
+        /// ThresholdHalftoneMethod). The Factory design pattern is applied
+        /// to solve the need for a default module contructor.
+        /// </summary>
+        /// <returns>Default halftone method instance.</returns>
         public static HalftoneMethod createDefault() {
             return new ThresholdHalftoneMethod();
         }

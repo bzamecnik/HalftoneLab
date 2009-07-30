@@ -17,13 +17,13 @@ namespace HalftoneLab
     /// </para>
     /// <para>
     /// To define these ratios error matrix contains a rational coefficients
-    /// in form of an integer definition matrix and a divisor. The coefficient
-    /// values are then precomputed and cached to a matrix of doubles. The
-    /// purpose is to enable the user to edit the matrix comfortably without
-    /// a loss of precision.
+    /// in form of an integer definition matrix (numerators) and a divisor
+    /// (denominator). The coefficient values are then precomputed and cached
+    /// to the working matrix (of doubles). The purpose is to enable the user
+    /// to edit the matrix comfortably without any loss of precision.
     /// </para>
     /// <para>
-    /// Currently ErrorMatrix doesn't support omni-directional error matrices.
+    /// Currently, ErrorMatrix doesn't support omni-directional error matrices.
     /// To support that you need to integrate SourcePixelOffsetY variable
     /// and treat CoefficientCount and CoefficientCapacity differently.
     /// </para>
@@ -33,18 +33,22 @@ namespace HalftoneLab
     public class ErrorMatrix : Matrix<int, double>
     {
         private int _divisor;
+        /// <summary>
+        /// Divisor which acts a denominator for numerators in the 
+        /// DefinitionMatrix.
+        /// </summary>
         public int Divisor {
             get { return _divisor; }
             protected set { _divisor = value; }
         }
 
-        /// <summary>
-        /// A cache matrix containing elements from DefinitionMatrix divided
-        /// by Divisor. It needs to be computed again after deserialization
-        /// (in init() function).
-        /// </summary>
         [NonSerialized]
         private double[,] _workingMatrix;
+        /// <summary>
+        /// A cache matrix containing elements from the DefinitionMatrix
+        /// divided by the Divisor. It needs to be computed again after
+        /// deserialization (in init() function).
+        /// </summary>
         protected override double[,] WorkingMatrix {
             get { return _workingMatrix; }
             set { _workingMatrix = value; }
@@ -92,19 +96,12 @@ namespace HalftoneLab
         }
 
         /// <summary>
-        /// Delegate to a function to be applied over the matrix.
-        /// </summary>
-        /// <param name="y">Y offset coordinate</param>
-        /// <param name="x">X offset coordinate</param>
-        /// <param name="coeff">matrix coefficient at that offset</param>
-        public delegate void ApplyFunc(int y, int x, double coeff);
-
-        /// <summary>
         /// Create an error matrix. Coefficients are divided automatically
         /// by their sum. 
         /// </summary>
         /// <param name="coeffs">Coefficients definition, deep copied</param>
-        /// <param name="sourcePixelOffsetX">X offset of the source pixel</param>
+        /// <param name="sourcePixelOffsetX">X offset of the source pixel
+        /// </param>
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX) {
             SourceOffsetX = sourcePixelOffsetX;
             // compute the divisor as a sum of all coefficients.
@@ -137,9 +134,8 @@ namespace HalftoneLab
             : this(new int[,] {{0, 1}}, 1, 1) { }
 
         /// <summary>
-        /// Compute a cached matrix of coefficient values.
-        /// Scale the working matrix coefficients if necessary.
-        /// Their sum must be equal to 1.0.
+        /// Compute the coefficients of working matrix. If necessary, they are
+        /// normalized, as their sum must be equal to 1.0.
         /// </summary>
         protected override void computeWorkingMatrix() {
             WorkingMatrix = new double[Height, Width];
@@ -165,6 +161,14 @@ namespace HalftoneLab
         //    Divisor = divisor;
         //    DefinitionMatrix = definitionMatrix;
         //}
+
+        /// <summary>
+        /// Delegate to a function to be applied over the matrix.
+        /// </summary>
+        /// <param name="y">Y offset coordinate</param>
+        /// <param name="x">X offset coordinate</param>
+        /// <param name="coeff">matrix coefficient at that offset</param>
+        public delegate void ApplyFunc(int y, int x, double coeff);
 
         /// <summary>
         /// Apply a function on each of matrix coefficients and their offsets.
@@ -198,7 +202,7 @@ namespace HalftoneLab
         }
 
         /// <summary>
-        /// Enumerate offsets of all coefficients after the source pixel
+        /// Iterate over offsets of all coefficients after the source pixel
         /// offset.
         /// </summary>
         /// <returns>Enumerable of offset coordinates</returns>
@@ -215,6 +219,10 @@ namespace HalftoneLab
             yield break;
         }
 
+        /// <summary>
+        /// Convert to a human-readable representation.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Source offset X: {0}", SourceOffsetX);
@@ -237,11 +245,7 @@ namespace HalftoneLab
         /// </summary>
         public static class Samples
         {
-            // TODO: make a key-value based dictionary
-            // which can be listed
-
             public static ErrorMatrix Default;
-            // the simplest error-diffusion matrix
             public static ErrorMatrix nextPixel;
             public static ErrorMatrix nextTwoPixels;
             public static ErrorMatrix floydSteinberg;
@@ -258,6 +262,10 @@ namespace HalftoneLab
             public static ErrorMatrix hocevarNiger;
 
             private static List<ErrorMatrix> _list;
+            /// <summary>
+            /// Iterate over the list of the samples.
+            /// </summary>
+            /// <returns>Enumerable of sample error matrices.</returns>
             public static IEnumerable<ErrorMatrix> list() {
                 return _list;
             }

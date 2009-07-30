@@ -27,7 +27,7 @@ namespace HalftoneLab.GUI.Gtk
                 (uint)module.Matrix.Height,
                 (uint)module.Matrix.Width);
             matrixPanel.Matrix = module.Matrix.DefinitionMatrix;
-            matrixPanel.Scaled = !module.Matrix.Iterative;
+            matrixPanel.Scaled = !module.Matrix.Incremental;
 
             table = new Table(2, 1, false)
                 { ColumnSpacing = 5, RowSpacing = 5, BorderWidth = 5 };

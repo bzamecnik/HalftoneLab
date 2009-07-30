@@ -4,9 +4,8 @@ using Gimp;
 namespace HalftoneLab
 {
     /// <summary>
-    /// TODO: correct this!!!
-    /// Threshold halftone algorithm acts as a base class for halftone algorithms
-    /// that perform bi-level intensity quantization using a threshold.
+    /// Threshold filter acts as a base class for filters that perform
+    /// bi-level intensity quantization.
     /// </summary>
     /// <remarks>
     /// <para>

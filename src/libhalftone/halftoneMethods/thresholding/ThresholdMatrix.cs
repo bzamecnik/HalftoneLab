@@ -21,23 +21,31 @@ namespace HalftoneLab
             set { _workingMatrix = value; }
         }
 
-        // true if definition matrix is normalized
-        // false if already scaled
-        private bool _iterative;
-        public bool Iterative {
-            get { return _iterative; }
+        // 
+        private bool _incremental;
+        /// <summary>
+        /// Is the definition matrix in incremental form (true) or already
+        /// normalized (false)?
+        /// </summary>
+        public bool Incremental {
+            get { return _incremental; }
         }
 
-        public ThresholdMatrix(int[,] matrix, bool iterative) {
-            _iterative = iterative;
+        /// <summary>
+        /// Create a threshold matrix from given definition matrix.
+        /// </summary>
+        /// <param name="matrix">Definition matrix</param>
+        /// <param name="incremental">True - matrix is incremental, false - it
+        /// is normalized</param>
+        public ThresholdMatrix(int[,] matrix, bool incremental) {
+            _incremental = incremental;
             DefinitionMatrix = matrix;
         }
 
         /// <summary>
-        /// Create a threshold matrix from given iterative matrix.
+        /// Create a threshold matrix from given incremental matrix.
         /// </summary>
-        /// <param name="matrix">matrix with coefficients scaled to 0-255
-        /// range.</param>
+        /// <param name="matrix">Definition matrix in incremental form</param>
         public ThresholdMatrix(int[,] matrix)
             : this(matrix, true) { }
 
@@ -52,17 +60,18 @@ namespace HalftoneLab
         }
 
         protected override void computeWorkingMatrix() {
-            _workingMatrix = (_iterative) ?
+            _workingMatrix = (_incremental) ?
                 normalizeFromIncrementalMatrix(DefinitionMatrix) :
                 DefinitionMatrix;
         }
 
         /// <summary>
-        /// Scale coefficients from iterative matrix to 0-255 range.
+        /// Normalize (scale) coefficients from incremental matrix to 0-255
+        /// range.
         /// </summary>
         /// <param name="incrMatrix">matrix with coefficients in
         /// range 1-(h*w)</param>
-        /// <returns>scaled matrix with coefficients in range 0-255</returns>
+        /// <returns>scaled matrix with coefficients in 0-255 range</returns>
         private static int[,] normalizeFromIncrementalMatrix(int[,] incrMatrix) {
             int height = incrMatrix.GetLength(0);
             int width = incrMatrix.GetLength(1);
@@ -80,6 +89,13 @@ namespace HalftoneLab
 
         }
 
+        /// <summary>
+        /// Normalize (scale) matrix coefficients from incremental form to
+        /// 0-255 range.
+        /// </summary>
+        /// <param name="incrMatrix">Matrix in incremental form</param>
+        /// <param name="divisor">Divisor</param>
+        /// <returns>Normalized matrix</returns>
         private static int[,] normalizeFromIncrementalMatrix(
             int[,] incrMatrix, int divisor)
         {
