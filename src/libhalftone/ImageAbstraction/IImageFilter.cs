@@ -1,4 +1,7 @@
-﻿namespace HalftoneLab
+﻿// Copyright (c) 2009 Bohumir Zamecnik <bohumir@zamecnik.org>
+// License: The MIT License, see the LICENSE file
+
+namespace HalftoneLab
 {
     /// <summary>
     /// Interface for image filters.
