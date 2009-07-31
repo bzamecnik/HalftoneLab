@@ -3,10 +3,21 @@ using HalftoneLab;
 
 namespace HalftoneLab.SampleConfig
 {
+    /// <summary>
+    /// A collection of sample module configurations.
+    /// </summary>
+    /// <remarks>
+    /// It is intended to fill the ConfigManager with a default configuration
+    /// if it is empty.
+    /// </remarks>
     class SampleConfig
     {
         // TODO: preprare sample configurations
 
+        /// <summary>
+        /// Fill the config manager with a default configuration.
+        /// </summary>
+        /// <param name="config"></param>
         public static void makeSampleConfig(ConfigManager config) {
             if (config == null) {
                 return;

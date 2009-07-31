@@ -4,21 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
-    // brainstorming:
-    // - list of intensity range records
-    //   - intensity range record
-    //     - start intensity
-    //     - error matrix
-    //   - impl: treeview + liststore
-    // - operations:
-    //   - add new record
-    //     -> popup dialog, append to liststore, add to module
-    //   - delete selected record
-    //     -> delete from liststore, delete from module
-    //   - edit existing record
-    //     - get selected, popup dialog, store
-    //       - the same as add op., except for getting the original one
-
+    /// <summary>
+    /// Dynamic matrix error filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.DynamicMatrixErrorFilter"/>
     public class DynamicMatrixErrorFilterDialog : ModuleDialog
     {
         private DynamicMatrixErrorFilter module;
@@ -126,7 +115,7 @@ namespace HalftoneLab.GUI.Gtk
             VBox.PackStart(table);
         }
 
-        public void initRecordTable(DynamicMatrixErrorFilter module) {
+        private void initRecordTable(DynamicMatrixErrorFilter module) {
             // TODO: possibly add a string column for Matrix name
             recordStore = new ListStore(
                 typeof(DynamicMatrixErrorFilter.ErrorRecord));
@@ -164,13 +153,13 @@ namespace HalftoneLab.GUI.Gtk
             recordTreeView.AppendColumn(intensityColumn);
         }
 
-        TreeIter getSelectedRowIter() {
+        private TreeIter getSelectedRowIter() {
             TreeIter iter;
             recordTreeView.Selection.GetSelected(out iter);
             return iter;
         }
 
-        TreeIter getIterByIntensity(int intensity) {
+        private TreeIter getIterByIntensity(int intensity) {
             TreeIter iter;
             recordStore.GetIterFirst(out iter);
             if (!recordStore.IterIsValid(iter)) { return iter; }
@@ -187,7 +176,7 @@ namespace HalftoneLab.GUI.Gtk
             return iter;
         }
 
-        int getIntensityFromRow(TreeIter iter) {
+        private int getIntensityFromRow(TreeIter iter) {
             if (recordStore.IterIsValid(iter)) {
                 return ((DynamicMatrixErrorFilter.ErrorRecord)
                     recordStore.GetValue(iter, 0)).keyRangeStart;
@@ -195,7 +184,7 @@ namespace HalftoneLab.GUI.Gtk
             return -1;
         }
 
-        void addRecord(DynamicMatrixErrorFilter.ErrorRecord record) {
+        private void addRecord(DynamicMatrixErrorFilter.ErrorRecord record) {
             if (record != null) {
                 module.MatrixTable.addDefinitionRecord(record);
                 // if there is another record with the same intensity
@@ -210,7 +199,7 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
-        void deleteRecord(ref TreeIter iter, int intensity) {
+        private void deleteRecord(ref TreeIter iter, int intensity) {
             recordStore.Remove(ref iter);
             module.MatrixTable.deleteDefinitionRecord(intensity);
         }

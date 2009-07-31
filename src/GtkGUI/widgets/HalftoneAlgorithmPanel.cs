@@ -6,9 +6,31 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Halftone algorithm configuration panel.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Typical workflow:
+    /// - panel is created
+    /// - existing module (or a default one) is set via constructor or the
+    /// %Module property
+    /// - when a parameter or submodule changes the ModuleChanged event is fired
+    /// - the changed module can be retrieved via the %Module property
+    /// </para>
+    /// <para>
+    /// The ModuleChanged event is necessary because: 1) we cannot catch the
+    /// GimpDialog OnResponse event, 2) when there will be a preview, it will
+    /// need to be updated every time the algorithm changes.
+    /// </para>
+    /// </remarks>
+    /// <see cref="HalftoneLab.HalftoneAlgorithm"/>
     public class HalftoneAlgorithmPanel : Notebook
     {
         private HalftoneAlgorithm module;
+        /// <summary>
+        /// The halftone algorithm module.
+        /// </summary>
         public HalftoneAlgorithm Module {
             get { return module; }
             set {
@@ -29,6 +51,10 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// %Module configured by this panel has changed. You can retrieve it
+        /// via the %Module property.
+        /// </summary>
         public event EventHandler ModuleChanged;
 
         private ResizePanel preResizePanel;
@@ -42,9 +68,18 @@ namespace HalftoneLab.GUI.Gtk
         private CheckButton postSmoothenEnabledCheckButton;
         private SpinButton postSmoothenRadiusSpinButton;
 
+        /// <summary>
+        /// Create a new halftone algorithm configuration panel using a
+        /// default halftone algorithm.
+        /// </summary>
         public HalftoneAlgorithmPanel()
             : this(new HalftoneAlgorithm()) { }
 
+        /// <summary>
+        /// Create a new halftone algorithm configuration panel using an
+        /// existing halftone algorithm.
+        /// </summary>
+        /// <param name="existingModule"></param>
         public HalftoneAlgorithmPanel(HalftoneAlgorithm existingModule)
         {
             BorderWidth = 3;
@@ -265,6 +300,9 @@ namespace HalftoneLab.GUI.Gtk
             Page = 1;
         }
 
+        /// <summary>
+        /// A configuration panel for HalftoneAlgorithm.Resize filter.
+        /// </summary>
         public class ResizePanel : Table {
             private HalftoneAlgorithm.Resize module;
             public HalftoneAlgorithm.Resize Module {

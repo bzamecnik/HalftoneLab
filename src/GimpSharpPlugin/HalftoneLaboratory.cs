@@ -7,10 +7,17 @@ using HalftoneLab.GUI.Gtk;
 namespace Gimp.HalftoneLaboratory
 {
     /// <summary>
-    /// Halftone Laboratory user interface as a GIMP plugin.
+    /// Halftone Laboratory GIMP plugin.
     /// </summary>
+    /// <remarks>
+    /// A thin layer between HalftoneLab library and GUI on one side, and
+    /// GIMP on the other side.
+    /// </remarks>
     class HalftoneLaboratory : Plugin
     {
+        /// <summary>
+        /// Name of the last used algorithm configuration.
+        /// </summary>
         private HalftoneAlgorithm selectedAlgorithm;
         private ConfigManager configManager;
 
@@ -34,6 +41,13 @@ namespace Gimp.HalftoneLaboratory
                     "GRAY*") { MenuPath = "<Image>/Filters/Distorts" };
         }
 
+        /// <summary>
+        /// Create a plug-in dialog.
+        /// </summary>
+        /// <remarks>
+        /// Save the last used algorithm configuration to a file.
+        /// </remarks>
+        /// <returns>Gimp plug-in dialog</returns>
         override protected GimpDialog CreateDialog() {
             gimp_ui_init("HalftoneLab", true);
 
@@ -77,6 +91,15 @@ namespace Gimp.HalftoneLaboratory
             return dialog;
         }
 
+        /// <summary>
+        /// Run the halftoning algorithm.
+        /// </summary>
+        /// <remarks>
+        /// The halftoning algorithm can be either selected inteactively or
+        /// in case of non-interactive processing it is the previously used
+        /// one.
+        /// </remarks>
+        /// <param name="drawable">The image - both input and output</param>
         override protected void Render(Drawable drawable) {
             HalftoneLab.Image image = new GSImage(drawable);
             if (configManager == null) {
@@ -87,6 +110,13 @@ namespace Gimp.HalftoneLaboratory
             }
         }
 
+        /// <summary>
+        /// Initialize the config manager.
+        /// </summary>
+        /// <remarks>
+        /// Load the configurations from file, if possible, and get the last
+        /// used algorithm.
+        /// </remarks>
         private void initConfigManager() {
             configManager = new ConfigManager()
             {
@@ -97,7 +127,7 @@ namespace Gimp.HalftoneLaboratory
             };
             configManager.load();
 
-            // load last used algorithm
+            // load the last used algorithm
             selectedAlgorithm = configManager.getModule<HalftoneAlgorithm>(
                 "_LAST");
             if (selectedAlgorithm == null) {

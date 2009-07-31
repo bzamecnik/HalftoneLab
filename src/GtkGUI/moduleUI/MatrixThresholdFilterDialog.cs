@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// %Matrix threshold filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.MatrixThresholdFilter"/>
     public class MatrixThresholdFilterDialog : ModuleDialog
     {
         private MatrixThresholdFilter module;

@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// %Image threshold filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.ImageThresholdFilter"/>
     public class ImageThresholdFilterDialog : ModuleDialog
     {
         private ImageThresholdFilter module;

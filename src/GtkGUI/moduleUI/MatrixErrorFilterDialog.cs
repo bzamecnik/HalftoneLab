@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// %Matrix error filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.MatrixErrorFilter"/>
     class MatrixErrorFilterDialog : ModuleDialog
     {
         private MatrixErrorFilter module;

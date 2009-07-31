@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Error vector configuration panel.
+    /// </summary>
+    /// <see cref="HalftoneLab.ErrorVector"/>
     class ErrorVectorPanel : Table
     {
         //ErrorMatrix module; // TODO
