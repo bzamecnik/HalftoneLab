@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Threshold halftone method configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.ThresholdHalftoneMethod"/>
     public class ThresholdHalftoneMethodDialog : ModuleDialog
     {
         private ThresholdHalftoneMethod module;

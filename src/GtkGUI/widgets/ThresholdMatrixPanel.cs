@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Threshold matrix configuration panel.
+    /// </summary>
+    /// <see cref="HalftoneLab.ThresholdMatrix"/>
     class ThresholdMatrixPanel : Table
     {
         MatrixPanel matrixPanel;

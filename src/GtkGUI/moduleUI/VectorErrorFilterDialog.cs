@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Vector error filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.VectorErrorFilter"/>
     public class VectorErrorFilterDialog : ModuleDialog
     {
         private VectorErrorFilter module;

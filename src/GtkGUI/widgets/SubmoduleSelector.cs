@@ -5,11 +5,13 @@ using HalftoneLab;
 namespace HalftoneLab.GUI.Gtk
 {
     // TODO:
-    // *- show ModuleAttribute.TypeName as ComboBox text
     // - show ModuleAttribute.TypeDescription as a ComboBox tool-tip
     //   or in a separate frame
-    // *- null checkbox
 
+    /// <summary>
+    /// A panel for selecting and configuring a submodule.
+    /// </summary>
+    /// <typeparam name="ModuleType">Type of the submodule</typeparam>
     public class SubmoduleSelector<ModuleType> : Table
         where ModuleType : Module
     {
@@ -18,9 +20,13 @@ namespace HalftoneLab.GUI.Gtk
         private Button editButton;
         private CheckButton nullCheckButton;
 
-        private string[] errorFilterSubtypes;
+        private string[] subtypeNames;
 
         private ModuleType module;
+        
+        /// <summary>
+        /// The configured submodule.
+        /// </summary>
         public ModuleType Module {
             get { return (!AllowNull || !IsNull) ? module : null; }
             set {
@@ -28,8 +34,11 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
-        // Allow the module to be set to null?
         private bool allowNull;
+
+        /// <summary>
+        /// Allow the module to be set to null, ie. disable it?
+        /// </summary>
         public bool AllowNull {
             get { return allowNull; }
             set {
@@ -41,7 +50,15 @@ namespace HalftoneLab.GUI.Gtk
         }
 
         private bool isNull;
-        // Module is set to null
+        /// <summary>
+        /// Is %Module set to null?
+        /// </summary>
+        /// <remarks>
+        /// This property is there instead of just setting the module to null
+        /// in order to temporarily disable the module. In case the user sets
+        /// this propery back to false, the module remains there, instead of
+        /// being deleted.
+        /// </remarks>
         private bool IsNull {
             get { return isNull; }
             set {
@@ -60,11 +77,22 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// %Module configured by this panel has changed. You can retrieve it
+        /// via the %Module property.
+        /// </summary>
         public event EventHandler ModuleChanged;
 
+        /// <summary>
+        /// Create a new submodule selector (with no module - null).
+        /// </summary>
         public SubmoduleSelector() 
             : this(null){}
 
+        /// <summary>
+        /// Create a new submodule selector with an existing module.
+        /// </summary>
+        /// <param name="existingModule"></param>
         public SubmoduleSelector(ModuleType existingModule)
             : base(1, 3, false)
         {
@@ -76,9 +104,9 @@ namespace HalftoneLab.GUI.Gtk
             ModuleRegistry moduleRegistry = ModuleRegistry.Instance;
 
             typeStore = new ListStore(typeof(string), typeof(Type));
-            errorFilterSubtypes = moduleRegistry.getSubmodules(
+            subtypeNames = moduleRegistry.getSubmodules(
                 typeof(ModuleType).Name);
-            foreach (string moduleTypeName in errorFilterSubtypes) {
+            foreach (string moduleTypeName in subtypeNames) {
                 Type type = moduleRegistry.getModuleType(moduleTypeName);
                 ModuleAttribute attribute =
                     moduleRegistry.getModuleAttribute(moduleTypeName);
@@ -141,7 +169,13 @@ namespace HalftoneLab.GUI.Gtk
             ShowAll();
         }
 
-        public void assignModule(ModuleType module, bool fireSignal) {
+        /// <summary>
+        /// Set the module to be configured and optionally fire the
+        /// ModuleChanged event.
+        /// </summary>
+        /// <param name="module">Module to be configured</param>
+        /// <param name="fireEvent">Fire the ModuleChanged event?</param>
+        public void assignModule(ModuleType module, bool fireEvent) {
             this.module = module;
             editButton.Sensitive = ((module != null) &&
             (ModuleRegistry.Instance.getDialogType(
@@ -150,14 +184,17 @@ namespace HalftoneLab.GUI.Gtk
             if (module != null) {
                 string activeTypeName = module.GetType().Name;
                 typeComboBox.Active = Array.FindIndex(
-                    errorFilterSubtypes, (string type) => activeTypeName == type);
+                    subtypeNames, (string type) => activeTypeName == type);
             }
             nullCheckButton.Active = Module == null;
-            if (fireSignal && (ModuleChanged != null)) {
+            if (fireEvent && (ModuleChanged != null)) {
                 ModuleChanged(this, new EventArgs());
             }
         }
 
+        /// <summary>
+        /// Type of the currently active module.
+        /// </summary>
         private Type ActiveModuleType {
             get {
                 Type type = null;

@@ -6,6 +6,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Error matrix configuration panel.
+    /// </summary>
+    /// <see cref="HalftoneLab.ErrorMatrix"/>
     class ErrorMatrixPanel : Table
     {
         ErrorMatrix module;

@@ -7,6 +7,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// %Image generator configuration panel.
+    /// </summary>
+    /// <see cref="HalftoneLab.ImageGenerator"/>
     public class ImageGeneratorPanel : Table
     {
         private ImageGenerator module;

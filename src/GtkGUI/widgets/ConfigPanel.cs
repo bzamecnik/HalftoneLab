@@ -6,6 +6,11 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// A panel for managing configurations of a particular type.
+    /// </summary>
+    /// <typeparam name="ModuleType">Type of the module to be configured
+    /// </typeparam>
     public class ConfigPanel<ModuleType> : Table
         where ModuleType : Module, new()
     {
@@ -15,13 +20,24 @@ namespace HalftoneLab.GUI.Gtk
         private Button saveCurrentConfigButton;
         private Button deleteSelectedConfigButton;
 
+        /// <summary>
+        /// Currently selected and configured module.
+        /// </summary>
         public ModuleType CurrentModule { get; set; }
 
+        /// <summary>
+        /// %Module configured by this panel has changed. You can retrieve it
+        /// via the CurrentModule property.
+        /// </summary>
         public event EventHandler ModuleChanged;
 
         private List<string> configNames;
         private static string defaultModuleName = "_DEFAULT";
 
+        /// <summary>
+        /// Create a new config panel backed by an existing config manager.
+        /// </summary>
+        /// <param name="manager">Configuration manager</param>
         public ConfigPanel(ConfigManager manager)
             : base(1, 4, false)
         {
@@ -72,6 +88,13 @@ namespace HalftoneLab.GUI.Gtk
             ShowAll();
         }
 
+        /// <summary>
+        /// Save the current configuration.
+        /// </summary>
+        /// <remarks>
+        /// Use a ConfigEditDialog to fill name and description of the
+        /// configuration.
+        /// </remarks>
         private void saveCurrentConfig() {
             string oldName = configNameComboBox.ActiveText;
             // open an edit dialog to fill config name and description
@@ -109,6 +132,9 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// Delete the currently selected configuration.
+        /// </summary>
         private void deleteSelectedConfig() {
             string selectedName = configNameComboBox.ActiveText;
             if (selectedName != null) {
@@ -119,6 +145,10 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// Set the module from the configuration currently selected in the
+        /// list.
+        /// </summary>
         private void selectConfig() {
             ModuleType selectedConfig = getSelectedConfig();
             if (selectedConfig != null) {
@@ -129,6 +159,10 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// Get the currently selected configuration.
+        /// </summary>
+        /// <returns></returns>
         private ModuleType getSelectedConfig() {
             string selectedName = configNameComboBox.ActiveText;
             return (selectedName != defaultModuleName) ?
@@ -137,6 +171,9 @@ namespace HalftoneLab.GUI.Gtk
 
         }
 
+        /// <summary>
+        /// Refresh the list of configurations.
+        /// </summary>
         private void refreshConfigNameListStore() {
             configNames.Sort();
             configNameListStore.Clear();
@@ -146,8 +183,16 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
+        /// <summary>
+        /// Dialog for editing configuration details (such as name or
+        /// description).
+        /// </summary>
         class ConfigEditDialog : Dialog {
+            /// <summary>
+            /// Name of the configuration.
+            /// </summary>
             public string NameText { get; set; }
+            /// Description of the configuration.
             public string DescriptionText { get; set; }
 
             private Entry nameEntry;
@@ -156,6 +201,12 @@ namespace HalftoneLab.GUI.Gtk
             private ScrolledWindow descScroll;
             private Table table;
 
+            /// <summary>
+            /// Create a new configuration details dialog.
+            /// </summary>
+            /// <param name="name">Existing configuration name</param>
+            /// <param name="description">Existing configuration description
+            /// </param>
             public ConfigEditDialog(string name, string description)
             {
                 Title = "Configuration details";

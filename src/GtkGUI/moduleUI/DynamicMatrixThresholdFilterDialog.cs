@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Dynamic matrix threshold filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.DynamicMatrixThresholdFilter"/>
     public class DynamicMatrixThresholdFilterDialog : ModuleDialog
     {
         private DynamicMatrixThresholdFilter module;
@@ -121,7 +125,7 @@ namespace HalftoneLab.GUI.Gtk
             VBox.PackStart(table);
         }
 
-        public void initRecordTable(DynamicMatrixThresholdFilter module) {
+        private void initRecordTable(DynamicMatrixThresholdFilter module) {
             // TODO: possibly add:
             // - string column for ThresholdMatrix name
             // - double column for noise amplitude
@@ -160,13 +164,13 @@ namespace HalftoneLab.GUI.Gtk
             recordTreeView.AppendColumn(intensityColumn);
         }
 
-        TreeIter getSelectedRowIter() {
+        private TreeIter getSelectedRowIter() {
             TreeIter iter;
             recordTreeView.Selection.GetSelected(out iter);
             return iter;
         }
 
-        TreeIter getIterByIntensity(int intensity) {
+        private TreeIter getIterByIntensity(int intensity) {
             TreeIter iter;
             recordStore.GetIterFirst(out iter);
             if (!recordStore.IterIsValid(iter)) { return iter; }
@@ -182,7 +186,7 @@ namespace HalftoneLab.GUI.Gtk
             return iter;
         }
 
-        int getIntensityFromRow(TreeIter iter) {
+        private int getIntensityFromRow(TreeIter iter) {
             if (recordStore.IterIsValid(iter)) {
                 return ((DynamicMatrixThresholdFilter.ThresholdRecord)
                     recordStore.GetValue(iter, 0)).keyRangeStart;
@@ -190,7 +194,7 @@ namespace HalftoneLab.GUI.Gtk
             return -1;
         }
 
-        void addRecord(DynamicMatrixThresholdFilter.ThresholdRecord record) {
+        private void addRecord(DynamicMatrixThresholdFilter.ThresholdRecord record) {
             if (record != null) {
                 module.MatrixTable.addDefinitionRecord(record);
                 // if there is another record with the same intensity
@@ -205,7 +209,7 @@ namespace HalftoneLab.GUI.Gtk
             }
         }
 
-        void deleteRecord(ref TreeIter iter, int intensity) {
+        private void deleteRecord(ref TreeIter iter, int intensity) {
             recordStore.Remove(ref iter);
             module.MatrixTable.deleteDefinitionRecord(intensity);
         }

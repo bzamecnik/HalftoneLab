@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Randomized matrix error filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.RandomizedMatrixErrorFilter"/>
     public class RandomizedMatrixErrorFilterDialog : ModuleDialog
     {
         private RandomizedMatrixErrorFilter module;

@@ -6,6 +6,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Spot function configuration panel.
+    /// </summary>
+    /// <see cref="HalftoneLab.SpotFunction"/>
     public class SpotFunctionPanel : Table
     {
         private SpotFunction module;

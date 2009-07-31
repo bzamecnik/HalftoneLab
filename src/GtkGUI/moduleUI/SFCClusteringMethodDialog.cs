@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// SFC clustering halftone method configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.SFCClusteringMethod"/>
     public class SFCClusteringMethodDialog : ModuleDialog
     {
         private SFCClusteringMethod module;

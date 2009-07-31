@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Perturbed error filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.PerturbedErrorFilter"/>
     public class PerturbedErrorFilterDialog : ModuleDialog
     {
         private PerturbedErrorFilter module;

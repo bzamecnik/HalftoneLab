@@ -4,6 +4,10 @@ using HalftoneLab;
 
 namespace HalftoneLab.GUI.Gtk
 {
+    /// <summary>
+    /// Spot function threshold filter configuration dialog.
+    /// </summary>
+    /// <see cref="HalftoneLab.SpotFunctionThresholdFilter"/>
     public class SpotFunctionThresholdFilterDialog : ModuleDialog
     {
         private SpotFunctionThresholdFilter module;
