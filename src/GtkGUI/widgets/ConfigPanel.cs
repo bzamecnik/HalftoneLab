@@ -22,6 +22,8 @@ namespace HalftoneLab.GUI.Gtk
         private ListStore configNameListStore;
         private Button saveCurrentConfigButton;
         private Button deleteSelectedConfigButton;
+        private TextView configDescTextView;
+        private ScrolledWindow configDescScroll;
 
         /// <summary>
         /// Currently selected and configured module.
@@ -42,7 +44,7 @@ namespace HalftoneLab.GUI.Gtk
         /// </summary>
         /// <param name="manager">Configuration manager</param>
         public ConfigPanel(ConfigManager manager)
-            : base(1, 4, false)
+            : base(2, 4, false)
         {
             if (manager == null) {
                 throw new ArgumentNullException();
@@ -65,6 +67,9 @@ namespace HalftoneLab.GUI.Gtk
             configNameComboBox.Changed += delegate
             {
                 selectConfig();
+                if (CurrentModule != null) {
+                    configDescTextView.Buffer.Text = CurrentModule.Description;
+                }
             };
 
             saveCurrentConfigButton = new Button("gtk-save");
@@ -79,6 +84,14 @@ namespace HalftoneLab.GUI.Gtk
                 deleteSelectedConfig();
             };
 
+            configDescTextView = new TextView()
+            {
+                WrapMode = WrapMode.Word,
+                Sensitive = false
+            };
+            configDescScroll = new ScrolledWindow() { HeightRequest = 30 };
+            configDescScroll.Add(configDescTextView);
+
             Attach(new Label("Config:") { Xalign = 0.0f }, 0, 1, 0, 1,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
             Attach(configNameComboBox, 1, 2, 0, 1, AttachOptions.Fill |
@@ -87,6 +100,9 @@ namespace HalftoneLab.GUI.Gtk
                 AttachOptions.Shrink, 0, 0);
             Attach(deleteSelectedConfigButton, 3, 4, 0, 1, AttachOptions.Fill,
                 AttachOptions.Shrink, 0, 0);
+            Attach(configDescScroll, 0, 4, 1, 2, AttachOptions.Fill |
+                AttachOptions.Expand, AttachOptions.Fill | AttachOptions.Expand,
+                0, 0);
 
             ShowAll();
         }

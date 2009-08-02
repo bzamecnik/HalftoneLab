@@ -59,7 +59,7 @@ namespace HalftoneLab
             : this(new int[1, 1] { { 128 } }, false) { }
 
         public override Matrix<int, int> Clone() {
-            return new ThresholdMatrix(DefinitionMatrix);
+            return new ThresholdMatrix(DefinitionMatrix, Incremental);
         }
 
         protected override void computeWorkingMatrix() {
@@ -121,13 +121,13 @@ namespace HalftoneLab
         /// <summary>
         /// A utility class for generating threshold matrices.
         /// </summary>
-        public class Generator
+        public class Samples
         {
-            public static ThresholdMatrix sampleMatrix;
+            public static ThresholdMatrix sampleScreenMatrix;
             public static ThresholdMatrix simpleThreshold;
-            static Generator() {
+            static Samples() {
                 simpleThreshold = new ThresholdMatrix(new int[1, 1] { { 128 } }, false);
-                sampleMatrix = new ThresholdMatrix(
+                sampleScreenMatrix = new ThresholdMatrix(
                     new int[,] {
                     //{ 16,  5,  9, 13 },
                     //{ 12,  1,  2,  6 },

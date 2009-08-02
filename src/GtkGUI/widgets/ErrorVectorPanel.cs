@@ -2,6 +2,8 @@
 // License: The MIT License, see the LICENSE file
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gtk;
 using HalftoneLab;
 
@@ -22,9 +24,11 @@ namespace HalftoneLab.GUI.Gtk
         SpinButton divisorSpinButton;
         CheckButton customDivisorCheckButton;
         SpinButton sourceOffsetXSpinButton;
+        ComboBox presetComboBox;
+        List<ErrorMatrix> presets;
 
         public ErrorVectorPanel(uint length)
-            : base(5, 3, false)
+            : base(6, 3, false)
         {
             divisorSpinButton = new SpinButton(1, 10000, 1);
             sourceOffsetXSpinButton = new SpinButton(1, length, 1);
@@ -32,6 +36,17 @@ namespace HalftoneLab.GUI.Gtk
             customDivisorCheckButton.Toggled += delegate
             {
                 divisorSpinButton.Sensitive = customDivisorCheckButton.Active;
+            };
+
+            presets = new List<ErrorMatrix>(ErrorMatrix.Samples.listVectors());
+            var presetsNames = from preset in presets select preset.Name;
+            presetComboBox = new ComboBox(presetsNames.ToArray());
+            presetComboBox.Changed += delegate
+            {
+                int active = presetComboBox.Active;
+                if (active >= 0) {
+                    BareMatrix = presets[active].DefinitionMatrix;
+                }
             };
 
             ColumnSpacing = 2;
@@ -54,31 +69,38 @@ namespace HalftoneLab.GUI.Gtk
                 }
             };
 
-            Attach(scroll, 0, 5, 0, 1,
+            Attach(new Label("Preset:") { Xalign = 0.0f }, 0, 1, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+            Attach(presetComboBox, 1, 3, 0, 1,
+                AttachOptions.Fill | AttachOptions.Expand,
+                AttachOptions.Shrink, 0, 0);
+
+            Attach(scroll, 0, 5, 1, 2,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Fill | AttachOptions.Expand, 0, 0);
             
-            Attach(new Label("Length:") { Xalign = 0.0f }, 0, 1, 1, 2,
+            Attach(new Label("Length:") { Xalign = 0.0f }, 0, 1, 2, 3,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            Attach(vectorLengthSpinButton, 1, 2, 1, 2,
+            Attach(vectorLengthSpinButton, 1, 2, 2, 3,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-            Attach(resizeButton, 2, 3, 1, 2,
+            Attach(resizeButton, 2, 3, 2, 3,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
             Attach(new Label("Source offset X:") { Xalign = 0.0f },
-                0, 1, 2, 3, AttachOptions.Fill | AttachOptions.Expand,
+                0, 1, 3, 4, AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            Attach(sourceOffsetXSpinButton, 1, 2, 2, 3,
+            Attach(sourceOffsetXSpinButton, 1, 2, 3, 4,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
-            Attach(customDivisorCheckButton, 0, 3, 3, 4,
+            Attach(customDivisorCheckButton, 0, 3, 4, 5,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
 
-            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 4, 5,
+            Attach(new Label("Divisor:") { Xalign = 0.0f }, 0, 1, 5, 6,
                 AttachOptions.Fill | AttachOptions.Expand,
                 AttachOptions.Shrink, 0, 0);
-            Attach(divisorSpinButton, 1, 2, 4, 5,
+            Attach(divisorSpinButton, 1, 2, 5, 6,
                 AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
         }
 

@@ -60,7 +60,7 @@ namespace HalftoneLab
             public ErrorRecord(int intensityRangeStart,
                 ErrorMatrix matrix) {
                 this.keyRangeStart = intensityRangeStart;
-                this.matrix = matrix;
+                this.matrix = (ErrorMatrix)matrix.Clone();
             }
 
             /// <summary>

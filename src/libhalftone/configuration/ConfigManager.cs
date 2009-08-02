@@ -60,6 +60,11 @@ namespace HalftoneLab
                     _savedModules = loadedModules;
                 }
                 // else: report an error
+            } catch (System.Runtime.Serialization.SerializationException ex) {
+                Console.Out.WriteLine(
+                    "Cannot deserialize the contents of the configuration file: {0}. Its format might be old.",
+                    ConfigFileName);
+                Console.Out.WriteLine(ex.Message);
             } catch (FileNotFoundException ex) {
                 Console.Out.WriteLine(ex.Message);
                 Console.Out.WriteLine(

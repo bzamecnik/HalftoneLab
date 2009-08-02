@@ -107,14 +107,7 @@ namespace HalftoneLab
         /// </param>
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX) {
             SourceOffsetX = sourcePixelOffsetX;
-            // compute the divisor as a sum of all coefficients.
-            int coeffSum = 0;
-            // TODO: omit coefficients before source pixel X (including it)!
-            foreach (int coef in coeffs) {
-                coeffSum += coef;
-            }
-            Divisor = coeffSum;
-            DefinitionMatrix = coeffs;
+            setDefinitionMatrix(coeffs);
         }
 
         /// <summary>
@@ -126,8 +119,7 @@ namespace HalftoneLab
         /// <param name="divisor">Divisor of coefficients</param>
         public ErrorMatrix(int[,] coeffs, int sourcePixelOffsetX, int divisor) {
             SourceOffsetX = sourcePixelOffsetX;
-            Divisor = divisor;
-            DefinitionMatrix = coeffs;
+            setDefinitionMatrix(coeffs, divisor);
         }
 
         /// <summary>
@@ -135,6 +127,32 @@ namespace HalftoneLab
         /// </summary>
         public ErrorMatrix()
             : this(new int[,] {{0, 1}}, 1, 1) { }
+
+        /// <summary>
+        /// Set the definition matrix with a custom divisor.
+        /// </summary>
+        /// <param name="coeffs">Coefficients definition, deep copied</param>
+        /// <param name="divisor">Divisor of coefficients</param>
+        public void setDefinitionMatrix(int[,] coeffs, int divisor) {
+            Divisor = divisor;
+            DefinitionMatrix = coeffs;
+        }
+
+        /// <summary>
+        /// Set the definition matrix.
+        /// </summary>
+        /// <remarks>
+        /// Compute the divisor as a sum of all coefficients.
+        /// </remarks>
+        /// <param name="coeffs">Coefficients definition, deep copied</param>
+        public void setDefinitionMatrix(int[,] coeffs) {
+            int coeffSum = 0;
+            // TODO: omit coefficients before source pixel X (including it)!
+            foreach (int coef in coeffs) {
+                coeffSum += coef;
+            }
+            setDefinitionMatrix(coeffs, coeffSum);
+        }
 
         /// <summary>
         /// Compute the coefficients of working matrix. If necessary, they are
@@ -263,18 +281,30 @@ namespace HalftoneLab
             public static ErrorMatrix sierraFilterLite;
             public static ErrorMatrix atkinson;
             public static ErrorMatrix hocevarNiger;
+            public static ErrorMatrix riemersma16;
 
-            private static List<ErrorMatrix> _list;
+            private static List<ErrorMatrix> _matrixList;
+            private static List<ErrorMatrix> _vectorList;
+
             /// <summary>
-            /// Iterate over the list of the samples.
+            /// Iterate over the list of the sample matrices.
             /// </summary>
             /// <returns>Enumerable of sample error matrices.</returns>
-            public static IEnumerable<ErrorMatrix> list() {
-                return _list;
+            public static IEnumerable<ErrorMatrix> listMatrices() {
+                return _matrixList;
+            }
+
+            /// <summary>
+            /// Iterate over the list of the sample vectors.
+            /// </summary>
+            /// <returns>Enumerable of sample error vectors.</returns>
+            public static IEnumerable<ErrorMatrix> listVectors() {
+                return _vectorList;
             }
 
             static Samples() {
-                _list = new List<ErrorMatrix>();
+                _matrixList = new List<ErrorMatrix>();
+                _vectorList = new List<ErrorMatrix>();
                 nextPixel = new ErrorMatrix(
                     new int[1, 2] {
                         { 0, 1 }
@@ -283,7 +313,8 @@ namespace HalftoneLab
                         Name = "Next pixel",
                         Description = "The simplest error-diffusion matrix"
                     };
-                _list.Add(nextPixel);
+                _matrixList.Add(nextPixel);
+                _vectorList.Add(nextPixel);
                 Default = nextPixel;
                 nextTwoPixels = new ErrorMatrix(
                     new int[1, 3] {
@@ -292,7 +323,8 @@ namespace HalftoneLab
                     {
                         Name = "Next two pixels"
                     };
-                _list.Add(nextTwoPixels);
+                _matrixList.Add(nextTwoPixels);
+                _vectorList.Add(nextTwoPixels);
                 floydSteinberg = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 7 },
@@ -301,7 +333,7 @@ namespace HalftoneLab
                     {
                         Name = "Floyd-Steinberg"
                     };
-                _list.Add(floydSteinberg);
+                _matrixList.Add(floydSteinberg);
                 jarvisJudiceNinke = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 7, 5 },
@@ -311,7 +343,7 @@ namespace HalftoneLab
                     {
                         Name = "Jarvis-Judice-Ninke"
                     };
-                _list.Add(jarvisJudiceNinke);
+                _matrixList.Add(jarvisJudiceNinke);
                 stucki = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 8, 4 },
@@ -321,7 +353,7 @@ namespace HalftoneLab
                     {
                         Name = "Stucki"
                     };
-                _list.Add(stucki);
+                _matrixList.Add(stucki);
                 burkes = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 4, 2 },
@@ -330,7 +362,7 @@ namespace HalftoneLab
                     {
                         Name = "Burkes"
                     };
-                _list.Add(burkes);
+                _matrixList.Add(burkes);
                 fan = new ErrorMatrix(
                     new int[2, 4] {
                         { 0, 0, 0, 7 },
@@ -339,7 +371,7 @@ namespace HalftoneLab
                     {
                         Name = "Fan"
                     };
-                _list.Add(fan);
+                _matrixList.Add(fan);
                 shiauFan1 = new ErrorMatrix(
                     new int[2, 4] {
                         { 0, 0, 0, 4 },
@@ -348,7 +380,7 @@ namespace HalftoneLab
                     {
                         Name = "Shiau-Fan 1"
                     };
-                _list.Add(shiauFan1);
+                _matrixList.Add(shiauFan1);
                 shiauFan2 = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 0, 8 },
@@ -357,7 +389,7 @@ namespace HalftoneLab
                     {
                         Name = "Shiau-Fan 2"
                     };
-                _list.Add(shiauFan2);
+                _matrixList.Add(shiauFan2);
                 sierra = new ErrorMatrix(
                     new int[3, 5] {
                         { 0, 0, 0, 5, 3 },
@@ -367,7 +399,7 @@ namespace HalftoneLab
                     {
                         Name = "Sierra"
                     };
-                _list.Add(sierra);
+                _matrixList.Add(sierra);
                 sierraTwoRow = new ErrorMatrix(
                     new int[2, 5] {
                         { 0, 0, 0, 4, 3 },
@@ -376,7 +408,7 @@ namespace HalftoneLab
                     {
                         Name = "Sierra two row"
                     };
-                _list.Add(sierraTwoRow);
+                _matrixList.Add(sierraTwoRow);
                 sierraFilterLite = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 2 },
@@ -385,7 +417,7 @@ namespace HalftoneLab
                     {
                         Name = "Sierra filter lite"
                     };
-                _list.Add(sierraFilterLite);
+                _matrixList.Add(sierraFilterLite);
                 atkinson = new ErrorMatrix(
                     new int[3, 4] {
                         { 0, 0, 1, 1 },
@@ -395,7 +427,7 @@ namespace HalftoneLab
                     {
                         Name = "Atkinson"
                     };
-                _list.Add(atkinson);
+                _matrixList.Add(atkinson);
                 hocevarNiger = new ErrorMatrix(
                     new int[2, 3] {
                         { 0, 0, 7 },
@@ -409,8 +441,55 @@ namespace HalftoneLab
                     "Source: Reinstating Floyd-Steinberg - Improved Metrics for " +
                     "Quality Assessment of Error Diffusion Algorithms"
                 };
-                _list.Add(hocevarNiger);
-                //_list.OrderBy((matrix) => matrix.Name);
+                _matrixList.Add(hocevarNiger);
+                riemersma16 = generateRiemersmaMatrix(16, 16, 3);
+                riemersma16.Name = "Riemersma 16";
+                riemersma16.Description = "Riemersma coefficients, 16 coefficients, ratio 1:16, precision: 3";
+                _matrixList.Add(riemersma16);
+                _vectorList.Add(riemersma16);
+                //_matrixList.OrderBy((matrix) => matrix.Name);
+            }
+
+            /// <summary>
+            /// Generate Riemersma erro vector coefficients.
+            /// </summary>
+            /// <remarks>
+            /// Coefficients fall down along an exponential curve.
+            /// </remarks>
+            /// <param name="ratio">ratio between the highest and smallest coefficient</param>
+            /// <param name="nCoeff">number of coefficients</param>
+            /// <returns></returns>
+            public static double[] generateRiemersmaCoefficients(
+                double ratio, int nCoeff) {
+                // base of the exponential curve
+                double b = Math.Exp(Math.Log(ratio) / (nCoeff - 1));
+                double[] coefficients = new double[nCoeff];
+                for (int i = 0; i < nCoeff; i++) {
+                    coefficients[nCoeff - i - 1] = Math.Pow(b, i) / ratio;
+                }
+                return coefficients;
+            }
+
+            private static int[] scaleWithPrecision(double[] coeffs, int precision) {
+                if ((precision <= 0) && (precision > 8)) {
+                    return null;
+                }
+                int[] scaledCoeffs = new int[coeffs.Length];
+                for (int i = 0; i < coeffs.Length; i++) {
+                    scaledCoeffs[i] = (int)Math.Round(coeffs[i] * Math.Pow(10, precision));
+                }
+                return scaledCoeffs;
+            }
+
+            public static ErrorMatrix generateRiemersmaMatrix(
+                double ratio, int nCoeff, int precision) {
+                int[,] matrixCoeffs = new int[1, nCoeff + 1];
+                int[] coeffs = scaleWithPrecision(generateRiemersmaCoefficients(ratio, nCoeff), precision);
+                matrixCoeffs[0, 0] = 0;
+                for (int i = 0; i < coeffs.Length; i++) {
+                    matrixCoeffs[0, i + 1] = coeffs[i];
+                }
+                return new ErrorMatrix(matrixCoeffs, 0);
             }
         }
     }
