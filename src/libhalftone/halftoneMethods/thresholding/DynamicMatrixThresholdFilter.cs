@@ -50,7 +50,7 @@ namespace HalftoneLab
             public ThresholdRecord(int intensityRangeStart,
                 ThresholdMatrix matrix, double noiseAmplitude) {
                 this.keyRangeStart = intensityRangeStart;
-                this.matrix = matrix;
+                this.matrix = (ThresholdMatrix)matrix.Clone();
                 this.noiseAmplitude = noiseAmplitude;
             }
 

@@ -41,7 +41,7 @@ namespace HalftoneLab.GUI.Gtk
                     matrixPanel.Columns;
             };
 
-            presets = new List<ErrorMatrix>(ErrorMatrix.Samples.list());
+            presets = new List<ErrorMatrix>(ErrorMatrix.Samples.listMatrices());
             var presetsNames = from preset in presets select preset.Name;
             presetComboBox = new ComboBox(presetsNames.ToArray());
             presetComboBox.Changed += delegate
@@ -50,7 +50,6 @@ namespace HalftoneLab.GUI.Gtk
                 if (active >= 0) {
                     Matrix = presets[active];
                 }
-
             };
 
             ColumnSpacing = 2;

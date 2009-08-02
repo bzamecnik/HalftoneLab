@@ -77,9 +77,9 @@ namespace Gimp.HalftoneLaboratory
             };
 
             table.Attach(configPanel, 0, 1, 0, 1, AttachOptions.Fill,
-                AttachOptions.Shrink, 0, 0);
-            table.Attach(algorithmPanel, 0, 1, 1, 2, AttachOptions.Fill |
-                AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+                AttachOptions.Fill | AttachOptions.Expand, 0, 0);
+            table.Attach(algorithmPanel, 0, 1, 1, 2, AttachOptions.Fill,
+                AttachOptions.Fill, 0, 0);
 
             dialog.VBox.PackStart(table);
 

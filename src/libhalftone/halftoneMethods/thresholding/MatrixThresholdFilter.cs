@@ -30,7 +30,7 @@ namespace HalftoneLab
                 if (value != null) {
                     _matrix = value;
                 } else {
-                    _matrix = ThresholdMatrix.Generator.simpleThreshold;
+                    _matrix = ThresholdMatrix.Samples.simpleThreshold;
                 }
             }
         }
@@ -48,7 +48,7 @@ namespace HalftoneLab
         /// (currently 1x1 matrix with threshold at 50% grey).
         /// </summary>
         public MatrixThresholdFilter() {
-            Matrix = ThresholdMatrix.Generator.simpleThreshold;
+            Matrix = ThresholdMatrix.Samples.simpleThreshold;
         }
 
         /// <summary>

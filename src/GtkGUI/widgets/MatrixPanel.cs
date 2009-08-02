@@ -149,7 +149,7 @@ namespace HalftoneLab.GUI.Gtk
             spinButtonMatrix = new SpinButton[rows, columns];
             for (uint row = 0; row < rows; row++) {
                 for (uint col = 0; col < columns; col++) {
-                    SpinButton spin = new SpinButton(0, 1000, 1)
+                    SpinButton spin = new SpinButton(0, 10000, 1)
                         { HasFrame = false };
                     spinButtonMatrix[row, col] = spin;
                     matrixTable.Attach(spin,
