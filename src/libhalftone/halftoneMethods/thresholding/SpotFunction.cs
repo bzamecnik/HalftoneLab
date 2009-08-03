@@ -312,6 +312,7 @@ namespace HalftoneLab
 
                     return (int x, int y) =>
                     {
+                        // TODO: it does not rotate
                         return (int)(255 * 0.5 * (
                         ((invDistance * x) % 1) +
                         ((invDistance * y) % 1)
@@ -329,6 +330,7 @@ namespace HalftoneLab
 
                     return (int x, int y) =>
                     {
+                        // TODO: fix this
                         double xSq = x - distance * 0.5;
                         xSq = (xSq * xSq) % distance;
                         double ySq = y - distance * 0.5;
@@ -344,7 +346,8 @@ namespace HalftoneLab
                 {
                     Name = "Circle dot"
                 };
-                _list.Add(circleDot);
+                // TODO: uncomment this when circle dot will work
+                //_list.Add(circleDot);
             }
         }
     }
