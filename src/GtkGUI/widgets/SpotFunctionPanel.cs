@@ -27,7 +27,7 @@ namespace HalftoneLab.GUI.Gtk
         {
             // TODO: use degrees instead of radians
             angleHScale = new HScale(0, 2, 0.01);
-            distanceSpinButton = new SpinButton(1, 50, 1);
+            distanceSpinButton = new SpinButton(1, 1000, 1);
 
             presets = new List<SpotFunction>(SpotFunction.Samples.list());
             presetsNames = (from preset in presets select preset.Name).ToList();

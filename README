@@ -11,7 +11,7 @@ been integrated as a plug-in with the framework of a popular image-processing
 application GIMP.
 
 Author: Bohumir Zamecnik <bohumir@zamecnik.org>
-Release Date: 2009-07-30
+Release Date: 2009-08-03
 License: The MIT License, see the LICENSE file
 Website: http://zamecnik.org/halftonelab
 
@@ -240,6 +240,9 @@ For perturbing error matrix coefficients with random noise a separate filter
 is used. Inside it has a MatrixErrorFilter child filter as a submodule
 controlled by a standard submodule panel. In addition to it the amount of
 noise can be controlled by the Perturbation amplidute scale.
+
+Currently, Perturbed matrix error filter does not support Dynamic matrix
+error filter as its child filter. 
 
 Vector error filter
 
