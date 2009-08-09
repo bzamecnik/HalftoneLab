@@ -67,6 +67,7 @@ Section "HalftoneLab GIMP plug-in" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "halftone.dll"
+  File "halftonegui.dll"
   File "HalftoneLab.exe"
   CreateDirectory "$SMPROGRAMS\Halftone Laboratory"
   CreateDirectory "$INSTDIR\HalftoneLab"
@@ -74,6 +75,7 @@ SectionEnd
 
 Section /o "Debug symbols" SEC02
   File "halftone.pdb"
+  File "halftonegui.pdb"
   File "HalftoneLab.pdb"
 SectionEnd
 
@@ -119,8 +121,10 @@ Section Uninstall
   Delete "$INSTDIR\HalftoneLab\uninstall.exe"
   Delete "$INSTDIR\HalftoneLab.pdb"
   Delete "$INSTDIR\halftone.pdb"
+  Delete "$INSTDIR\halftonegui.pdb"
   Delete "$INSTDIR\HalftoneLab.exe"
   Delete "$INSTDIR\halftone.dll"
+  Delete "$INSTDIR\halftonegui.dll"
 
   Delete "$SMPROGRAMS\Halftone Laboratory\Uninstall.lnk"
   Delete "$SMPROGRAMS\Halftone Laboratory\Website.lnk"

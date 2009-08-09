@@ -23,14 +23,19 @@ Currently, it was tested sucessfully on Windows XP SP2 with .NET 3.5,
 GIMP 2.4.6, GIMP# 0.14 and GTK# 2.10.
 
   * Operating system: Windows XP, Linux
-  * .NET 3.5 / Mono 2.4
+  * Microsoft .NET Framework 3.5 / Mono 2.4
   * GIMP >= 2.4
   * GIMP# >= 0.13
 
 Installation Instructions
 -------------------------
 
-First GIMP and GIMP# must be installed, run gimp-2.4.6-i686-setup.exe and
+First make sure you have Microsoft .NET Framework 3.5 installed, otherwise
+HalftoneLab will not work. You can eventually use the enclosed incremental
+installers of .NET 2.0, 3.0, 3.5, and optionally 3.5 SP1. Note that some of
+those installer might need internet accesss.
+
+Then GIMP and GIMP# must be installed, run gimp-2.4.6-i686-setup.exe and
 then gimp-sharp-setup-0.14-gimp-2.4.exe. After that you can install
 HalftoneLab with halftonelab-setup.exe. All installers act as wizards, so the
 installation is straightforward.
