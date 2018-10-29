@@ -16,7 +16,7 @@ application GIMP.
 - Project website (on SourceForge):
 	- [wiki](https://sourceforge.net/apps/trac/halftonelab/wiki)
 	- [download page](http://sourceforge.net/projects/halftonelab/)
-- Thesis text: [Advanced Halftoning Methods](https://www.dropbox.com/sh/6rkoubtpoc1fsje/MnN9pEKw7r/mff-uk/advanced-halftoning-methods_zamecnik_thesis_2009.pdf)
+- Thesis text: [Advanced Halftoning Methods](https://www.dropbox.com/s/m7x22sj68vz288a/advanced-halftoning-methods_zamecnik_thesis_2009.pdf?dl=0)
 
 ## System Requirements
 
